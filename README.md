@@ -3,6 +3,19 @@ What's Going On?
 
 Rails is magical already, and this package preloads the default Rails 4 setup with plenty of goodies. 
 
+# Getting Started
+
+1. Add the following to your .env file: 
+    
+    PORT=3000
+    RACK_ENV=development
+
+2. Run `foreman start` and add the line, similar to the line below, to `config/initializers/devise.rb`:
+
+    config.secret_key = 'd2b22...'
+    
+3. Create your heroku app, and push. 
+
 # Ingredients
 
 1. General Environment Setup
