@@ -102,3 +102,5 @@ gem 'rqrcode'
 gem 'activeadmin', github: 'gregbell/active_admin'
 
 gem 'quiet_assets'
+
+gem 'inbox'

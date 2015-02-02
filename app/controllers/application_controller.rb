@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   end
 
   # Redirect the user to their game, if they have an active one.
-  def one_game_at_a_time
-    return redirect_to current_user.current_game if current_user.has_active_game?
+  def nilas
+    @nilas ||= Inbox::API.new(ENV['NILAS_APP_ID'], ['NILAS_APP_SECRET'], nil)
   end
 end
