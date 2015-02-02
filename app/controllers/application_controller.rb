@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   end
 
   # Redirect the user to their game, if they have an active one.
-  def nilas
-    @nilas ||= Inbox::API.new(ENV['NILAS_APP_ID'], ['NILAS_APP_SECRET'], nil)
+  def nilas(token=nil)
+    (!token and @nilas) ? @nilas : Inbox::API.new(ENV['NILAS_APP_ID'], ['NILAS_APP_SECRET'], token)
   end
 end

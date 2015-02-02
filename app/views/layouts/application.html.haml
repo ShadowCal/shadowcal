@@ -31,9 +31,6 @@
         .collapse.navbar-collapse
           %ul.nav.navbar-nav
             - if user_signed_in?
-              - if current_user.is_female
-                %li= link_to "Invite A Gentleman", invite_path()
-              %li= link_to "Edit Profile", edit_user_path(current_user)
               %li= link_to "Sign Out", destroy_user_session_path, method: :delete
             - else
               %li= link_to "Join", "/users/sign_up"
