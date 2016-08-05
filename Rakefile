@@ -3,4 +3,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-TheCatch::Application.load_tasks
+ShadowCal::Application.load_tasks

@@ -6,7 +6,7 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env)
 
-module TheCatch
+module ShadowCal
   class Application < Rails::Application
 
     class << self

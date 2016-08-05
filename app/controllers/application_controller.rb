@@ -1,3 +1,14 @@
+class AccessToken
+  attr_reader :token
+  def initialize(token)
+    @token = token
+  end
+
+  def apply!(headers)
+    headers['Authorization'] = "Bearer #{@token}"
+  end
+end
+
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -7,8 +18,13 @@ class ApplicationController < ActionController::Base
     render :json => {:response_type => "ERROR", :response_code => code, :message => message}, :status => status
   end
 
-  # Redirect the user to their game, if they have an active one.
-  def nilas(token=nil)
-    (!token and @nilas) ? @nilas : Inbox::API.new(ENV['NILAS_APP_ID'], ['NILAS_APP_SECRET'], token)
+  def calendars
+    access_token = AccessToken.new current_user.try(:access_token)
+
+    service = Google::Apis::CalendarV3::CalendarService.new
+
+    service.authorization = access_token
+
+    service.list_calendar_lists.items
   end
 end

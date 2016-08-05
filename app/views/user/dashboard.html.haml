@@ -9,11 +9,14 @@
     %th Participants
     %th Calendar ID
     %th When
-  - @events.each do |e|
+  - @calendars.each do |e|
+    / %tr
+    /   %td.title= e.title
+    /   %td.description= e.description
+    /   %td.participants= e.participants
+    /   %td.calendar= e.calendar_id
+    /   %td.when= e.when
     %tr
-      %td.title= e.title
-      %td.description= e.description
-      %td.participants= e.participants
-      %td.calendar= e.calendar_id
-      %td.when= e.when
+      %td.summary= e.summary
+
 

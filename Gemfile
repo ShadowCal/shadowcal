@@ -1,9 +1,9 @@
-ruby '2.0.0'
+ruby '2.3.1'
 
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.2'
+gem 'rails', '4.1.15'
 
 # Use sqlite3 as the database for Active Record
 group :development do
@@ -12,7 +12,8 @@ end
 group :production do
   gem 'pg'
 end
-gem 'squeel'
+
+gem 'squeel', github: 'activerecord-hackery/squeel'
 
 gem 'rails_12factor', group: :production
 
@@ -38,6 +39,7 @@ gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
+gem 'json', '1.8.3'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
@@ -72,7 +74,7 @@ gem 'delayed_job_active_record'
 
 gem 'devise'
 gem 'omniauth'
-gem 'omniauth-facebook'
+gem 'omniauth-google-oauth2'
 
 gem 'haml-rails'
 gem 'haml_coffee_assets'
@@ -103,4 +105,4 @@ gem 'activeadmin', github: 'gregbell/active_admin'
 
 gem 'quiet_assets'
 
-gem 'inbox'
+gem 'google-api-client', require: 'google/apis/calendar_v3'

@@ -2,4 +2,4 @@
 require File.expand_path('../application', __FILE__)
 
 # Initialize the Rails application.
-TheCatch::Application.initialize!
+ShadowCal::Application.initialize!

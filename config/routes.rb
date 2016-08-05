@@ -1,4 +1,4 @@
-TheCatch::Application.routes.draw do
+ShadowCal::Application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
 
   devise_for :users, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
@@ -11,5 +11,5 @@ TheCatch::Application.routes.draw do
   match 'nilas/connect'   => 'nilas#connect',   as: 'nilas_connect',  via: [:get, :post]
   match 'nilas/callback'  => 'nilas#callback',  as: 'nilas_callback', via: [:get, :post]
 
-  root to: 'home#landing'
+  root to: 'user#dashboard'
 end
