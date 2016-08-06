@@ -1,22 +1,13 @@
 %h1 Welcome!
 
-%h3 Your upcoming events:
+%h3 Block personal events off in your work calendar (Privately):
 
-%table{style: "width: '100%'"}
-  %thead
-    %th Title
-    %th Desc
-    %th Participants
-    %th Calendar ID
-    %th When
-  - @calendars.each do |e|
-    / %tr
-    /   %td.title= e.title
-    /   %td.description= e.description
-    /   %td.participants= e.participants
-    /   %td.calendar= e.calendar_id
-    /   %td.when= e.when
-    %tr
-      %td.summary= e.summary
-
+%form.form-inline
+  .form-group
+    %label{:for => "from_calendar_id"} Personal Calendar
+    = select_tag :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)
+  .form-group
+    %label{:for => "to_calendar_id"} Work Calendar
+    = select_tag :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)
+  %button.btn.btn-default{:type => "submit"} Copy Anonymous Events
 

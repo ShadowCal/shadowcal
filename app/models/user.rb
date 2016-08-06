@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
        :recoverable, :rememberable, :trackable, :validatable, :omniauthable
 
   has_many :google_accounts
+  has_many :syned_pairs
 
   def self.from_omniauth(access_token)
       data = access_token.info

@@ -1,4 +1,10 @@
 FactoryGirl.define do
+  factory :sync_pair do
+    from_cal_id "MyString"
+    from_google_account 1
+    to_cal_id "MyString"
+    to_google_account 1
+  end
   factory :google_account do
     user ""
     access_token "MyString"
