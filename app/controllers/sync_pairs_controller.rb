@@ -6,9 +6,9 @@ class SyncPairsController < ApplicationController
     belongs_to :user
 
     response_for :create do
+      #current_object.cast_shadows! if current_object.persisted?
       redirect_to :dashboard
     end
   end
-
 
 end

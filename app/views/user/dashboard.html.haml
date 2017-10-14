@@ -2,12 +2,16 @@
 
 %h3 Block personal events off in your work calendar (Privately):
 
+- if @sync_pairs.any?
+  %h2 Existing Synced Calendars
+
 = form_for([current_user, @sync_pair]) do |f|
+  %h2 Sync Calendars:
   .form-group
     %label{:for => "from_calendar_id"} Personal Calendar
-    = select_tag :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)
+    = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)
   .form-group
     %label{:for => "to_calendar_id"} Work Calendar
-    = select_tag :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)
+    = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_google_account)
   %button.btn.btn-default{:type => "submit"} Copy Anonymous Events
 
