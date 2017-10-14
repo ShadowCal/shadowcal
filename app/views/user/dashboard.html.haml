@@ -2,7 +2,7 @@
 
 %h3 Block personal events off in your work calendar (Privately):
 
-%form.form-inline
+= form_for([current_user, @sync_pair]) do |f|
   .form-group
     %label{:for => "from_calendar_id"} Personal Calendar
     = select_tag :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)

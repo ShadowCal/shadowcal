@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
        :recoverable, :rememberable, :trackable, :validatable, :omniauthable
 
   has_many :google_accounts
-  has_many :syned_pairs
+  has_many :sync_pairs
 
   def self.from_omniauth(access_token)
       data = access_token.info
@@ -18,8 +18,6 @@ class User < ActiveRecord::Base
              password: Devise.friendly_token[0,20]
           )
       end
-
-      puts access_token.inspect
 
       user.google_accounts.where{email==my{data["email"]}}
         .first_or_create
