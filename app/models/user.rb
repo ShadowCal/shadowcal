@@ -34,4 +34,8 @@ class User < ActiveRecord::Base
     google_accounts.first.try(:access_token)
   end
 
+  def calendars_by_gogle_account
+    CalendarAccountHelper.from_accounts_by_key(self.google_accounts)
+  end
+
 end

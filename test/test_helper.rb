@@ -3,6 +3,8 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require "mocha/test_unit"
 
+require 'stubs'
+
 class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending!
 
@@ -14,7 +16,7 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 
-  
+
   def expect_trigger_message(who, event_name, times=1)
     Analytics.expects(:track).times(times).with(event_name, anything)
     Analytics.expects(:identfiy).with(who, 'trigger_message_new_question', anything)
@@ -22,7 +24,7 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
-  include Devise::TestHelpers  
+  include Devise::TestHelpers
 end
 
 # Runs assert_difference with a number of conditions and varying difference

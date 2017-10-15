@@ -3,10 +3,12 @@
 %h3 Block personal events off in your work calendar (Privately):
 
 - if @sync_pairs.any?
-  %h2 Existing Synced Calendars
+  %h2 Existing Synced Calendars:
+  - @sync_pairs.each do |sp|
+    = sp.from_calendar.name
 
 = form_for([current_user, @sync_pair]) do |f|
-  %h2 Sync Calendars:
+  %h2 Choose calendars to cast a shadow of personal events on your work calendar:
   .form-group
     %label{:for => "from_calendar_id"} Personal Calendar
     = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)

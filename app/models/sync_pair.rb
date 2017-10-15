@@ -11,7 +11,7 @@ class SyncPair < ActiveRecord::Base
   end
 
   def from_calendar_id=(calendar_id)
-    from_google_account_id, from_cal_id = if calendar_id.blank?
+    self.from_google_account_id, self.from_cal_id = if calendar_id.blank?
       then [nil, nil]
       else calendar_id.split(':')
     end
@@ -25,7 +25,7 @@ class SyncPair < ActiveRecord::Base
   end
 
   def to_calendar_id=(calendar_id)
-    to_google_account_id, to_cal_id = if calendar_id.blank?
+    self.to_google_account_id, self.to_cal_id = if calendar_id.blank?
       then [nil, nil]
       else calendar_id.split(':')
     end
