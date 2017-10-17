@@ -2,7 +2,7 @@
 
 %h3 Block personal events off in your work calendar (Privately):
 
-- if @sync_pairs.any?
+- if @existing_sync_pairs.any?
   %h2 Existing Synced Calendars:
   - @sync_pairs.each do |sp|
     = sp.from_calendar.name
