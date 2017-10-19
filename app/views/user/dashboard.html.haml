@@ -4,16 +4,17 @@
 
 - if @existing_sync_pairs.any?
   %h2 Existing Synced Calendars:
-  - @sync_pairs.each do |sp|
-    = sp.from_calendar.name
 
-= form_for([current_user, @sync_pair]) do |f|
-  %h2 Choose calendars to cast a shadow of personal events on your work calendar:
-  .form-group
-    %label{:for => "from_calendar_id"} Personal Calendar
-    = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)
-  .form-group
-    %label{:for => "to_calendar_id"} Work Calendar
-    = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_google_account)
-  %button.btn.btn-default{:type => "submit"} Copy Anonymous Events
+- if @new_sync_pair
+  = form_for([current_user, @new_sync_pair]) do |f|
+    %h2 Choose calendars to cast a shadow of personal events on your work calendar:
+    .form-group
+      %label{:for => "from_calendar_id"} Personal Calendar
+      = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)
+    .form-group
+      %label{:for => "to_calendar_id"} Work Calendar
+      = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_google_account)
+    %button.btn.btn-default{:type => "submit"} Copy Anonymous Events
 
+- elsif @calendars_by_google_account.blank?
+  %h2 Loading your calendars. Please refresh

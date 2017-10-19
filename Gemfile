@@ -3,7 +3,7 @@ ruby '2.3.1'
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.15'
+gem 'rails', '4.2.0'
 
 # Use sqlite3 as the database for Active Record
 group :development do
@@ -12,8 +12,6 @@ end
 group :production do
   gem 'pg'
 end
-
-gem 'squeel', github: 'activerecord-hackery/squeel'
 
 gem 'rails_12factor', group: :production
 
@@ -100,8 +98,6 @@ gem 'font-awesome-rails'
 gem 'chosen-rails'
 
 gem 'rqrcode'
-
-gem 'activeadmin', github: 'gregbell/active_admin'
 
 gem 'quiet_assets'
 

@@ -1,4 +1,11 @@
 FactoryGirl.define do
+  factory :event do
+    calendar nil
+    name "MyString"
+    start_at "2017-10-18 18:13:03"
+    end_at "2017-10-18 18:13:03"
+    shadow_of_event nil
+  end
   factory :sync_pair do
     from_cal_id "MyString"
     from_google_account 1

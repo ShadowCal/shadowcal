@@ -1,13 +1,12 @@
 class GoogleAccount < ActiveRecord::Base
   belongs_to :user
+  has_many :calendars
 
-  def calendars
-    client = AccessToken.new access_token
+  after_create :fetch_calendars
 
-    service = Google::Apis::CalendarV3::CalendarService.new
-
-    service.authorization = client
-
-    service.list_calendar_lists.items
+  private
+  def fetch_calendars
+    self.calendars = GoogleCalendarApiHelper.request_calendars(access_token)
   end
+  handle_asynchronously :fetch_calendars
 end

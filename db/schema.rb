@@ -11,15 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160806181344) do
+ActiveRecord::Schema.define(version: 20171019011303) do
 
-  create_table "active_admin_comments", force: true do |t|
-    t.string   "namespace"
+  create_table "active_admin_comments", force: :cascade do |t|
+    t.string   "namespace",     limit: 255
     t.text     "body"
-    t.string   "resource_id",   null: false
-    t.string   "resource_type", null: false
+    t.string   "resource_id",   limit: 255, null: false
+    t.string   "resource_type", limit: 255, null: false
     t.integer  "author_id"
-    t.string   "author_type"
+    t.string   "author_type",   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -28,17 +28,17 @@ ActiveRecord::Schema.define(version: 20160806181344) do
   add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace"
   add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
 
-  create_table "admin_users", force: true do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
-    t.string   "reset_password_token"
+  create_table "admin_users", force: :cascade do |t|
+    t.string   "email",                  limit: 255, default: "", null: false
+    t.string   "encrypted_password",     limit: 255, default: "", null: false
+    t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",                      default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
+    t.string   "current_sign_in_ip",     limit: 255
+    t.string   "last_sign_in_ip",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -46,59 +46,79 @@ ActiveRecord::Schema.define(version: 20160806181344) do
   add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
 
-  create_table "delayed_jobs", force: true do |t|
-    t.integer  "priority",   default: 0, null: false
-    t.integer  "attempts",   default: 0, null: false
-    t.text     "handler",                null: false
+  create_table "calendars", force: :cascade do |t|
+    t.integer  "google_account_id"
+    t.string   "external_id",       limit: 255
+    t.string   "name",              limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "calendars", ["google_account_id"], name: "index_calendars_on_google_account_id"
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",               default: 0, null: false
+    t.integer  "attempts",               default: 0, null: false
+    t.text     "handler",                            null: false
     t.text     "last_error"
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
-    t.string   "locked_by"
-    t.string   "queue"
+    t.string   "locked_by",  limit: 255
+    t.string   "queue",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
 
-  create_table "google_accounts", force: true do |t|
+  create_table "events", force: :cascade do |t|
+    t.integer  "calendar_id"
+    t.string   "name"
+    t.datetime "start_at"
+    t.datetime "end_at"
+    t.string   "external_id"
+    t.integer  "source_event_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "events", ["calendar_id"], name: "index_events_on_calendar_id"
+  add_index "events", ["source_event_id"], name: "index_events_on_source_event_id"
+
+  create_table "google_accounts", force: :cascade do |t|
     t.integer  "user_id"
-    t.string   "access_token"
-    t.string   "token_secret"
+    t.string   "access_token",  limit: 255
+    t.string   "token_secret",  limit: 255
     t.integer  "token_expires"
-    t.string   "email"
+    t.string   "email",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "google_accounts", ["user_id"], name: "index_google_accounts_on_user_id"
 
-  create_table "sync_pairs", force: true do |t|
+  create_table "sync_pairs", force: :cascade do |t|
     t.integer  "user_id"
-    t.string   "from_cal_id"
-    t.integer  "from_google_account_id"
-    t.string   "to_cal_id"
-    t.integer  "to_google_account_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "from_calendar_id"
+    t.integer  "to_calendar_id"
   end
 
-  add_index "sync_pairs", ["from_google_account_id"], name: "index_sync_pairs_on_from_google_account_id"
-  add_index "sync_pairs", ["to_google_account_id"], name: "index_sync_pairs_on_to_google_account_id"
   add_index "sync_pairs", ["user_id"], name: "index_sync_pairs_on_user_id"
 
-  create_table "users", force: true do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
-    t.string   "reset_password_token"
+  create_table "users", force: :cascade do |t|
+    t.string   "email",                  limit: 255, default: "", null: false
+    t.string   "encrypted_password",     limit: 255, default: "", null: false
+    t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",                      default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
+    t.string   "current_sign_in_ip",     limit: 255
+    t.string   "last_sign_in_ip",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "nilas_token"
