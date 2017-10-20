@@ -1,6 +1,5 @@
 module CalendarShadowHelper
   def cast_from_to(from_calendar, to_calendar)
-    puts "Casting from #{from_calendar.name} to #{to_calendar.name}"
 
     update_calendar_events_cach(to_calendar)
     update_calendar_events_cach(from_calendar)
@@ -10,14 +9,11 @@ module CalendarShadowHelper
 
   private
   def update_calendar_events_cach(calendar)
-    puts "Caching events of #{calendar.name}"
 
     events = request_events_for_calendar(calendar)
 
-    puts "Got #{events.length} events from #{calendar.name}"
 
     events.each do |event|
-      puts "Saving #{event.name}"
       event.calendar = calendar
       event.save!
     end
@@ -26,15 +22,12 @@ module CalendarShadowHelper
   end
 
   def cast_new_shadows(from_calendar, to_calendar, batch_size=100)
-    puts "From calendar (#{from_calendar.name}) has #{from_calendar.events.count} events"
-    puts "Of these, #{from_calendar.events.without_shadows.count} need shadows"
     from_calendar.events.without_shadows.find_in_batches(batch_size: batch_size) do |events_batch|
       cast_shadows_of_events_on_calendar(events_batch, to_calendar)
     end
   end
 
   def cast_shadows_of_events_on_calendar(events_batch, to_calendar)
-    puts "Casting shadows of #{events_batch.length} events on #{to_calendar.name}"
     Event.transaction do
       shadows = events_batch.map{ |source_event| shadow_of_event(source_event) }
 
