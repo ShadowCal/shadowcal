@@ -11,16 +11,11 @@ class User < ActiveRecord::Base
   def self.from_omniauth(access_token)
       data = access_token.info
 
-      user = User.where(:email => data["email"]).first
-
-      unless user
-          user = User.create(name: data["name"],
-             email: data["email"],
-             password: Devise.friendly_token[0,20]
-          )
+      user = User.where(:email => data["email"]).first_or_create do |user|
+        user.password = Devise.friendly_token[0,20]
       end
 
-      user.google_accounts.where{email==my{data["email"]}}
+      user.google_accounts.where(email: data["email"])
         .first_or_create
         .update_attributes!({
           access_token: access_token.credentials.token,

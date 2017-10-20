@@ -7,7 +7,7 @@ module CalendarAccountHelper
   def calendar_options(calendars)
     calendars.map do |cal|
       [
-        cal.summary,
+        cal.name,
         cal.id
       ]
     end

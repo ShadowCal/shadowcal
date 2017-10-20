@@ -32,6 +32,8 @@ module ShadowCal
     config.i18n.enforce_available_locales = false
     I18n.config.enforce_available_locales = false
 
+    config.active_job.queue_adapter = :delayed_job
+
     config.paperclip_defaults = {
       :storage => :s3,
       :s3_credentials => {

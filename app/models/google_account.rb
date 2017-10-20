@@ -4,7 +4,7 @@ class GoogleAccount < ActiveRecord::Base
 
   after_create :fetch_calendars
 
-  private
+  #private
   def fetch_calendars
     self.calendars = GoogleCalendarApiHelper.request_calendars(access_token)
   end

@@ -1,13 +1,18 @@
 %h1 Welcome!
 
-%h3 Block personal events off in your work calendar (Privately):
+%p Block personal events off in your work calendar (Privately):
 
 - if @existing_sync_pairs.any?
   %h2 Existing Synced Calendars:
+  %ul
+    - @existing_sync_pairs.each do |pair|
+      %li= "Syncing #{pair.from_calendar.name} to #{pair.to_calendar.name}"
+
+
 
 - if @new_sync_pair
-  = form_for([current_user, @new_sync_pair]) do |f|
-    %h2 Choose calendars to cast a shadow of personal events on your work calendar:
+  = form_for(@new_sync_pair) do |f|
+    %h3 Choose calendars to cast a shadow of personal events on your work calendar:
     .form-group
       %label{:for => "from_calendar_id"} Personal Calendar
       = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_google_account)
@@ -16,5 +21,5 @@
       = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_google_account)
     %button.btn.btn-default{:type => "submit"} Copy Anonymous Events
 
-- elsif @calendars_by_google_account.blank?
-  %h2 Loading your calendars. Please refresh
+- elsif not @has_calendars
+  %h3 Loading your calendars. Please refresh

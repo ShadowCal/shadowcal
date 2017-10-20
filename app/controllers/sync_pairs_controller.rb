@@ -1,14 +1,12 @@
 class SyncPairsController < ApplicationController
   before_action :authenticate_user!
 
-  make_resourceful do
-    actions :create
-    belongs_to :user
+  def create
+    new_pair = current_user.sync_pairs.build params.require(:sync_pair).permit(:from_calendar_id, :to_calendar_id)
 
-    response_for :create do
-      #current_object.cast_shadows! if current_object.persisted?
-      redirect_to :dashboard
-    end
+    new_pair.save
+
+    redirect_to :dashboard
   end
 
 end
