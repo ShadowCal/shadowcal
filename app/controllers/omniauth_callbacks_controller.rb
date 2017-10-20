@@ -1,6 +1,8 @@
 class OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def google_oauth2
-    @user = User.from_omniauth(request.env["omniauth.auth"])
+    @user = current_user or User.find_or_create_from_omniauth(request.env["omniauth.auth"])
+
+    @user.add_or_update_google_account(request.env["omniauth.auth"])
 
     if @user.persisted?
       flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "Google"

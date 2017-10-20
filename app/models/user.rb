@@ -8,22 +8,24 @@ class User < ActiveRecord::Base
   has_many :sync_pairs
   has_many :calendars, through: :google_accounts
 
-  def self.from_omniauth(access_token)
-      data = access_token.info
+  def self.find_or_create_from_omniauth(access_token)
+    data = access_token.info
 
-      user = User.where(:email => data["email"]).first_or_create do |user|
-        user.password = Devise.friendly_token[0,20]
-      end
+    User.where(:email => data["email"]).first_or_create do |user|
+      user.password = Devise.friendly_token[0,20]
+    end
+  end
 
-      user.google_accounts.where(email: data["email"])
-        .first_or_create
-        .update_attributes!({
-          access_token: access_token.credentials.token,
-          token_secret: access_token.credentials.secret,
-          token_expires: access_token.credentials.expires_at,
-        })
+  def add_or_update_google_account(access_token)
+    data = access_token.info
 
-      user
+    self.google_accounts.where(email: data["email"])
+      .first_or_create
+      .update_attributes!({
+        access_token: access_token.credentials.token,
+        token_secret: access_token.credentials.secret,
+        token_expires: access_token.credentials.expires_at,
+      })
   end
 
   def access_token

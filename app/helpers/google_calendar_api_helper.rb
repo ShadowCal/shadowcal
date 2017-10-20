@@ -22,7 +22,6 @@ module GoogleCalendarApiHelper
   def create_events(access_token, calendar_id, events)
     service = build_service(access_token)
 
-
     service.batch do |service|
       events.map do |event|
 
