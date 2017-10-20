@@ -1,0 +1,20 @@
+{
+  "name": "shadowcal",
+  "description": "",
+  "scripts": {
+    "postdeploy": "bundle exec rake db:schema:load db:seed"
+  },
+  "env": {
+    "RACK_ENV": "development",
+    "RAILS_ENV": "development",
+    "GOOGLE_CLIENT_ID": {
+      "required": true
+    },
+    "GOOGLE_CLIENT_SECRET": {
+      "required": true
+    }
+  },
+  "formation": {},
+  "addons": [],
+  "buildpacks": []
+}
