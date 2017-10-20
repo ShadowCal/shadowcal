@@ -5,7 +5,7 @@ class Event < ActiveRecord::Base
 
   scope :without_shadows, -> {
     joins('LEFT JOIN events as e2 on events.id = e2.source_event_id')
-    .where('source_event_id IS NULL')
+    .where('e2.source_event_id IS NULL')
   }
 
   def description
