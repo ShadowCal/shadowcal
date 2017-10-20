@@ -39,7 +39,7 @@ module CalendarShadowHelper
 
   def shadow_of_event(source_event)
     Event.where(source_event_id: source_event.id).first_or_create do |event|
-      event.name = 'Busy'
+      event.name = "(#{source_event.name})"
       event.start_at = source_event.start_at
       event.end_at = source_event.end_at
     end
