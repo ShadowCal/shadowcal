@@ -19,25 +19,25 @@ Rollbar.configure do |config|
 
   # If you want to attach custom data to all exception and message reports,
   # provide a lambda like the following. It should return a hash.
-  config.custom_data_method = lambda {
-    return {} unless current_user
+  # config.custom_data_method = lambda {
+  #   return {} unless current_user
 
-    {
-      google_accounts: current_user.google_accounts.map{ |acc|
-        {
-          email: acc.email,
-          calendars: acc.calendars.map(&:as_json),
-        }
-      },
-      sync_pairs: current_user.sync_pairs.map{ |pair|
-        {
-          from_calendar: pair.from_calendar.as_json,
-          to_calendar: pair.to_calendar.as_json,
-          last_synced_at: pair.last_synced_at,
-        }
-      },
-      event_count: current_user.events.count,
-    }
+  #   {
+  #     google_accounts: current_user.google_accounts.map{ |acc|
+  #       {
+  #         email: acc.email,
+  #         calendars: acc.calendars.map(&:as_json),
+  #       }
+  #     },
+  #     sync_pairs: current_user.sync_pairs.map{ |pair|
+  #       {
+  #         from_calendar: pair.from_calendar.as_json,
+  #         to_calendar: pair.to_calendar.as_json,
+  #         last_synced_at: pair.last_synced_at,
+  #       }
+  #     },
+  #     event_count: current_user.events.count,
+  #   }
   }
 
   # Add exception class names to the exception_level_filters hash to
