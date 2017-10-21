@@ -80,6 +80,7 @@ module GoogleCalendarApiHelper
         time_min: Time.now.iso8601
       )
       .items
+      .reject{ |item| item.transparency == 'transparent' }
   end
 
   extend self
