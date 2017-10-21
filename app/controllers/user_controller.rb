@@ -7,7 +7,6 @@ class UserController < ApplicationController
     @has_calendars = @google_accounts.all? {|acc| acc.calendars.any? }
 
     @existing_sync_pairs = current_user.sync_pairs
-    @new_sync_pair = SyncPair.new if @google_accounts.any? and @has_calendars
   end
 
 

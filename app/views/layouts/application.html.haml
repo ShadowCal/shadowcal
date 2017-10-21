@@ -18,40 +18,26 @@
     = javascript_include_tag "header_includes"
 
   %body
-    .navbar.navbar-default.navbar-fixed-top
-      .navbar-inner
-        .navbar-header
-          %button.navbar-toggle(data-target=".nav-collapse" data-toggle="collapse")
-            .sr-only Toggle Navigation
-            %span.icon-bar
-            %span.icon-bar
-            %span.icon-bar
-          %a.navbar-brand(href="/")
-            ShadowCal
-        .collapse.navbar-collapse
-          %ul.nav.navbar-nav
-            - if user_signed_in?
-              %li= link_to "Sign Out", destroy_user_session_path, method: :delete
-              %li= link_to "Add Google Account", omniauth_authorize_path('user', 'google_oauth2')
-            - else
-              %li= link_to "Join By Connecting Google Account", omniauth_authorize_path(resource_name, 'google_oauth2')
-
+    %nav.navbar.navbar-expand-lg.navbar-light.bg-light
+      = link_to "ShadowCal.com", :dashboard, { class: 'navbar-brand' }
+      %button.navbar-toggler{ type: 'button', 'data-toggle' => 'collapse', 'data-target' => '#navbarSupportedContent', 'aria-controls' => 'navbarSupportedContent', 'aria-expanded' => 'false', 'aria-label' => "Toggle navigation"}
+        %span.navbar-toggler-icon
+      #navbarSupportedContent.collapse.navbar-collapse
+        %ul.navbar-nav.mr-auto
+          - if user_signed_in?
+            %li{ class: 'nav-item ' + active_class(dashboard_path)}= link_to "Home", :dashboard, { class: 'nav-link' }
+            %li{ class: 'nav-item ' + active_class(new_sync_pair_path)}= link_to "New Shadow", new_sync_pair_path, { class: 'nav-link' }
+            %li.nav-item= link_to "Sign Out", destroy_user_session_path, method: :delete, class: 'nav-link'
+          - else
+            %li.nav-item= link_to "Join By Connecting Google Account", omniauth_authorize_path(resource_name, 'google_oauth2'), { class: 'nav-link' }
 
     .container
       .row
-        #content.col-md-12
+        #content.col-md-12.py-2
           - flash.each do |key, value|
             = content_tag(:div, value, class: "alert alert-#{key}")
           = yield
 
-
-
-    .navbar.navbar-fixed-bottom
-      .navbar-inner
-        .navbar-header
-          .container
-            %footer
-              %p &copy; ShadowCal.com 2018
 
     = yield :extra_javascripts
 

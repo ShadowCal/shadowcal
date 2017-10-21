@@ -17,7 +17,7 @@ end
 gem 'rails_12factor', group: :production
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.0'
+gem 'sass-rails'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -79,7 +79,8 @@ gem 'haml-rails'
 gem 'haml_coffee_assets'
 gem 'execjs'
 
-gem 'bootstrap-sass', '~> 3.1.0'
+gem 'sprockets-rails', '>= 2.3.2'
+gem 'bootstrap', '~> 4.0.0.beta2'
 
 gem 'make_resourceful'
 
