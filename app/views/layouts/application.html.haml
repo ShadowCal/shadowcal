@@ -34,8 +34,7 @@
     .container
       .row
         #content.col-md-12.py-2
-          - flash.each do |key, value|
-            = content_tag(:div, value, class: "alert alert-#{key}")
+          = flash_messages
           = yield
 
 

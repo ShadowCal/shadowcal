@@ -1,0 +1,17 @@
+
+- if current_user.has_calendars
+  = form_for SyncPair.new do |f|
+    %h3 New Shadow:
+    %p Events on your personal calendar will block time on your work calendar without sharing details of those events with your coworkers.
+
+    .form-group
+      = f.label :from_calendar_id, 'From'
+      = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_google_account), { prompt: "Private, Personal Calendar" }, { class: 'form-control' }
+
+    .form-group
+      = f.label :to_calendar_id, 'Onto'
+      = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_google_account), { prompt: "Work Calendar" }, { class: 'form-control' }
+    %button.btn.btn-primary{:type => "submit"} Block Time Privately
+
+- else
+  %h3 Loading your calendars. Please refresh

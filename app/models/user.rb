@@ -16,6 +16,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def has_calendars
+    self.google_accounts.all? {|acc| acc.calendars.any? }
+  end
+
   def add_or_update_google_account(access_token)
     data = access_token.info
 

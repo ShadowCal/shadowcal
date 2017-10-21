@@ -1,0 +1,24 @@
+
+%table.table
+  %thead
+    %th{scope: 'col'} Sync From
+    %th{scope: 'col'} To
+    %th{scope: 'col'}
+  %tbody
+    - @existing_sync_pairs.each do |pair|
+      %tr
+        %td= pair.from_calendar.name
+        %td= pair.to_calendar.name
+        %td
+          = link_to "Run Now", sync_pair_now_path(pair)
+          or
+          = link_to "Subscribe", '#'
+          to Run Automatically
+    %tr
+      %td{colspan: 3}
+        .btn-group{role: "group"}
+          %button.btn.btn-secondary.dropdown-toggle{type: 'button', 'data-toggle' => 'dropdown', 'aria-haspopup' => 'true', 'aria-expanded' => 'false'}
+            Add
+          .dropdown-menu
+            = link_to "New Shadow", new_sync_pair_path, {class: 'dropdown-item'}
+            = link_to "Another Google Account", omniauth_authorize_path('user', 'google_oauth2'), {class: 'dropdown-item'}
