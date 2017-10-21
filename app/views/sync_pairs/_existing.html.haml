@@ -11,8 +11,11 @@
         %td= pair.from_calendar.name
         %td= pair.to_calendar.name
         %td
-          = distance_of_time_in_words_to_now pair.last_synced_at
-          ago
+          - if pair.last_synced_at
+            = distance_of_time_in_words_to_now pair.last_synced_at
+            ago
+          - else
+            %i never
         %td
           = link_to "Sync Now", sync_pair_now_path(pair)
           or
