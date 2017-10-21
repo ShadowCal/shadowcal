@@ -28,15 +28,15 @@ module GoogleCalendarApiHelper
         service.insert_event(
           calendar_id,
           Google::Apis::CalendarV3::Event.new({
-            summary: event.name,
-            description: event.description,
+            summary: event[:name],
+            description: event[:description],
             start: {
-              date_time: event.start_at.iso8601
+              date_time: event[:start_at].iso8601
             },
             end: {
-              date_time: event.end_at.iso8601
+              date_time: event[:end_at].iso8601
             },
-            visibility: 'private'
+            visibility: 'public'
           })
         )
       end

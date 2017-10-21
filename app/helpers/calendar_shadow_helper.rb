@@ -33,24 +33,33 @@ module CalendarShadowHelper
 
       Event.where({id: shadows}).update_all({calendar_id: to_calendar.id})
 
-      create_remote_events(to_calendar, shadows)
+      create_remote_shadows(to_calendar, shadows)
     end
   end
 
   def shadow_of_event(source_event)
     Event.where(source_event_id: source_event.id).first_or_create do |event|
-      event.name = "(#{source_event.name})"
+      event.name = source_event.name
       event.start_at = source_event.start_at
       event.end_at = source_event.end_at
     end
   end
 
-  def create_remote_events(calendar, events)
+  def create_remote_shadows(calendar, events)
     GoogleCalendarApiHelper.create_events(
       calendar.access_token,
       calendar.external_id,
-      events
+      events.map {|e| event_as_shadow(e) }
     )
+  end
+
+  def event_as_shadow(event)
+    {
+      name: '(Busy)',
+      description: "The calendar owner is busy at this time with a private event.\n\nThis notice was created using shadowcal.com: Block personal events off your work calendar without sharing details. \n\n\n\nSourceEvent##{event.source_event_id}"
+      start_at: event.start_at,
+      end_at: event.end_at,
+    }
   end
 
   def request_events_for_calendar(calendar)
