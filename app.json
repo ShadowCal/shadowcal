@@ -7,6 +7,7 @@
   "env": {
     "RACK_ENV": "development",
     "RAILS_ENV": "development",
+    "ROLLBAR_ENV": "review-app",
     "GOOGLE_CLIENT_ID": {
       "required": true
     },

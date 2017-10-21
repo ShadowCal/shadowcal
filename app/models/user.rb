@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many :google_accounts
   has_many :sync_pairs
   has_many :calendars, through: :google_accounts
+  has_many :events, through: :calendars
 
   def self.find_or_create_from_omniauth(access_token)
     data = access_token.info

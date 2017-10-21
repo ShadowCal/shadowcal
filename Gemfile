@@ -86,6 +86,8 @@ gem 'make_resourceful'
 
 gem 'has-bit-field'
 
+gem 'rollbar'
+
 gem 'rabl'
 gem 'oj'
 
