@@ -56,7 +56,7 @@ module CalendarShadowHelper
   def event_as_shadow(event)
     {
       name: '(Busy)',
-      description: "The calendar owner is busy at this time with a private event.\n\nThis notice was created using shadowcal.com: Block personal events off your work calendar without sharing details. \n\n\n\nSourceEvent##{event.source_event_id}"
+      description: "The calendar owner is busy at this time with a private event.\n\nThis notice was created using shadowcal.com: Block personal events off your work calendar without sharing details. \n\n\n\nSourceEvent##{event.source_event_id}",
       start_at: event.start_at,
       end_at: event.end_at,
     }
