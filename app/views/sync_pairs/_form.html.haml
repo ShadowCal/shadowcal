@@ -12,6 +12,9 @@
       = f.label :to_calendar_id, 'Onto'
       = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_google_account), { prompt: "Work Calendar" }, { class: 'form-control' }
     %button.btn.btn-primary{:type => "submit"} Block Time Privately
+    %span.ml-1
+      or
+      = link_to "add another Google account", omniauth_authorize_path('user', 'google_oauth2')
 
 - else
   %h3 Loading your calendars. Please refresh
