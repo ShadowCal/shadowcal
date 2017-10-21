@@ -38,7 +38,7 @@ Rollbar.configure do |config|
   #     },
   #     event_count: current_user.events.count,
   #   }
-  }
+  # }
 
   # Add exception class names to the exception_level_filters hash to
   # change the level that exception is reported at. Note that if an exception
