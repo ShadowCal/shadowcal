@@ -35,8 +35,8 @@ FactoryGirl.define do
 
     external_id { generate(:calendar_id) }
 
-    after :create do |calendar|
-      create google_account, user: calendar.user, calendars: [calendar]
+    after :create do |calendar, evaluator|
+      create :google_account, user: evaluator.user, calendars: [calendar] if calendar.google_account.nil?
     end
   end
 

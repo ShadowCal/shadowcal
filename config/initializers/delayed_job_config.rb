@@ -6,6 +6,3 @@ Delayed::Worker.sleep_delay = 5
 # Delayed::Worker.default_queue_name = 'default'
 Delayed::Worker.delay_jobs = !Rails.env.test?
 # Delayed::Worker.raise_signal_exceptions = :term
-
-# require 'delayed_job_log_setup'
-# Delayed::Worker.plugins << DelayedJobLogSetup
