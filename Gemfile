@@ -51,10 +51,15 @@ end
 
 group :development, :test do
   gem 'factory_girl_rails', '~> 4.0'
-  gem 'callback_skipper'
+
+  gem 'rspec-rails'
+  gem 'capybara'
+  gem 'capybara-screenshot'
+  gem 'database_cleaner'
 
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'faker'
 end
 
 # Use ActiveModel has_secure_password
