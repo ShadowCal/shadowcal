@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     parallelism: 3
-    working_directory: ~/circleci-demo-ruby-rails
+    working_directory: ~/shadowcal
     docker:
       - image: circleci/ruby:2.3.5-node-browsers
         environment:
