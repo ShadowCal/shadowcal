@@ -61,6 +61,8 @@ group :development, :test do
   gem 'binding_of_caller'
   gem 'faker'
 
+  gem 'rspec_junit_formatter'
+
   gem 'webmock'
 end
 
