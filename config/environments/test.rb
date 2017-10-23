@@ -10,7 +10,8 @@ ShadowCal::Application.configure do
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that
   # preloads Rails for running tests, you may have to set it to true.
-  config.eager_load = false
+  config.allow_concurrency = false
+  config.eager_load = true
 
   # Configure static asset server for tests with Cache-Control for performance.
   config.serve_static_files  = true
@@ -21,12 +22,12 @@ ShadowCal::Application.configure do
   config.action_controller.perform_caching = false
 
   # Raise exceptions instead of rendering exception templates.
-  config.action_dispatch.show_exceptions = false
+  config.action_dispatch.show_exceptions = true
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
 
-  config.action_controller.default_url_options = {:host => "localhost:3000"}
+  #config.action_controller.default_url_options = {:host => "localhost:3000"}
   Rails.application.routes.default_url_options[:host] = 'localhost:3000'
 
   # Tell Action Mailer not to deliver emails to the real world.
@@ -37,12 +38,4 @@ ShadowCal::Application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
-end
-
-if Rails.env == "test"
-  Delayed::Job.class_eval do
-    def self.enqueue(obj)
-      obj[:payload_object].perform
-    end
-  end
 end

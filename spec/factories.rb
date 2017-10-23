@@ -10,6 +10,7 @@ FactoryGirl.define do
     user
     from_calendar { build(:calendar, user: user) }
     to_calendar { build(:calendar, user: user)}
+    last_synced_at nil
 
     after :build do |pair|
       pair.stub(:perform_sync).and_return(true)

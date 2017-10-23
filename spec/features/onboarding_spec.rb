@@ -32,7 +32,6 @@ describe "onboarding", :type => :feature do
     expect(CalendarShadowHelper).to receive(:cast_from_to) do |from_calendar, to_calendar|
       expect(from_calendar).to eq expected_from_calendar
       expect(to_calendar).to eq expected_to_calendar
-
     end
 
     click_button('Block Time Privately')
@@ -40,7 +39,6 @@ describe "onboarding", :type => :feature do
     page.should have_css('table#existing_sync_pairs')
     find('table#existing_sync_pairs').should have_content('Calendar1')
     find('table#existing_sync_pairs').should have_content('Calendar2')
-    find('table#existing_sync_pairs').should have_content('never')
 
 
     # Once you have made first pair, you're onboarded and can see delete link

@@ -13,6 +13,9 @@
     },
     "GOOGLE_CLIENT_SECRET": {
       "required": true
+    },
+    "RAILS_SECRET_KEY_BASE": {
+      "generator": "secret"
     }
   },
   "formation": {},
