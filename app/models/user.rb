@@ -29,7 +29,8 @@ class User < ActiveRecord::Base
       .update_attributes!({
         access_token: access_token.credentials.token,
         token_secret: access_token.credentials.secret,
-        token_expires: access_token.credentials.expires_at,
+        token_expires_at: access_token.credentials.expires_at,
+        refresh_token: access_token.credentials.refresh_token
       })
   end
 
