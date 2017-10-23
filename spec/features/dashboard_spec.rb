@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 describe "dashboard", :type => :feature do
   before :each do
     @pair = FactoryGirl.create :sync_pair, last_synced_at: 3.hours.ago

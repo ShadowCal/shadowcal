@@ -1,7 +1,5 @@
 require "rails_helper"
 
-#require Rails.root.join('app', 'helpers', 'calendar_account_helper.rb')
-
 describe CalendarAccountHelper do
   describe "#from_accounts_by_key" do
     it "groups multiple accounts' calendars as select options" do

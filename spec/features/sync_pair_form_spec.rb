@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 describe "sync_pair_form", :type => :feature do
   before :each do
     @pair = FactoryGirl.create :sync_pair

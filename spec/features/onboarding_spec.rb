@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 describe "onboarding", :type => :feature do
   before :each do
     @user = FactoryGirl.create :user_with_google_account, num_google_accounts: 2

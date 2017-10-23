@@ -13,7 +13,9 @@ jobs:
 
       # Restore bundle cache
       - restore_cache:
-          key: shadowcal-{{ checksum "Gemfile.lock" }}
+          keys:
+            - shadowcal-{{ checksum "Gemfile.lock" }}
+            - shadowcal-
 
       # Bundle install dependencies
       - run: bundle install --path vendor/bundle
@@ -25,12 +27,11 @@ jobs:
             - vendor/bundle
 
       # Database setup
-      - run: bundle exec rake db:create
-      - run: bundle exec rake db:schema:load
+      - run: bundle exec rake db:create db:schema:load --trace
 
       # Run rspec in parallel
       - run: |
-          bundle exec rake spec --profile 10 \
+          bundle exec rspec --profile 10 \
                             --format RspecJunitFormatter \
                             --out test_results/rspec.xml \
                             --format progress \
