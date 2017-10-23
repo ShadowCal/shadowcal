@@ -21,8 +21,13 @@ FactoryGirl.define do
     user
     email
     access_token { Faker::Internet.password(10, 20) }
+    refresh_token { Faker::Internet.password(10, 20) }
     token_secret { Faker::Internet.password(10, 20) }
-    token_expires { 1.month.from_now }
+    token_expires_at { 1.month.from_now }
+
+    trait :expired do
+      token_expires_at 1.minute.ago
+    end
 
     after :build do |acc|
       acc.stub(:fetch_calendars).and_return(true)

@@ -1,4 +1,19 @@
 module GoogleCalendarApiHelper
+  def refresh_access_token(refresh_token)
+    url = URI("https://accounts.google.com/o/oauth2/token")
+
+    params = {
+      'refresh_token' => refresh_token,
+      'client_id'     => ENV['GOOGLE_CLIENT_ID'],
+      'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+      'grant_type'    => 'refresh_token'
+    }
+
+    resp = Net::HTTP.post_form(url, params)
+
+    JSON.parse(resp.body)
+  end
+
   def request_calendars(access_token)
     service = build_service(access_token)
 

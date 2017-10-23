@@ -16,6 +16,7 @@ jobs:
           keys:
             - v1-gems-{{ checksum "Gemfile.lock" }}
             - v1-gems-
+            - v1-sprockets-
 
       # Bundle install dependencies
       - run: bundle install --path vendor/bundle
@@ -25,6 +26,10 @@ jobs:
           key: v1-gems-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
+      - save_cache:
+          key: v1-sprockets-
+          paths:
+            - tmp/cache/assets/sprockets
 
       # Database setup
       - run: bundle exec rake db:create db:schema:load --trace

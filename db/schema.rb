@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171021223921) do
+ActiveRecord::Schema.define(version: 20171023015104) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace",     limit: 255
@@ -88,12 +88,13 @@ ActiveRecord::Schema.define(version: 20171021223921) do
 
   create_table "google_accounts", force: :cascade do |t|
     t.integer  "user_id"
-    t.string   "access_token",  limit: 255
-    t.string   "token_secret",  limit: 255
-    t.integer  "token_expires"
-    t.string   "email",         limit: 255
+    t.string   "access_token",     limit: 255
+    t.string   "token_secret",     limit: 255
+    t.string   "email",            limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "refresh_token"
+    t.datetime "token_expires_at"
   end
 
   add_index "google_accounts", ["user_id"], name: "index_google_accounts_on_user_id"
