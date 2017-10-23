@@ -2,7 +2,7 @@ class GoogleAccount < ActiveRecord::Base
   belongs_to :user
   has_many :calendars
 
-  after_create :fetch_calendars
+  after_create :fetch_calendars, unless: -> {Rails.env.test?}
 
   after_initialize :refresh_token!, if: :should_refresh_token?
 
