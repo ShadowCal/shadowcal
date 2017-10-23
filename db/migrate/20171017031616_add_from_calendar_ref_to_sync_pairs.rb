@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddFromCalendarRefToSyncPairs < ActiveRecord::Migration
   def change
     remove_column :sync_pairs, :from_cal_id, :string

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryGirl.define do
   factory :event do
     calendar
@@ -9,7 +11,7 @@ FactoryGirl.define do
   factory :sync_pair do
     user
     from_calendar { build(:calendar, user: user) }
-    to_calendar { build(:calendar, user: user)}
+    to_calendar { build(:calendar, user: user) }
     last_synced_at nil
 
     after :build do |pair|
@@ -48,7 +50,7 @@ FactoryGirl.define do
 
   factory :user do
     email
-    password 'password'
+    password "password"
 
     factory :user_with_google_account do
       transient do

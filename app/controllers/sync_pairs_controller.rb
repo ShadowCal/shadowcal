@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class SyncPairsController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    new_pair = current_user.sync_pairs.create! params.require(:sync_pair).permit(:from_calendar_id, :to_calendar_id)
+    current_user.sync_pairs.create! params.require(:sync_pair).permit(:from_calendar_id, :to_calendar_id)
 
     redirect_to :dashboard
   end
@@ -21,5 +23,4 @@ class SyncPairsController < ApplicationController
 
     redirect_to :dashboard, notice: "Okay, queued to update!"
   end
-
 end

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 namespace :oauth do
   def log(msg)
-    Rails.logger.info ['[oauth#refresh_tokens]', msg].join(' ')
+    Rails.logger.info ["[oauth#refresh_tokens]", msg].join(" ")
   end
 
   desc "Refresh all the tokens of all the accounts which are stale"
@@ -13,5 +15,4 @@ namespace :oauth do
       log "Refreshed token for #{account.email}. Good until #{account.token_expires_at}"
     end
   end
-
 end

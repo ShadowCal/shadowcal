@@ -1,19 +1,23 @@
-class GoogleAccount < ActiveRecord::Base
+# frozen_string_literal: true
+
+class GoogleAccount < ApplicationRecord
   belongs_to :user
   has_many :calendars
 
-  after_create :fetch_calendars, unless: -> {Rails.env.test?}
+  after_create :fetch_calendars, unless: lambda { Rails.env.test? }
 
   after_initialize :refresh_token!, if: :should_refresh_token?
 
-  scope :to_be_refreshed, -> { where(
-    'token_expires_at IS NOT NULL AND ' +
-    'refresh_token IS NOT NULL AND ' +
-    ' token_expires_at < ?', Time.now
-  ) }
-
+  scope :to_be_refreshed, lambda {
+    where(
+      "token_expires_at IS NOT NULL AND " \
+      "refresh_token IS NOT NULL AND " \
+      " token_expires_at < ?", Time.current
+    )
+  }
 
   private
+
   def fetch_calendars
     self.calendars = GoogleCalendarApiHelper.request_calendars(access_token)
   end
@@ -22,12 +26,12 @@ class GoogleAccount < ActiveRecord::Base
   def refresh_token!
     resp = GoogleCalendarApiHelper.refresh_access_token(refresh_token)
     update_attributes(
-      access_token: resp['access_token'],
-      token_expires_at: Time.now + resp['expires_in'].to_i.seconds
+      access_token:     resp["access_token"],
+      token_expires_at: Time.current + resp["expires_in"].to_i.seconds
     )
   end
 
   def should_refresh_token?
-    token_expires_at < Time.now unless token_expires_at.nil? or refresh_token.blank?
+    token_expires_at < Time.current unless token_expires_at.nil? || refresh_token.blank?
   end
 end

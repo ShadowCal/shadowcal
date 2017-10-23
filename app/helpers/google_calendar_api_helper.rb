@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 module GoogleCalendarApiHelper
   def refresh_access_token(refresh_token)
     url = URI("https://accounts.google.com/o/oauth2/token")
 
     params = {
-      'refresh_token' => refresh_token,
-      'client_id'     => ENV['GOOGLE_CLIENT_ID'],
-      'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
-      'grant_type'    => 'refresh_token'
+      "refresh_token" => refresh_token,
+      "client_id"     => ENV["GOOGLE_CLIENT_ID"],
+      "client_secret" => ENV["GOOGLE_CLIENT_SECRET"],
+      "grant_type"    => "refresh_token"
     }
 
     resp = Net::HTTP.post_form(url, params)
@@ -37,32 +39,28 @@ module GoogleCalendarApiHelper
   def create_events(access_token, calendar_id, events)
     service = build_service(access_token)
 
-    service.batch do |service|
+    service.batch do |batch|
       events.map do |event|
-
-        service.insert_event(
+        batch.insert_event(
           calendar_id,
-          Google::Apis::CalendarV3::Event.new({
-            summary: event[:name],
-            description: event[:description],
-            start: {
-              date_time: event[:start_at].iso8601
-            },
-            end: {
-              date_time: event[:end_at].iso8601
-            },
-            visibility: 'public'
-          })
+          Google::Apis::CalendarV3::Event.new(summary:     event[:name],
+                                              description: event[:description],
+                                              start:       {
+                                                date_time: event[:start_at].iso8601
+                                              },
+                                              end:         {
+                                                date_time: event[:end_at].iso8601
+                                              },
+                                              visibility:  "public")
         )
       end
-
     end
   end
 
   private
+
   def service_calendar_item_to_calendar_model(item)
     Calendar.where(external_id: item.id).first_or_create do |calendar|
-
       calendar.name = item.summary
     end
   end
@@ -75,7 +73,6 @@ module GoogleCalendarApiHelper
       event.start_at = item.start.date || item.start.date_time
       event.end_at = item.end.date || item.end.date_time
       event.source_event_id = item.description.try(:[], /SourceEvent#(0-9)+/, 1)
-
     end
   end
 
@@ -95,7 +92,7 @@ module GoogleCalendarApiHelper
         time_min: Time.now.iso8601
       )
       .items
-      .reject{ |item| item.transparency == 'transparent' }
+      .reject { |item| item.transparency == "transparent" }
   end
 
   extend self

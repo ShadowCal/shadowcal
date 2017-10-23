@@ -1,6 +1,8 @@
-class Calendar < ActiveRecord::Base
+# frozen_string_literal: true
+
+class Calendar < ApplicationRecord
   belongs_to :google_account
-  has_many :events
+  has_many :events, dependent: :destroy
 
   delegate :access_token, to: :google_account
 end

@@ -1,6 +1,8 @@
-require 'rails_helper'
+# frozen_string_literal: true
 
-describe "sync_pair_form", :type => :feature do
+require "rails_helper"
+
+describe "sync_pair_form", type: :feature do
   before :each do
     @pair = FactoryGirl.create :sync_pair
     @user = @pair.user
@@ -10,8 +12,8 @@ describe "sync_pair_form", :type => :feature do
   end
 
   it "groups calendars by account" do
-    page.should have_select('From', with_options: @user.calendars.map(&:name))
-    page.should have_select('Onto', with_options: @user.calendars.map(&:name))
+    page.should have_select("From", with_options: @user.calendars.map(&:name))
+    page.should have_select("Onto", with_options: @user.calendars.map(&:name))
 
     @user.google_accounts.each do |acc|
       page.should have_css("optgroup[label=\"#{acc.email}\"]")
@@ -22,6 +24,6 @@ describe "sync_pair_form", :type => :feature do
   end
 
   it "allows user to add new google account" do
-    page.should have_link('add another Google account')
+    page.should have_link("add another Google account")
   end
 end

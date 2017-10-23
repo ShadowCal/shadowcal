@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddRefreshTokenToGoogleAccount < ActiveRecord::Migration
   def change
     add_column :google_accounts, :refresh_token, :string

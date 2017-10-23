@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateSyncPairs < ActiveRecord::Migration
   def change
     create_table :sync_pairs do |t|

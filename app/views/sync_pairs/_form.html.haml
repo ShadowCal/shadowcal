@@ -1,5 +1,5 @@
 
-- if current_user.has_calendars
+- if current_user.calendars?
   = form_for SyncPair.new do |f|
     %h3 New Shadow:
     %p Events on your personal calendar will block time on your work calendar without sharing details of those events with your coworkers.

@@ -1,25 +1,27 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-require 'spec_helper'
-require 'webmock/rspec'
+require "spec_helper"
+require "webmock/rspec"
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
-ENV['RAILS_ENV'] = 'test'
+ENV["RAILS_ENV"] = "test"
 
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path("../../config/environment", __FILE__)
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
-require 'rspec/rails'
-require 'capybara/rails'
+require "rspec/rails"
+require "capybara/rails"
 
-require 'capybara-screenshot/rspec'
-#Capybara.asset_host = 'http://localhost:3000'
+require "capybara-screenshot/rspec"
+# Capybara.asset_host = 'http://localhost:3000'
 Capybara::Screenshot.webkit_options = { width: 1024, height: 768 }
 Capybara::Screenshot.prune_strategy = :keep_last_run
 Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
-  "#{example.description.gsub(' ', '-').gsub(/^.*\/spec\//,'')}"
+  example.description.tr(" ", "-").gsub(%r{^.*\/spec\/}, "").to_s
 end
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -37,7 +39,7 @@ end
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join("spec", "support", "**", "*.rb")].each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
@@ -80,7 +82,7 @@ RSpec.configure do |config|
     # with the specs, so continue to use transaction strategy for speed.
     driver_shares_db_connection_with_specs = Capybara.current_driver == :rack_test
 
-    if !driver_shares_db_connection_with_specs
+    unless driver_shares_db_connection_with_specs
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
@@ -95,7 +97,6 @@ RSpec.configure do |config|
   config.append_after(:each) do
     DatabaseCleaner.clean
   end
-
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and

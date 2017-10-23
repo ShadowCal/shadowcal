@@ -1,4 +1,6 @@
-require 'rabl'
+# frozen_string_literal: true
+
+require "rabl"
 Rabl.configure do |config|
   # Commented as these are defaults
   # config.cache_all_output = false

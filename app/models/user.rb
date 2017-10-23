@@ -1,41 +1,40 @@
-class User < ActiveRecord::Base
+# frozen_string_literal: true
+
+class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-       :recoverable, :rememberable, :trackable, :validatable, :omniauthable
+         :recoverable, :rememberable, :trackable, :validatable, :omniauthable
 
-  has_many :google_accounts
-  has_many :sync_pairs
+  has_many :google_accounts, dependent: :destroy
+  has_many :sync_pairs, dependent: :destroy
   has_many :calendars, through: :google_accounts
   has_many :events, through: :calendars
 
   def self.find_or_create_from_omniauth(access_token)
     data = access_token.info
 
-    User.where(:email => data["email"]).first_or_create do |user|
-      user.password = Devise.friendly_token[0,20]
+    User.where(email: data["email"]).first_or_create do |user|
+      user.password = Devise.friendly_token[0, 20]
     end
   end
 
-  def has_calendars
-    self.google_accounts.all? {|acc| acc.calendars.any? }
+  def calendars?
+    google_accounts.all? { |acc| acc.calendars.any? }
   end
 
   def add_or_update_google_account(access_token)
     data = access_token.info
 
-    self.google_accounts.where(email: data["email"])
-      .first_or_create
-      .update_attributes!({
-        access_token: access_token.credentials.token,
-        token_secret: access_token.credentials.secret,
-        token_expires_at: access_token.credentials.expires_at,
-        refresh_token: access_token.credentials.refresh_token
-      })
+    google_accounts.where(email: data["email"])
+                   .first_or_create
+                   .update_attributes!(access_token:     access_token.credentials.token,
+                                       token_secret:     access_token.credentials.secret,
+                                       token_expires_at: access_token.credentials.expires_at,
+                                       refresh_token:    access_token.credentials.refresh_token)
   end
 
   def access_token
     google_accounts.first.try(:access_token)
   end
-
 end

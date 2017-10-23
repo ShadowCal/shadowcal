@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 module CalendarAccountHelper
   def from_accounts_by_key(accounts)
-    accounts.map{ |a| calendars_by_google_account(a) }
+    accounts.map { |a| calendars_by_google_account(a) }
   end
 
   private
+
   def calendar_options(calendars)
     calendars.map do |cal|
       [

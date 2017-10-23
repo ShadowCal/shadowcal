@@ -1,3 +1,5 @@
-collection @users, :root => false, :object_root => false
+# frozen_string_literal: true
 
-extends 'user/item'
+collection @users, root: false, object_root: false
+
+extends "user/item"

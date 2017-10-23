@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ShadowCal::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -23,8 +25,8 @@ ShadowCal::Application.configure do
   config.active_record.migration_error = :page_load
 
   # Default URL for devise
-  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
-  Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+  config.action_mailer.default_url_options = { host: "localhost:3000" }
+  Rails.application.routes.default_url_options[:host] = "localhost:3000"
 
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
@@ -32,5 +34,4 @@ ShadowCal::Application.configure do
   config.assets.debug = false
 
   config.log_level = :debug
-
 end

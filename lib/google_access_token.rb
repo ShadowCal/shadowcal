@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GoogleAccessToken
   attr_reader :token
   def initialize(token)
@@ -5,6 +7,6 @@ class GoogleAccessToken
   end
 
   def apply!(headers)
-    headers['Authorization'] = "Bearer #{@token}"
+    headers["Authorization"] = "Bearer #{@token}"
   end
 end
