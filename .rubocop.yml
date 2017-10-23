@@ -1,6 +1,10 @@
 AllCops:
   Exclude:
-    - 'db/schema.rb'
+    - 'db/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - 'bin/**/*'
+    - 'log/**/*'
     - 'config/initializers/devise.rb'
   DisplayCopNames: true
 

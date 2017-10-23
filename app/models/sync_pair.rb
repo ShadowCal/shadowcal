@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SyncPair < ApplicationRecord
+class SyncPair < ActiveRecord::Base
   belongs_to :user
 
   belongs_to :to_calendar, class_name: "Calendar", foreign_key: "to_calendar_id"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class GoogleAccount < ApplicationRecord
+class GoogleAccount < ActiveRecord::Base
   belongs_to :user
   has_many :calendars
 
