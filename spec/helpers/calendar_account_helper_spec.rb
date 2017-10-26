@@ -5,7 +5,7 @@ require "rails_helper"
 describe CalendarAccountHelper do
   describe "#from_accounts_by_key" do
     it "groups multiple accounts' calendars as select options" do
-      accounts = FactoryGirl.create_list :google_account, 2
+      accounts = FactoryBot.create_list :google_account, 2
 
       options = CalendarAccountHelper.from_accounts_by_key accounts
 

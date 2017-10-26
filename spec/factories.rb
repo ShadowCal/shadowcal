@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :event do
     calendar
     name { Faker::Company.bs }
@@ -13,10 +13,6 @@ FactoryGirl.define do
     from_calendar { build(:calendar, user: user) }
     to_calendar { build(:calendar, user: user) }
     last_synced_at nil
-
-    after :build do |pair|
-      pair.stub(:perform_sync).and_return(true)
-    end
   end
 
   factory :google_account do
@@ -30,15 +26,11 @@ FactoryGirl.define do
     trait :expired do
       token_expires_at 1.minute.ago
     end
-
-    after :build do |acc|
-      acc.stub(:fetch_calendars).and_return(true)
-    end
   end
 
   factory :calendar do
     transient do
-      user build(:user)
+      user { build(:user) }
     end
 
     external_id { generate(:calendar_id) }

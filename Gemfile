@@ -52,7 +52,7 @@ group :test do
 end
 
 group :development, :test do
-  gem "factory_girl_rails", "~> 4.0"
+  gem "factory_bot_rails", "~> 4.0"
 
   gem "capybara"
   gem "capybara-screenshot"

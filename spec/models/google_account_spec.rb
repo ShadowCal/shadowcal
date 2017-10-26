@@ -3,8 +3,8 @@
 require "rails_helper"
 
 describe "GoogleAccount", type: :model do
-  let(:expired_instance) { FactoryGirl.create :google_account, :expired }
-  let(:valid_instance) { FactoryGirl.create :google_account }
+  let(:expired_instance) { FactoryBot.create :google_account, :expired }
+  let(:valid_instance) { FactoryBot.create :google_account }
 
   describe "scope(:to_be_refreshed)" do
     before :each do
@@ -37,7 +37,7 @@ describe "GoogleAccount", type: :model do
   describe "#refresh_token!" do
     let(:new_token) { "asdf" }
     let(:new_expires_at) { 3600 }
-    let(:account) { FactoryGirl.create :google_account, :expired }
+    let(:account) { FactoryBot.create :google_account, :expired }
 
     before :each do
       allow(GoogleCalendarApiHelper).to receive(:refresh_access_token)

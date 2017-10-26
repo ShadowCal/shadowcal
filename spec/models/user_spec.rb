@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe "User", type: :model do
-  let(:user) { FactoryGirl.create :user }
+  let(:user) { FactoryBot.create :user }
 
   describe "#add_or_update_google_account" do
     before :each do

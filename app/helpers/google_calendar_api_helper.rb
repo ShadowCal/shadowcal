@@ -68,10 +68,13 @@ module GoogleCalendarApiHelper
   def service_event_item_to_event_model(item)
     Event.where(
       external_id: item.id
-    ).first_or_create do |event|
+    ).first_or_initialize do |event|
+      item_start_date = item.start.date || item.start.date_time
+      item_end_date = item.end.date || item.end.date_time
+
       event.name = item.summary
-      event.start_at = item.start.date || item.start.date_time
-      event.end_at = item.end.date || item.end.date_time
+      event.start_at = item_start_date
+      event.end_at = item_end_date
       event.source_event_id = item.description.try(:[], /SourceEvent#(0-9)+/, 1)
     end
   end

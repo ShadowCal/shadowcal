@@ -34,6 +34,9 @@ jobs:
       # Database setup
       - run: bundle exec rake db:create db:schema:load --trace
 
+      # Lint
+      - run: bundle exec rubocop --config .rubocop.yml --fail-level warn
+
       # Run rspec in parallel
       - run: |
           bundle exec rspec --profile 10 \

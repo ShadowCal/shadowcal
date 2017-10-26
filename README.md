@@ -43,7 +43,7 @@ Rails is magical already, and this package preloads the default Rails 4 setup wi
         - [Font Awesome](https://github.com/bokmann/font-awesome-rails) glyph icon set. 
 4. Test Suite Tools
     - [Mocha](https://github.com/quartzmo/mocha_rails) for stubbing and expectations.
-    - [FactoryGirl] for factories instead of fixtures. 
+    - [FactoryBot] for factories instead of fixtures. 
         - TODO: All fixtures have been deleted, but maybe modify generators to not create new ones for new models? 
         - * Custom callback skipper for skipping before_/after_/save/create callbacks. *
 5. Vendored Ruby Tools

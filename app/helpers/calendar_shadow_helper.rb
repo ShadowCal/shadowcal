@@ -2,15 +2,15 @@
 
 module CalendarShadowHelper
   def cast_from_to(from_calendar, to_calendar)
-    update_calendar_events_cach(to_calendar)
-    update_calendar_events_cach(from_calendar)
+    update_calendar_events_cache(to_calendar)
+    update_calendar_events_cache(from_calendar)
 
     cast_new_shadows(from_calendar, to_calendar)
   end
 
   private
 
-  def update_calendar_events_cach(calendar)
+  def update_calendar_events_cache(calendar)
     events = request_events_for_calendar(calendar)
 
     events.each do |event|

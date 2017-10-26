@@ -4,7 +4,7 @@ require "rails_helper"
 
 describe "onboarding", type: :feature do
   before :each do
-    @user = FactoryGirl.create :user_with_google_account, num_google_accounts: 2
+    @user = FactoryBot.create :user_with_google_account, num_google_accounts: 2
     login_as @user, scope: :user
   end
 
@@ -15,7 +15,7 @@ describe "onboarding", type: :feature do
 
   it "shows form after calendars arrive" do
     @user.google_accounts.each do |acc|
-      FactoryGirl.create :calendar, google_account: acc
+      FactoryBot.create :calendar, google_account: acc
     end
 
     visit "/"
@@ -26,11 +26,11 @@ describe "onboarding", type: :feature do
   end
 
   it "creates first sync_pair by submitting form" do
-    expected_from_calendar = FactoryGirl.create :calendar,
+    expected_from_calendar = FactoryBot.create  :calendar,
                                                 name:           "Calendar1",
                                                 google_account: @user.google_accounts.first
 
-    expected_to_calendar = FactoryGirl.create :calendar,
+    expected_to_calendar = FactoryBot.create  :calendar,
                                               name:           "Calendar2",
                                               google_account: @user.google_accounts.last
 
