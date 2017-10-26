@@ -27,7 +27,7 @@ class GoogleAccount < ActiveRecord::Base
     resp = GoogleCalendarApiHelper.refresh_access_token(refresh_token)
     update_attributes(
       access_token:     resp["access_token"],
-      token_expires_at: Time.current + resp["expires_in"].to_i.seconds
+      token_expires_at: resp["expires_in"].to_i.seconds.from_now
     )
   end
 
