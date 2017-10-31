@@ -8,7 +8,7 @@ class SyncPair < ActiveRecord::Base
 
   validates :to_calendar, :from_calendar, presence: true
 
-  after_create :perform_sync, unless: lambda { Rails.env.test? }
+  after_create :perform_sync, unless: :skip_callbacks
 
   # private
   def perform_sync

@@ -4,7 +4,7 @@ class GoogleAccount < ActiveRecord::Base
   belongs_to :user
   has_many :calendars
 
-  after_create :fetch_calendars, unless: lambda { Rails.env.test? }
+  after_create :fetch_calendars, unless: :skip_callbacks
 
   after_initialize :refresh_token!, if: :should_refresh_token?
 

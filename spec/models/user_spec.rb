@@ -7,7 +7,12 @@ describe "User", type: :model do
 
   describe "#add_or_update_google_account" do
     before :each do
+      allow(GoogleCalendarApiHelper)
+        .to receive(:request_calendars)
+        .and_return([])
+
       expect(user.google_accounts.count).to eq 0 # sanity
+
       user.add_or_update_google_account(Faker::Omniauth.unique.google.to_ostruct)
     end
 

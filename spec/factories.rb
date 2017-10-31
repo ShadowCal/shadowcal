@@ -62,4 +62,10 @@ FactoryBot.define do
   sequence :email do |n|
     "test#{n}@example.com"
   end
+
+  to_create do |model|
+    ActiveRecord::Base.skip_callbacks = true
+    model.save!
+    ActiveRecord::Base.skip_callbacks = false
+  end
 end
