@@ -49,17 +49,20 @@ module CalendarShadowHelper
     GoogleCalendarApiHelper.create_events(
       calendar.access_token,
       calendar.external_id,
-      events.map { |e| event_as_shadow(e) }
+      events.map do |event|
+        {
+          summary:     "(Busy)",
+          description: "The calendar owner is busy at this time with a private event.\n\nThis notice was created using shadowcal.com: Block personal events off your work calendar without sharing details. \n\n\n\nSourceEvent##{event.source_event_id}",
+          start:       {
+            date_time: event.start_at.iso8601
+          },
+          end:         {
+            date_time: event.end_at.iso8601
+          },
+          visibility:  "public"
+        }
+      end
     )
-  end
-
-  def event_as_shadow(event)
-    {
-      name:        "(Busy)",
-      description: "The calendar owner is busy at this time with a private event.\n\nThis notice was created using shadowcal.com: Block personal events off your work calendar without sharing details. \n\n\n\nSourceEvent##{event.source_event_id}",
-      start_at:    event.start_at,
-      end_at:      event.end_at
-    }
   end
 
   def request_events_for_calendar(calendar)

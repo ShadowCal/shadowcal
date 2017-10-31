@@ -43,18 +43,27 @@ module GoogleCalendarApiHelper
       events.map do |event|
         batch.insert_event(
           calendar_id,
-          Google::Apis::CalendarV3::Event.new(summary:     event[:name],
-                                              description: event[:description],
-                                              start:       {
-                                                date_time: event[:start_at].iso8601
-                                              },
-                                              end:         {
-                                                date_time: event[:end_at].iso8601
-                                              },
-                                              visibility:  "public")
+          Google::Apis::CalendarV3::Event.new(event)
         )
       end
     end
+  end
+
+  def move_event(access_token, calendar_id, event_id, start_at, end_at)
+    service = build_service(access_token)
+
+    service.patch_event(
+      calendar_id,
+      event_id,
+      Google::Apis::CalendarV3::Event.new(
+        start: {
+          date_time: start_at.iso8601
+        },
+        end: {
+          date_time: end_at.iso8601
+        },
+      )
+    )
   end
 
   private
