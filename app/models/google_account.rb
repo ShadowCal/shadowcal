@@ -4,7 +4,7 @@ class GoogleAccount < ActiveRecord::Base
   belongs_to :user
   has_many :calendars
 
-  after_create :fetch_calendars, unless: lambda { Rails.env.test? }
+  after_create :fetch_calendars, unless: :skip_callbacks
 
   after_initialize :refresh_token!, if: :should_refresh_token?
 
@@ -12,7 +12,7 @@ class GoogleAccount < ActiveRecord::Base
     where(
       "token_expires_at IS NOT NULL AND " \
       "refresh_token IS NOT NULL AND " \
-      " token_expires_at < ?", Time.current
+      "token_expires_at < ?", 20.minutes.from_now
     )
   }
 

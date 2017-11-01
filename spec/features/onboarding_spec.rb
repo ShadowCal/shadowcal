@@ -10,7 +10,7 @@ describe "onboarding", type: :feature do
 
   it "shows loading screen until calendars arrive" do
     visit "/"
-    page.should have_content("Loading your calendars")
+    expect(page).to have_content("Loading your calendars")
   end
 
   it "shows form after calendars arrive" do
@@ -19,10 +19,10 @@ describe "onboarding", type: :feature do
     end
 
     visit "/"
-    page.should have_no_content("Loading your calendars")
-    page.should have_css("form")
+    expect(page).to have_no_content("Loading your calendars")
+    expect(page).to have_css("form")
 
-    page.should have_link("add another Google account")
+    expect(page).to have_link("add another Google account")
   end
 
   it "creates first sync_pair by submitting form" do
@@ -45,11 +45,11 @@ describe "onboarding", type: :feature do
 
     click_button("Block Time Privately")
 
-    page.should have_css("table#existing_sync_pairs")
+    expect(page).to have_css("table#existing_sync_pairs")
     find("table#existing_sync_pairs").should have_content("Calendar1")
     find("table#existing_sync_pairs").should have_content("Calendar2")
 
     # Once you have made first pair, you're onboarded and can see delete link
-    page.should have_link("Delete Account")
+    expect(page).to have_link("Delete Account")
   end
 end
