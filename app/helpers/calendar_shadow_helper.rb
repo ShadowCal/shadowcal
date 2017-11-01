@@ -22,9 +22,13 @@ module CalendarShadowHelper
   end
 
   def cast_new_shadows(from_calendar, to_calendar, batch_size = 100)
-    from_calendar.events.without_shadows.find_in_batches(batch_size: batch_size) do |events_batch|
-      cast_shadows_of_events_on_calendar(events_batch, to_calendar)
-    end
+    from_calendar
+      .events
+      .without_shadows
+      .tap { |result| Rails.logger.debug [from_calendar.name, to_calendar.name, "Need to create #{result.count} shadow(s)"].join "\t" }
+      .find_in_batches(batch_size: batch_size) do |events_batch|
+        cast_shadows_of_events_on_calendar(events_batch, to_calendar)
+      end
   end
 
   def cast_shadows_of_events_on_calendar(events_batch, to_calendar)
@@ -38,10 +42,15 @@ module CalendarShadowHelper
   end
 
   def shadow_of_event(source_event)
-    Event.where(source_event_id: source_event.id).first_or_create do |event|
+    Event.where(source_event_id: source_event.id).first_or_initialize do |event|
       event.name = source_event.name
       event.start_at = source_event.start_at
       event.end_at = source_event.end_at
+
+      verb = event.new_record? ? "Created" : "Found"
+      Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
+
+      event.save!
     end
   end
 

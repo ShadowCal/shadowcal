@@ -28,7 +28,14 @@ class Event < ActiveRecord::Base
   private
 
   def push_changes_to_corresponding_event
-    return true if corresponding_event.nil?
+    Rails.logger.debug [DebugHelper.identify_event(event), "Saving after being moved. Corresponding event?"].join "\t"
+
+    if corresponding_event.nil?
+      Rails.logger.debug [DebugHelper.identify_event(event), "No corresponding event to move"].join "\t"
+      return true
+    end
+
+    Rails.logger.debug [DebugHelper.identify_event(event), "Moving corresponding event:", DebugHelper.identify_event(corresponding_event)].join "\t"
 
     GoogleCalendarApiHelper
       .move_event(

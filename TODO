@@ -1,1 +1,2 @@
 Ignore/remove shadows of events not marked YES
+Unique constraint on [Event.calendar_id, Event.external_id]

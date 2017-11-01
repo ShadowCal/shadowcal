@@ -85,6 +85,9 @@ module GoogleCalendarApiHelper
       event.start_at = item_start_date
       event.end_at = item_end_date
       event.source_event_id = item.description.try(:[], /SourceEvent#(0-9)+/, 1)
+
+      verb = event.new_record? ? "Created" : "Found"
+      Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
     end
   end
 

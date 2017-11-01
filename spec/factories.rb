@@ -8,6 +8,8 @@ FactoryBot.define do
     end_at { start_at + 30.minutes }
 
     trait :is_shadow do
+      name "(Busy)"
+      
       after :create do |event|
         event.source_event = create :event
         event.save!
