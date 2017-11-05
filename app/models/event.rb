@@ -10,6 +10,9 @@ class Event < ActiveRecord::Base
       .where("e2.source_event_id IS NULL")
   }
 
+  has_one :google_account, through: :calendar
+  delegate :access_token, to: :google_account
+
   before_save :push_changes_to_corresponding_event, if: :moved?
 
   def moved?
@@ -18,7 +21,33 @@ class Event < ActiveRecord::Base
     return true if end_at_changed?
   end
 
+  def corresponding_event
+    source_event || shadow_event
+  end
+
   private
 
-  def push_changes_to_corresponding_event; end
+  def push_changes_to_corresponding_event
+    Rails.logger.debug [DebugHelper.identify_event(self), "Saving after being moved. Corresponding event?"].join "\t"
+
+    if corresponding_event.nil?
+      Rails.logger.debug [DebugHelper.identify_event(self), "No corresponding event to move"].join "\t"
+      return true
+    end
+
+    Rails.logger.debug [DebugHelper.identify_event(self), "Moving corresponding event:", DebugHelper.identify_event(corresponding_event)].join "\t"
+
+    GoogleCalendarApiHelper
+      .move_event(
+        corresponding_event.access_token,
+        corresponding_event.calendar.external_id,
+        corresponding_event.external_id,
+        start_at,
+        end_at
+      )
+
+    Event
+      .where(id: corresponding_event.id)
+      .update_all(start_at: start_at, end_at: end_at)
+  end
 end

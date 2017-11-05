@@ -6,6 +6,19 @@ FactoryBot.define do
     name { Faker::Company.bs }
     start_at { Faker::Time.forward(1, :afternoon) }
     end_at { start_at + 30.minutes }
+
+    trait :is_shadow do
+      name "(Busy)"
+      
+      after :create do |event|
+        event.source_event = create :event
+        event.save!
+      end
+    end
+
+    trait :has_shadow do
+      association :shadow_event, factory: :event
+    end
   end
 
   factory :sync_pair do

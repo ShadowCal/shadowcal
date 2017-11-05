@@ -22,9 +22,13 @@ module CalendarShadowHelper
   end
 
   def cast_new_shadows(from_calendar, to_calendar, batch_size = 100)
-    from_calendar.events.without_shadows.find_in_batches(batch_size: batch_size) do |events_batch|
-      cast_shadows_of_events_on_calendar(events_batch, to_calendar)
-    end
+    from_calendar
+      .events
+      .without_shadows
+      .tap { |result| Rails.logger.debug [from_calendar.name, to_calendar.name, "Need to create #{result.count} shadow(s)"].join "\t" }
+      .find_in_batches(batch_size: batch_size) do |events_batch|
+        cast_shadows_of_events_on_calendar(events_batch, to_calendar)
+      end
   end
 
   def cast_shadows_of_events_on_calendar(events_batch, to_calendar)
@@ -38,10 +42,15 @@ module CalendarShadowHelper
   end
 
   def shadow_of_event(source_event)
-    Event.where(source_event_id: source_event.id).first_or_create do |event|
+    Event.where(source_event_id: source_event.id).first_or_initialize do |event|
       event.name = source_event.name
       event.start_at = source_event.start_at
       event.end_at = source_event.end_at
+
+      verb = event.new_record? ? "Created" : "Found"
+      Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
+
+      event.save!
     end
   end
 
@@ -49,17 +58,20 @@ module CalendarShadowHelper
     GoogleCalendarApiHelper.create_events(
       calendar.access_token,
       calendar.external_id,
-      events.map { |e| event_as_shadow(e) }
+      events.map do |event|
+        {
+          summary:     "(Busy)",
+          description: "The calendar owner is busy at this time with a private event.\n\nThis notice was created using shadowcal.com: Block personal events off your work calendar without sharing details. \n\n\n\nSourceEvent##{event.source_event_id}",
+          start:       {
+            date_time: event.start_at.iso8601
+          },
+          end:         {
+            date_time: event.end_at.iso8601
+          },
+          visibility:  "public"
+        }
+      end
     )
-  end
-
-  def event_as_shadow(event)
-    {
-      name:        "(Busy)",
-      description: "The calendar owner is busy at this time with a private event.\n\nThis notice was created using shadowcal.com: Block personal events off your work calendar without sharing details. \n\n\n\nSourceEvent##{event.source_event_id}",
-      start_at:    event.start_at,
-      end_at:      event.end_at
-    }
   end
 
   def request_events_for_calendar(calendar)
