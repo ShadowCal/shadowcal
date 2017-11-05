@@ -3,10 +3,12 @@
 require "rails_helper"
 
 describe "GoogleAccount", type: :model do
-  let(:expired_instance) { FactoryBot.create :google_account, :expired }
-  let(:valid_instance) { FactoryBot.create :google_account }
+  let!(:expired_instance) { FactoryBot.create :google_account, :expired }
+  let!(:valid_instance) { FactoryBot.create :google_account }
 
   describe "scope(:to_be_refreshed)" do
+    let!(:no_expiry_instance) { FactoryBot.create :google_account, token_expires_at: nil }
+
     before :each do
       allow_any_instance_of(GoogleAccount).to receive(:refresh_token!)
     end
