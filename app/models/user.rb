@@ -26,12 +26,15 @@ class User < ActiveRecord::Base
   def add_or_update_google_account(access_token)
     data = access_token.info
 
+    refresh_token = access_token.credentials.refresh_token
+    token_expires_at = access_token.credentials.expires_at || 40.minutes.from_now unless refresh_token.blank?
+
     google_accounts.where(email: data["email"])
                    .first_or_create
                    .update_attributes!(access_token:     access_token.credentials.token,
                                        token_secret:     access_token.credentials.secret,
-                                       token_expires_at: access_token.credentials.expires_at,
-                                       refresh_token:    access_token.credentials.refresh_token)
+                                       token_expires_at: token_expires_at,
+                                       refresh_token:    refresh_token)
   end
 
   def access_token
