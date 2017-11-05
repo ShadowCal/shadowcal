@@ -54,10 +54,18 @@ describe DebugHelper do
       end
     end
 
+    context "with missing shadow event" do
+      let(:event) { build :event, source_event_id: 123 }
+
+      it "says SOURCE EVENT NOT FOUND" do
+        expect(subject).to start_with('(Shadow of "SOURCE EVENT NOT FOUND"')
+      end
+    end
+
     context "with nil dates" do
       let(:event) { build :event, start_at: nil, end_at: nil }
       it "doesn't crash" do
-        expect{subject}.not_to raise_error
+        expect{ subject }.not_to raise_error
       end
     end
   end

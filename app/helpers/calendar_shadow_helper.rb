@@ -61,7 +61,11 @@ module CalendarShadowHelper
       events.map do |event|
         {
           summary:     "(Busy)",
-          description: "The calendar owner is busy at this time with a private event.\n\nThis notice was created using shadowcal.com: Block personal events off your work calendar without sharing details. \n\n\n\nSourceEvent##{event.source_event_id}",
+          description: DescriptionTagHelper.add_source_event_id_tag_to_description(
+            "The calendar owner is busy at this time with a private event.\n\n" \
+            "This notice was created using shadowcal.com: Block personal events " \
+            "off your work calendar without sharing details."
+          ),
           start:       {
             date_time: event.start_at.iso8601
           },
@@ -80,6 +84,5 @@ module CalendarShadowHelper
       calendar.external_id
     )
   end
-
   extend self
 end

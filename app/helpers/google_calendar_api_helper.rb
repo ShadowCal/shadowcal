@@ -87,7 +87,17 @@ module GoogleCalendarApiHelper
       event.name = item.summary
       event.start_at = item_start_date
       event.end_at = item_end_date
-      event.source_event_id = item.description.try(:[], /SourceEvent#(0-9)+/, 1)
+      event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item.description)
+    end
+  end
+
+  def service_date_to_active_support_date_time(date)
+    if date.date && date.time_zone
+      ZoneHelper.from_date_str_and_zone_to_utc(date.date, date.time_zone)
+    elsif date.date
+      date.date.to_date
+    else
+      date.date_time
     end
   end
 
