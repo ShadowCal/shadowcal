@@ -53,5 +53,12 @@ describe DebugHelper do
         expect(subject).to start_with('(Shadow of "SourceEvent"')
       end
     end
+
+    context "with nil dates" do
+      let(:event) { build :event, start_at: nil, end_at: nil }
+      it "doesn't crash" do
+        expect{subject}.not_to raise_error
+      end
+    end
   end
 end

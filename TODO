@@ -1,1 +1,3 @@
+Account-level option to include transparent events
 Ignore/remove shadows of events not marked YES
+Handle parsing and syncing all day events and time zones correctly
