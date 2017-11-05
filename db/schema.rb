@@ -1,6 +1,4 @@
-
-# frozen_string_literal: true
-
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -13,21 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_171_023_015_104) do
+ActiveRecord::Schema.define(version: 20171105025500) do
+
   create_table "active_admin_comments", force: :cascade do |t|
-    t.string   "namespace", limit: 255
+    t.string   "namespace",     limit: 255
     t.text     "body"
     t.string   "resource_id",   limit: 255, null: false
     t.string   "resource_type", limit: 255, null: false
     t.integer  "author_id"
-    t.string   "author_type", limit: 255
+    t.string   "author_type",   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "active_admin_comments", %w[author_type author_id], name: "index_active_admin_comments_on_author_type_and_author_id"
+  add_index "active_admin_comments", ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
   add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace"
-  add_index "active_admin_comments", %w[resource_type resource_id], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+  add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
 
   create_table "admin_users", force: :cascade do |t|
     t.string   "email",                  limit: 255, default: "", null: false
@@ -35,7 +34,7 @@ ActiveRecord::Schema.define(version: 20_171_023_015_104) do
     t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count", default: 0, null: false
+    t.integer  "sign_in_count",                      default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",     limit: 255
@@ -71,7 +70,7 @@ ActiveRecord::Schema.define(version: 20_171_023_015_104) do
     t.datetime "updated_at"
   end
 
-  add_index "delayed_jobs", %w[priority run_at], name: "delayed_jobs_priority"
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
 
   create_table "events", force: :cascade do |t|
     t.integer  "calendar_id"
@@ -85,6 +84,7 @@ ActiveRecord::Schema.define(version: 20_171_023_015_104) do
   end
 
   add_index "events", ["calendar_id"], name: "index_events_on_calendar_id"
+  add_index "events", ["external_id", "calendar_id"], name: "index_events_on_external_id_and_calendar_id", unique: true
   add_index "events", ["source_event_id"], name: "index_events_on_source_event_id"
 
   create_table "google_accounts", force: :cascade do |t|
@@ -117,7 +117,7 @@ ActiveRecord::Schema.define(version: 20_171_023_015_104) do
     t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count", default: 0, null: false
+    t.integer  "sign_in_count",                      default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",     limit: 255
@@ -128,4 +128,5 @@ ActiveRecord::Schema.define(version: 20_171_023_015_104) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+
 end
