@@ -81,6 +81,7 @@ module CalendarShadowHelper
   def request_events_for_calendar(calendar)
     GoogleCalendarApiHelper.request_events(
       calendar.access_token,
+      calendar.google_account.email,
       calendar.external_id
     )
   end

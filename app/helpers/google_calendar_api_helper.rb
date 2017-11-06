@@ -27,12 +27,12 @@ module GoogleCalendarApiHelper
 
   # TODO: use updated_min parameter or sync_token
   # http://www.rubydoc.info/github/google/google-api-ruby-client/Google/Apis/CalendarV3/CalendarService#list_events-instance_method
-  def request_events(access_token, external_id)
+  def request_events(access_token, my_email, external_id)
     service = build_service(access_token)
 
     # Return each google api calendar as an ActiveRecord Calendar model
     get_calendar_events(service, external_id).map do |item|
-      service_event_item_to_event_model(item)
+      service_event_item_to_event_model(my_email, item)
     end
   end
 
@@ -74,20 +74,21 @@ module GoogleCalendarApiHelper
     end
   end
 
-  def service_event_item_to_event_model(item)
+  def service_event_item_to_event_model(my_email, item)
     Event.where(
       external_id: item.id
     ).first_or_initialize do |event|
       verb = event.new_record? ? "Created" : "Found"
       Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
 
-      item_start_date = item.start.date || item.start.date_time
-      item_end_date = item.end.date || item.end.date_time
+      item_start_date = service_date_to_active_support_date_time(item.start)
+      item_end_date = service_date_to_active_support_date_time(item.end)
 
       event.name = item.summary
       event.start_at = item_start_date
       event.end_at = item_end_date
       event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item.description)
+      event.is_attending = item.attendees.find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
     end
   end
 
