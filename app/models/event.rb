@@ -13,7 +13,7 @@ class Event < ActiveRecord::Base
   has_one :google_account, through: :calendar
   delegate :access_token, to: :google_account
 
-  before_save :push_changes_to_corresponding_event, if: :moved?
+  before_save :push_date_changes_to_corresponding_event, if: :moved?
 
   def moved?
     return false if new_record?
@@ -27,7 +27,7 @@ class Event < ActiveRecord::Base
 
   private
 
-  def push_changes_to_corresponding_event
+  def push_date_changes_to_corresponding_event
     Rails.logger.debug [DebugHelper.identify_event(self), "Saving after being moved. Corresponding event?"].join "\t"
 
     if corresponding_event.nil?

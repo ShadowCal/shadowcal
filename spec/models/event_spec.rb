@@ -56,9 +56,9 @@ describe "Event", type: :model do
     end
   end
 
-  describe "#push_changes_to_corresponding_event" do
+  describe "#push_date_changes_to_corresponding_event" do
     subject {
-      event.send(:push_changes_to_corresponding_event).tap do
+      event.send(:push_date_changes_to_corresponding_event).tap do
         event.reload
       end
     }
