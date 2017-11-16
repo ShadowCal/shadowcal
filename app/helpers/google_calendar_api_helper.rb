@@ -27,13 +27,24 @@ module GoogleCalendarApiHelper
 
   # TODO: use updated_min parameter or sync_token
   # http://www.rubydoc.info/github/google/google-api-ruby-client/Google/Apis/CalendarV3/CalendarService#list_events-instance_method
-  def request_events(access_token, my_email, external_id)
+  def request_events(access_token, my_email, calendar_id)
     service = build_service(access_token)
 
     # Return each google api calendar as an ActiveRecord Calendar model
-    get_calendar_events(service, external_id).map do |item|
+    get_calendar_events(service, calendar_id).map do |item|
       service_event_item_to_event_model(my_email, item)
     end
+  end
+
+  def get_event(access_token, my_email, calendar_id, event_id)
+    service_event = build_service(access_token)
+                    .get_event(
+                      calendar_id,
+                      event_id
+                    )
+                    .item
+
+    service_event_item_to_event_model(my_email, service_event)
   end
 
   def create_events(access_token, calendar_id, events)
@@ -47,6 +58,11 @@ module GoogleCalendarApiHelper
         )
       end
     end
+  end
+
+  def delete_event(access_token, calendar_id, event_id)
+    build_service(access_token)
+      .delete_event(calendar_id, event_id)
   end
 
   def move_event(access_token, calendar_id, event_id, start_at, end_at)

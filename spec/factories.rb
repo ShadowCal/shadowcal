@@ -6,13 +6,17 @@ FactoryBot.define do
     name { Faker::Company.bs }
     start_at { Faker::Time.forward(1, :afternoon) }
     end_at { start_at + 30.minutes }
+    is_attending false
 
     trait :is_shadow do
       name "(Busy)"
-      
+      external_id { Faker::Internet.password(10, 20) }
+
       after :create do |event|
-        event.source_event = create :event
-        event.save!
+        if event.source_event.nil?
+          event.source_event = create :event
+          event.save!
+        end
       end
     end
 
@@ -47,10 +51,7 @@ FactoryBot.define do
     end
 
     external_id { generate(:calendar_id) }
-
-    after :create do |calendar, evaluator|
-      create :google_account, user: evaluator.user, calendars: [calendar] if calendar.google_account.nil?
-    end
+    google_account { build :google_account, user: user }
   end
 
   factory :user do

@@ -58,7 +58,7 @@ describe DebugHelper do
       let(:event) { build :event, source_event_id: 123 }
 
       it "says SOURCE EVENT NOT FOUND" do
-        expect(subject).to start_with('(Shadow of "SOURCE EVENT NOT FOUND"')
+        expect(subject).to start_with('(Shadow of "[SOURCE EVENT NOT FOUND]"')
       end
     end
 

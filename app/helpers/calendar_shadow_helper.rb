@@ -1,11 +1,51 @@
 # frozen_string_literal: true
 
 module CalendarShadowHelper
+  class ShadowHelperError < StandardError; end
+
+  class ShadowVsSourceMismatchError < ShadowHelperError;
+    def initialize(msg, event)
+      @event = event
+      super(msg)
+    end
+  end
+
   def cast_from_to(from_calendar, to_calendar)
     update_calendar_events_cache(to_calendar)
     update_calendar_events_cache(from_calendar)
 
     cast_new_shadows(from_calendar, to_calendar)
+  end
+
+  def destroy_shadow_of_event(source_event)
+    unless source_event.source_event_id.nil?
+      raise ShadowVsSourceMismatchError.new("Cannot delete shadow of shadow", source_event)
+    end
+
+    shadow = source_event.shadow_event
+
+    begin
+      unless shadow.external_id.blank?
+        GoogleCalendarApiHelper.delete_event(
+          shadow.access_token,
+          shadow.calendar.external_id,
+          shadow.external_id
+        )
+      end
+
+      shadow.destroy
+    rescue StandardError => e
+      Rails.logger.debug [DebugHelper.identify_event(source_event), "Remote service fail:", e].join(" ")
+    end
+
+    true
+  end
+
+  def create_shadow_of_event(source_event)
+    GoogleCalendarApiHelper.create_events(
+      source_event.corresponding_calendar,
+      [source_event]
+    )
   end
 
   private
@@ -42,10 +82,23 @@ module CalendarShadowHelper
   end
 
   def shadow_of_event(source_event)
+    if source_event.corresponding_calendar.nil?
+      msg = "Cannot find or create the shadow of an event" \
+            " which belongs to a calendar that is not casting" \
+            " a shadow."
+
+      msg = [DebugHelper.identify_event(source_event), msg].join("\t")
+
+      Rails.logger.debug msg
+
+      raise ShadowHelperError, msg
+    end
+
     Event.where(source_event_id: source_event.id).first_or_initialize do |event|
       event.name = source_event.name
       event.start_at = source_event.start_at
       event.end_at = source_event.end_at
+      event.calendar_id = source_event.corresponding_calendar.id
 
       verb = event.new_record? ? "Created" : "Found"
       Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
@@ -62,6 +115,7 @@ module CalendarShadowHelper
         {
           summary:     "(Busy)",
           description: DescriptionTagHelper.add_source_event_id_tag_to_description(
+            event.id,
             "The calendar owner is busy at this time with a private event.\n\n" \
             "This notice was created using shadowcal.com: Block personal events " \
             "off your work calendar without sharing details."

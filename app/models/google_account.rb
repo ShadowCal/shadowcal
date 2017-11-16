@@ -32,6 +32,7 @@ class GoogleAccount < ActiveRecord::Base
   end
 
   def should_refresh_token?
+    return false if skip_callbacks
     token_expires_at < Time.current unless token_expires_at.nil? || refresh_token.blank?
   end
 end

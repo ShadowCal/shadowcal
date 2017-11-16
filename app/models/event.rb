@@ -11,9 +11,11 @@ class Event < ActiveRecord::Base
   }
 
   has_one :google_account, through: :calendar
+  has_one :user, through: :google_account
   delegate :access_token, to: :google_account
 
   before_save :push_date_changes_to_corresponding_event, if: :moved?
+  before_save :toggle_shadow, if: :is_attending_changed?
 
   def moved?
     return false if new_record?
@@ -25,17 +27,25 @@ class Event < ActiveRecord::Base
     source_event || shadow_event
   end
 
+  def corresponding_calendar
+    @corresponding_calendar ||= calendar.user.sync_pairs.find{ |pair| pair.from_calendar_id = calendar_id }
+  end
+
   private
 
+  def log(*msg)
+    [DebugHelper.identify_event(self), *msg].join("\t").tap{ |msg_str| Rails.logger.debug msg_str }
+  end
+
   def push_date_changes_to_corresponding_event
-    Rails.logger.debug [DebugHelper.identify_event(self), "Saving after being moved. Corresponding event?"].join "\t"
+    log "Saving after being moved. Corresponding event?"
 
     if corresponding_event.nil?
-      Rails.logger.debug [DebugHelper.identify_event(self), "No corresponding event to move"].join "\t"
+      log "No corresponding event to move"
       return true
     end
 
-    Rails.logger.debug [DebugHelper.identify_event(self), "Moving corresponding event:", DebugHelper.identify_event(corresponding_event)].join "\t"
+    log "Moving corresponding event:", DebugHelper.identify_event(corresponding_event)
 
     GoogleCalendarApiHelper
       .move_event(
@@ -49,5 +59,52 @@ class Event < ActiveRecord::Base
     Event
       .where(id: corresponding_event.id)
       .update_all(start_at: start_at, end_at: end_at)
+  end
+
+  def toggle_shadow
+    return true if skip_callbacks
+    log "is_attending changed from #{is_attending_was.inspect} => #{is_attending.inspect}"
+
+    # Ignore attendance changes on shadows themselves
+    if !source_event_id.nil?
+      log "Event is a shadow, ignoring that is_attending changed. Aborting."
+      return true
+    end
+
+    if corresponding_calendar.nil?
+      log "Calendar to which event belongs is not casting a shadow. Aborting."
+      return true
+    end
+
+    begin
+      transaction do
+        shadow_exists = !!(shadow_event&.external_id)
+
+        log "Shadow Exists?", shadow_exists.inspect
+
+        if shadow_exists && is_attending == false
+          log(
+            "No longer attending this event. Removing shadow from external calendar",
+            shadow_event.calendar.external_id,
+            shadow_event.external_id
+          )
+
+          Event
+            .where(id: shadow_event.id)
+            .destroy_all
+
+          CalendarShadowHelper.destroy_shadow_of_event(self)
+
+        elsif !shadow_exists && is_attending == true
+          log "Now attending this event. Creating remote shadow..."
+
+          CalendarShadowHelper.create_shadow_of_event(self)
+        end
+      end
+    rescue CalendarShadowHelper::ShadowHelperError => e
+      log "Calendar Error: ", e
+    end
+
+    true
   end
 end
