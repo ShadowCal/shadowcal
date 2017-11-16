@@ -66,6 +66,8 @@ group :development, :test do
   gem "rspec_junit_formatter"
 
   gem "webmock"
+
+  gem 'guard-rspec', require: false
 end
 
 # Use ActiveModel has_secure_password
