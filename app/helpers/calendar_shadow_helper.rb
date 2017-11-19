@@ -107,17 +107,17 @@ module CalendarShadowHelper
       raise ShadowHelperError, msg
     end
 
-    Event.where(source_event_id: source_event.id).first_or_initialize do |event|
+    Event.where(source_event_id: source_event.id).first_or_initialize{ |event|
       event.name = "(Busy)"
       event.start_at = source_event.start_at
       event.end_at = source_event.end_at
       event.calendar_id = source_event.corresponding_calendar.id
-
+    }.tap { |event|
       verb = event.new_record? ? "Created" : "Found"
       Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
 
       event.save!
-    end
+    }
   end
 
   def create_remote_shadows(calendar, events)
