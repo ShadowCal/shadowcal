@@ -4,8 +4,11 @@ require "ostruct"
 
 class OpenStruct2 < OpenStruct
   def id
-    puts "returning id: #{@id}"
     @id
+  end
+
+  def id=(id)
+    @id = id
   end
 end
 
