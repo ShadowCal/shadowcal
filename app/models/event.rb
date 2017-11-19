@@ -28,7 +28,29 @@ class Event < ActiveRecord::Base
   end
 
   def corresponding_calendar
-    @corresponding_calendar ||= calendar.user.sync_pairs.find{ |pair| pair.from_calendar_id = calendar_id }
+    # Not just corresponding_event&.calendar because it really depends on the
+    # calendar/sync-pair status, rather than just is there an event which
+    # links to it as the source (of which there may be more than one... )
+    sp = user.sync_pairs.find do |pair|
+      pair.from_calendar == calendar || pair.to_calendar == calendar
+    end
+
+    return nil if sp.nil?
+
+    sp.to_calendar == calendar ? sp.from_calendar : sp.to_calendar
+  end
+
+  def description
+    if source_event_id.blank?
+      ""
+    else
+      DescriptionTagHelper.add_source_event_id_tag_to_description(
+        event.id,
+        "The calendar owner is busy at this time with a private event.\n\n" \
+        "This notice was created using shadowcal.com: Block personal events " \
+        "off your work calendar without sharing details."
+      )
+    end
   end
 
   private
@@ -98,7 +120,7 @@ class Event < ActiveRecord::Base
         elsif !shadow_exists && is_attending == true
           log "Now attending this event. Creating remote shadow..."
 
-          CalendarShadowHelper.create_shadow_of_event(self)
+          CalendarShadowHelper.push_shadow_of_event(self)
         end
       end
     rescue CalendarShadowHelper::ShadowHelperError => e

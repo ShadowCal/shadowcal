@@ -3,8 +3,40 @@
 require "rails_helper"
 
 describe "Event", type: :model do
-  let(:new_event) { FactoryBot.build :event }
-  let(:shadow) { FactoryBot.create :event, :is_shadow }
+  let(:new_event) { build :event }
+
+  let(:pair) { create :sync_pair }
+  let(:source_event) { create :event, calendar_id: pair.from_calendar_id }
+  let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
+
+  describe "#corresponding_calendar" do
+    subject { event.corresponding_calendar }
+    context "when event is not synced" do
+      let(:event) { create :event }
+
+      it { is_expected.to be_nil }
+
+      context "but has a stale shadow" do
+        let(:event) { create :event, :has_shadow }
+
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "when event is synced" do
+      context "and is a shadow" do
+        let(:event) { shadow_event }
+
+        it { is_expected.to eq source_event.calendar }
+      end
+
+      context "and is a source" do
+        let(:event) { shadow_event.source_event }
+
+        it { is_expected.to eq shadow_event.calendar }
+      end
+    end
+  end
 
   describe "#toggle_shadow" do
     subject { event_to_test.send(:toggle_shadow) }
@@ -13,7 +45,7 @@ describe "Event", type: :model do
       let(:event_to_test) { create :event }
 
       before(:each) {
-        expect(GoogleCalendarApiHelper).not_to receive(:create_events)
+        expect(GoogleCalendarApiHelper).not_to receive(:push_events)
         expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
       }
 
@@ -26,10 +58,6 @@ describe "Event", type: :model do
     end
 
     context "on a synced event" do
-      let(:pair) { FactoryBot.create :sync_pair }
-      let(:source) { FactoryBot.create :event, calendar_id: pair.from_calendar_id }
-      let(:shadow) { FactoryBot.create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source.id }
-
       context "when is_attending is changing from false to true" do
         before(:each) {
           Event.where(id: event_to_test).update_all is_attending: false # Includes a save to clear callbacks
@@ -38,10 +66,10 @@ describe "Event", type: :model do
         before(:each) { event_to_test.is_attending = true } # Leaves unsaved, so callbacks are called
 
         context "when the event is a shadow" do
-          let(:event_to_test) { shadow }
+          let(:event_to_test) { shadow_event }
 
           before(:each) {
-            expect(GoogleCalendarApiHelper).not_to receive(:create_events)
+            expect(GoogleCalendarApiHelper).not_to receive(:push_events)
             expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
           }
 
@@ -49,15 +77,15 @@ describe "Event", type: :model do
         end
 
         context "and the event is a proper source event" do
-          let(:event_to_test) { source }
+          let(:event_to_test) { source_event }
 
           context "and a shadow event exists in the DB" do
-            before(:each) { shadow }
+            before(:each) { shadow_event }
             before(:each) { expect(event_to_test.shadow_event).not_to be_nil } # Sanity
 
             it "won't try to create the remote calendar event" do
               expect(CalendarShadowHelper)
-                .not_to receive(:create_shadow_of_event)
+                .not_to receive(:push_shadow_of_event)
                 .with(event_to_test)
 
               expect(subject).to be true
@@ -70,7 +98,7 @@ describe "Event", type: :model do
             context "and the remote calendar request fails" do
               before(:each) {
                 expect(CalendarShadowHelper)
-                  .to receive(:create_shadow_of_event)
+                  .to receive(:push_shadow_of_event)
                   .with(event_to_test)
                   .and_raise(CalendarShadowHelper::ShadowHelperError, "failure")
               }
@@ -81,9 +109,9 @@ describe "Event", type: :model do
             context "and the remote calendar request succeeds" do
               before(:each) {
                 expect(CalendarShadowHelper)
-                  .to receive(:create_shadow_of_event)
+                  .to receive(:push_shadow_of_event)
                   .with(event_to_test) do
-                    shadow
+                    shadow_event
                   end
               }
 
@@ -101,10 +129,10 @@ describe "Event", type: :model do
         before(:each) { event_to_test.is_attending = false } # Leaves unsaved, so callbacks are called
 
         context "and the event is the shadow" do
-          let(:event_to_test) { shadow }
+          let(:event_to_test) { shadow_event }
 
           before(:each) {
-            expect(GoogleCalendarApiHelper).not_to receive(:create_events)
+            expect(GoogleCalendarApiHelper).not_to receive(:push_events)
             expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
           }
 
@@ -112,7 +140,7 @@ describe "Event", type: :model do
         end
 
         context "and the event is a proper source event" do
-          let(:event_to_test) { source }
+          let(:event_to_test) { source_event }
 
           context "but a shadow event already doesn't exist in the DB" do
             before(:each) { expect(event_to_test.shadow_event).to be_nil } # Sanity
@@ -127,7 +155,7 @@ describe "Event", type: :model do
           end
 
           context "and the shadow event already exists in the DB" do
-            before(:each) { shadow }
+            before(:each) { shadow_event }
             before(:each) { expect(event_to_test.shadow_event).not_to be_nil } # Sanity
 
             context "and the remote calendar request fails" do
@@ -146,7 +174,7 @@ describe "Event", type: :model do
                 expect(CalendarShadowHelper)
                   .to receive(:destroy_shadow_of_event)
                   .with(event_to_test) do
-                    shadow
+                    shadow_event
                   end
               }
 

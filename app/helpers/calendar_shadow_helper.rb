@@ -19,7 +19,7 @@ module CalendarShadowHelper
 
   def destroy_shadow_of_event(source_event)
     unless source_event.source_event_id.nil?
-      raise ShadowVsSourceMismatchError.new("Cannot delete shadow of shadow", source_event)
+      raise ShadowVsSourceMismatchError.new("Cannot delete the shadow of a shadow", source_event)
     end
 
     shadow = source_event.shadow_event
@@ -35,17 +35,30 @@ module CalendarShadowHelper
 
       shadow.destroy
     rescue StandardError => e
-      Rails.logger.debug [DebugHelper.identify_event(source_event), "Remote service fail:", e].join(" ")
+      Rails.logger.debug [DebugHelper.identify_event(source_event), "Remote service fail? ", e].join(" ")
     end
 
     true
   end
 
-  def create_shadow_of_event(source_event)
-    GoogleCalendarApiHelper.create_events(
-      source_event.corresponding_calendar,
-      [source_event]
-    )
+  def push_shadow_of_event(source_event)
+    unless source_event.source_event_id.nil?
+      raise ShadowVsSourceMismatchError.new("Cannot create the shadow of a shadow", source_event)
+    end
+
+    return true if not source_event&.shadow_event&.external_id.nil?
+
+    begin
+      GoogleCalendarApiHelper.push_event(
+        source_event.corresponding_calendar.access_token,
+        source_event.corresponding_calendar.external_id,
+        shadow_of_event(source_event)
+      )
+    rescue StandardError => e
+      Rails.logger.debug [DebugHelper.identify_event(source_event), "Remote service fail? ", e].join(" ")
+    end
+
+    true
   end
 
   private
@@ -95,7 +108,7 @@ module CalendarShadowHelper
     end
 
     Event.where(source_event_id: source_event.id).first_or_initialize do |event|
-      event.name = source_event.name
+      event.name = "(Busy)"
       event.start_at = source_event.start_at
       event.end_at = source_event.end_at
       event.calendar_id = source_event.corresponding_calendar.id
@@ -108,26 +121,11 @@ module CalendarShadowHelper
   end
 
   def create_remote_shadows(calendar, events)
-    GoogleCalendarApiHelper.create_events(
+    GoogleCalendarApiHelper.push_events(
       calendar.access_token,
       calendar.external_id,
       events.map do |event|
-        {
-          summary:     "(Busy)",
-          description: DescriptionTagHelper.add_source_event_id_tag_to_description(
-            event.id,
-            "The calendar owner is busy at this time with a private event.\n\n" \
-            "This notice was created using shadowcal.com: Block personal events " \
-            "off your work calendar without sharing details."
-          ),
-          start:       {
-            date_time: event.start_at.iso8601
-          },
-          end:         {
-            date_time: event.end_at.iso8601
-          },
-          visibility:  "public"
-        }
+        shadow_of_event(event)
       end
     )
   end

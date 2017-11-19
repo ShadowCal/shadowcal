@@ -4,11 +4,54 @@ require "rails_helper"
 require "ostruct"
 
 describe GoogleCalendarApiHelper do
-  describe "#service_event_item_to_event_model" do
-    let!(:existing_event) { create :event }
-    let!(:item) {
+  let(:service) { double('service') }
+  let(:item) { double('item') }
+
+  before(:each) {
+    allow(GoogleCalendarApiHelper)
+      .to receive(:build_service)
+      .and_return(service)
+
+    allow(item)
+      .to receive(:id)
+      .and_return(Faker::Internet.unique.password(10, 20))
+  }
+
+  describe "#push_event" do
+    subject { GoogleCalendarApiHelper.push_event(access_token, calendar_id, event) }
+
+    let(:access_token) { Faker::Internet.unique.password(10, 20) }
+    let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
+    let(:event) { create :event, external_id: nil }
+
+    before(:each) {
+      expect(service)
+        .to receive(:insert_event)
+        .with(calendar_id, instance_of(Google::Apis::CalendarV3::Event))
+        .and_return(item)
+    }
+
+    after(:each) {
+      expect(event.external_id)
+        .to eq item.id
+    }
+
+    it { is_expected.to be true }
+  end
+
+  describe "#upsert_service_event_item" do
+    subject {
+      GoogleCalendarApiHelper
+        .send(
+          :upsert_service_event_item,
+          existing_event.google_account.email,
+          item
+        )
+    }
+
+    let!(:existing_event) { create :event, external_id: Faker::Internet.password(10, 20) }
+    let(:item) {
       {
-        id: existing_event.external_id,
         start: {
           date: Date.today
         },
@@ -21,16 +64,12 @@ describe GoogleCalendarApiHelper do
       }.to_ostruct
     }
 
-    def result
-      subject.send(
-        :service_event_item_to_event_model,
-        existing_event.google_account.email,
-        item
-      )
-    end
+    before(:each) {
+      allow(item).to receive(:id).and_return(existing_event.external_id)
+    }
 
     it "returns an Event" do
-      expect(result).to be_a Event
+      expect(subject).to be_a Event
     end
 
     context "with an un-previously-seen event" do
@@ -40,7 +79,7 @@ describe GoogleCalendarApiHelper do
 
       it "creates a new instance but does not save it" do
         expect(
-          result
+          subject
             .new_record?
         ).to be true
       end
@@ -48,8 +87,17 @@ describe GoogleCalendarApiHelper do
 
     context "when event exists in db" do
       it "finds an existing event by external_id" do
+
+        # puts "ITEM ID WAS ORIGINALLY", item.id
+        # existing_event.update_attributes external_id: 'abc123'
+        # item[:id] = existing_event.external_id
+
+        # puts "LOOKING FOR EVENT", existing_event.inspect
+        # puts "BASED ON ITEM", item.inspect
+        # puts "WITH ITEM.ID", item.id.inspect
+
         expect(
-          result
+          subject
         ).to eq existing_event
       end
 
@@ -60,7 +108,7 @@ describe GoogleCalendarApiHelper do
           item.start.time_zone = 'America/Los_Angeles'
 
           expect(
-            result
+            subject
               .start_at
               .to_s
           ).to eq ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.now.beginning_of_day).to_s
@@ -72,7 +120,7 @@ describe GoogleCalendarApiHelper do
           item.end.time_zone = 'America/Los_Angeles'
 
           expect(
-            result
+            subject
               .end_at
               .to_s
           ).to eq ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.now.beginning_of_day).to_s
@@ -86,7 +134,7 @@ describe GoogleCalendarApiHelper do
           item.start.time_zone = nil
 
           expect(
-            result
+            subject
               .start_at
           ).to be_within(1.second).of(Time.now)
         end
@@ -97,7 +145,7 @@ describe GoogleCalendarApiHelper do
           item.end.time_zone = nil
 
           expect(
-            result
+            subject
               .end_at
           ).to be_within(1.second).of(Time.now)
         end
@@ -107,7 +155,7 @@ describe GoogleCalendarApiHelper do
         item.summary = "new name"
 
         expect(
-          result
+          subject
             .name
         ).to eq "new name"
       end
@@ -134,7 +182,7 @@ describe GoogleCalendarApiHelper do
             ]
 
             expect(
-              result
+              subject
                 .is_attending
             ).to be true
           end
@@ -160,7 +208,7 @@ describe GoogleCalendarApiHelper do
             ]
 
             expect(
-              result
+              subject
                 .is_attending
             ).to be false
           end
@@ -180,7 +228,7 @@ describe GoogleCalendarApiHelper do
             ]
 
             expect(
-              result
+              subject
                 .is_attending
             ).to be false
           end
@@ -200,7 +248,7 @@ describe GoogleCalendarApiHelper do
             ]
 
             expect(
-              result
+              subject
                 .is_attending
             ).to be false
           end
@@ -211,7 +259,7 @@ describe GoogleCalendarApiHelper do
         item.description = Faker::Lorem.sentence + "\n\nSourceEvent#123"
 
         expect(
-          result
+          subject
             .source_event_id
         ).to eq 123
       end

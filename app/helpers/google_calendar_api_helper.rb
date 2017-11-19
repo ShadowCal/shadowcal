@@ -21,7 +21,7 @@ module GoogleCalendarApiHelper
 
     # Return each google api calendar as an ActiveRecord Calendar model
     service.list_calendar_lists.items.map do |item|
-      service_calendar_item_to_calendar_model(item)
+      upsert_service_calendar_item(item)
     end
   end
 
@@ -32,7 +32,7 @@ module GoogleCalendarApiHelper
 
     # Return each google api calendar as an ActiveRecord Calendar model
     get_calendar_events(service, calendar_id).map do |item|
-      service_event_item_to_event_model(my_email, item)
+      upsert_service_event_item(my_email, item)
     end
   end
 
@@ -44,20 +44,53 @@ module GoogleCalendarApiHelper
                     )
                     .item
 
-    service_event_item_to_event_model(my_email, service_event)
+    upsert_service_event_item(my_email, service_event)
   end
 
-  def create_events(access_token, calendar_id, events)
+  def push_events(access_token, calendar_id, events)
     service = build_service(access_token)
 
     service.batch do |batch|
-      events.map do |event|
+      events.each do |event|
         batch.insert_event(
           calendar_id,
-          Google::Apis::CalendarV3::Event.new(event)
-        )
+          Google::Apis::CalendarV3::Event.new(
+            summary:     event.name,
+            description: event.description,
+            start:       {
+              date_time: event.start_at.iso8601
+            },
+            end:         {
+              date_time: event.end_at.iso8601
+            },
+            visibility:  "public"
+          )
+        ) do |item|
+          event.update_attributes external_id: item.id
+        end
       end
     end
+  end
+
+  def push_event(access_token, calendar_id, event)
+    service = build_service(access_token)
+
+    item = service.insert_event(
+      calendar_id,
+      Google::Apis::CalendarV3::Event.new(
+        summary:     event.name,
+        description: event.description,
+        start:       {
+          date_time: event.start_at.iso8601
+        },
+        end:         {
+          date_time: event.end_at.iso8601
+        },
+        visibility:  "public"
+      )
+    )
+
+    event.update_attributes external_id: item.id
   end
 
   def delete_event(access_token, calendar_id, event_id)
@@ -84,13 +117,13 @@ module GoogleCalendarApiHelper
 
   private
 
-  def service_calendar_item_to_calendar_model(item)
+  def upsert_service_calendar_item(item)
     Calendar.where(external_id: item.id).first_or_create do |calendar|
       calendar.name = item.summary
     end
   end
 
-  def service_event_item_to_event_model(my_email, item)
+  def upsert_service_event_item(my_email, item)
     Event.where(
       external_id: item.id
     ).first_or_initialize do |event|
