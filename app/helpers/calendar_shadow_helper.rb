@@ -46,7 +46,7 @@ module CalendarShadowHelper
       raise ShadowVsSourceMismatchError.new("Cannot create the shadow of a shadow", source_event)
     end
 
-    return true if not source_event&.shadow_event&.external_id.nil?
+    return true unless source_event&.shadow_event&.external_id.nil?
 
     begin
       GoogleCalendarApiHelper.push_event(
@@ -77,6 +77,7 @@ module CalendarShadowHelper
   def cast_new_shadows(from_calendar, to_calendar, batch_size = 100)
     from_calendar
       .events
+      .attending
       .without_shadows
       .tap { |result| Rails.logger.debug [from_calendar.name, to_calendar.name, "Need to create #{result.count} shadow(s)"].join "\t" }
       .find_in_batches(batch_size: batch_size) do |events_batch|
@@ -90,7 +91,7 @@ module CalendarShadowHelper
 
       Event.where(id: shadows).update_all(calendar_id: to_calendar.id)
 
-      create_remote_shadows(to_calendar, shadows)
+      create_remote_events(to_calendar, shadows)
     end
   end
 
@@ -112,21 +113,21 @@ module CalendarShadowHelper
       event.start_at = source_event.start_at
       event.end_at = source_event.end_at
       event.calendar_id = source_event.corresponding_calendar.id
+      event.is_attending = source_event.is_attending
     }.tap { |event|
       verb = event.new_record? ? "Created" : "Found"
-      Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
 
       event.save!
+
+      Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
     }
   end
 
-  def create_remote_shadows(calendar, events)
+  def create_remote_events(calendar, events)
     GoogleCalendarApiHelper.push_events(
       calendar.access_token,
       calendar.external_id,
-      events.map do |event|
-        shadow_of_event(event)
-      end
+      events
     )
   end
 

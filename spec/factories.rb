@@ -50,7 +50,8 @@ FactoryBot.define do
       user { build(:user) }
     end
 
-    external_id { generate(:calendar_id) }
+    name { generate(:calendar_id) }
+    external_id { Faker::Internet.password(10, 20) }
     google_account { build :google_account, user: user }
   end
 

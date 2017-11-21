@@ -7,6 +7,75 @@ describe CalendarShadowHelper do
   let(:source_event) { create :event, calendar_id: pair.from_calendar_id }
   let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
 
+  describe "#cast_from_to" do
+    let(:pair) { create :sync_pair }
+    let(:from_calendar) { pair.from_calendar }
+    let(:to_calendar) { pair.to_calendar }
+    let(:event_not_attending) { create :event, name: "not attending", calendar: from_calendar, is_attending: false }
+    let(:event_already_pushed) { create :event, :has_shadow, name: "already_pushed", calendar: from_calendar }
+    let(:event_on_destination_calendar) { create :event, name: "on destination calendar", calendar: to_calendar, is_attending: true }
+
+    subject { CalendarShadowHelper.cast_from_to(from_calendar, to_calendar) }
+
+    before(:each) {
+      expect(CalendarShadowHelper)
+        .to receive(:update_calendar_events_cache)
+        .with(from_calendar)
+
+      expect(CalendarShadowHelper)
+        .to receive(:update_calendar_events_cache)
+        .with(to_calendar)
+
+      expect(GoogleCalendarApiHelper)
+        .not_to receive(:push_events)
+        .with(
+          anything,
+          anything,
+          array_including(event_not_attending)
+        )
+
+      expect(GoogleCalendarApiHelper)
+        .not_to receive(:push_events)
+        .with(
+          anything,
+          anything,
+          array_including(event_already_pushed)
+        )
+
+      expect(GoogleCalendarApiHelper)
+        .not_to receive(:push_events)
+        .with(
+          anything,
+          anything,
+          array_including(event_on_destination_calendar)
+        )
+    }
+
+    it "will cast the shadow of an event that is being attended" do
+      event_attending = create :event, name: "push me", calendar: from_calendar, is_attending: true
+
+      expect(GoogleCalendarApiHelper)
+        .to receive(:push_events) do |access_token, external_id, shadows|
+          expect(access_token)
+            .to eq to_calendar.access_token
+
+          expect(external_id)
+            .to eq to_calendar.external_id
+
+          expect(shadows.map(&:attributes))
+            .to contain_exactly(
+              hash_including(
+                "source_event_id" => event_attending.id,
+                "is_attending" => true
+              )
+            )
+        end
+
+      expect{ subject }
+        .to change{ Event.count }.by(1)
+    end
+  end
+
   describe "#push_shadow_of_event" do
     subject { CalendarShadowHelper.push_shadow_of_event(event).tap { event.reload } }
 
@@ -65,11 +134,11 @@ describe CalendarShadowHelper do
         it { is_expected.to be true }
 
         it "wont create any stray events" do
-          expect{subject}.not_to change{Event.count}
+          expect{ subject }.not_to(change{ Event.count })
         end
       end
 
-      context" with a local shadow with an existing external_id" do
+      context "with a local shadow with an existing external_id" do
         before(:each) {
           shadow_event
 
@@ -95,7 +164,7 @@ describe CalendarShadowHelper do
             .and_raise(CalendarShadowHelper::ShadowHelperError)
         }
 
-        it { expect{subject}.not_to change{Event.count} }
+        it { expect{ subject }.not_to(change{ Event.count }) }
 
         it { is_expected.to be true }
       end

@@ -5,6 +5,10 @@ class Event < ActiveRecord::Base
   belongs_to :source_event, foreign_key: :source_event_id, class_name: "Event"
   has_one :shadow_event, foreign_key: :source_event_id, class_name: "Event", dependent: :nullify
 
+  scope :attending, lambda {
+    where(is_attending: true)
+  }
+
   scope :without_shadows, lambda {
     joins("LEFT JOIN events as e2 on events.id = e2.source_event_id")
       .where("e2.source_event_id IS NULL")
