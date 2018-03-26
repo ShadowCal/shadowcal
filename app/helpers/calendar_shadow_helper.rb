@@ -3,6 +3,14 @@
 module CalendarShadowHelper
   class ShadowHelperError < StandardError; end
 
+  class CastingUnsyncdCalendars < ShadowHelperError
+    def initialize(from_calendar_id, to_calendar_id)
+      @from_calendar_id = from_calendar_id
+      @to_calendar_id = to_calendar_id
+      super("Casting between unsynced calendars")
+    end
+  end
+
   class ShadowVsSourceMismatchError < ShadowHelperError;
     def initialize(msg, event)
       @event = event
@@ -11,6 +19,13 @@ module CalendarShadowHelper
   end
 
   def cast_from_to(from_calendar, to_calendar)
+    sync_pair_between = SyncPair.find_by_from_calendar_id_and_to_calendar_id(
+      from_calendar.id,
+      to_calendar.id
+    )
+
+    raise CastingUnsyncdCalendars.new(from_calendar.id, to_calendar.id) if sync_pair_between.nil?
+
     update_calendar_events_cache(to_calendar)
     update_calendar_events_cache(from_calendar)
 
@@ -87,7 +102,9 @@ module CalendarShadowHelper
 
   def cast_shadows_of_events_on_calendar(events_batch, to_calendar)
     Event.transaction do
-      shadows = events_batch.map { |source_event| shadow_of_event(source_event) }
+      shadows = events_batch
+                .reject(&:outside_work_hours)
+                .map { |source_event| shadow_of_event(source_event) }
 
       Event.where(id: shadows).update_all(calendar_id: to_calendar.id)
 

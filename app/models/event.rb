@@ -6,7 +6,8 @@ class Event < ActiveRecord::Base
   has_one :shadow_event, foreign_key: :source_event_id, class_name: "Event", dependent: :nullify
 
   scope :attending, lambda {
-    where(is_attending: true)
+    # Fully qualified table name to prevent "ambuous column" when also joining to self
+    where("events.is_attending = ?", true)
   }
 
   scope :without_shadows, lambda {
@@ -35,7 +36,7 @@ class Event < ActiveRecord::Base
     # Not just corresponding_event&.calendar because it really depends on the
     # calendar/sync-pair status, rather than just is there an event which
     # links to it as the source (of which there may be more than one... )
-    sp = user.sync_pairs.find do |pair|
+    sp = calendar.google_account.user.sync_pairs.find do |pair|
       pair.from_calendar == calendar || pair.to_calendar == calendar
     end
 
@@ -49,12 +50,33 @@ class Event < ActiveRecord::Base
       ""
     else
       DescriptionTagHelper.add_source_event_id_tag_to_description(
-        event.id,
+        id,
         "The calendar owner is busy at this time with a private event.\n\n" \
         "This notice was created using shadowcal.com: Block personal events " \
         "off your work calendar without sharing details."
       )
     end
+  end
+
+  def outside_work_hours
+    local_start_at = start_at.in_time_zone(calendar.time_zone)
+    local_end_at = end_at.in_time_zone(calendar.time_zone)
+
+    start_hour = local_start_at.hour
+    end_hour = local_end_at.hour
+    same_day = local_end_at - local_start_at < 1.day
+    start_day = local_start_at.beginning_of_day
+    end_day = local_end_at.beginning_of_day
+
+    start_weekend = start_at.saturday? || start_at.sunday?
+    end_weekend = end_at.saturday? || end_at.sunday?
+    return true if start_weekend && end_weekend && end_day - start_day < 2.day
+
+    return true if start_hour < 8 && end_hour < 8 && same_day
+    return true if start_hour >= 19 && end_hour >= 19 && same_day
+    return true if start_hour >= 19 && end_hour < 8 && end_day - start_day == 1.day
+
+    false
   end
 
   private

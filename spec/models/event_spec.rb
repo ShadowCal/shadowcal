@@ -2,12 +2,102 @@
 
 require "rails_helper"
 
+def build_tests_outside_work_hours
+  let(:calendar) { create :calendar, time_zone: time_zone }
+  let(:start_of_day) { ActiveSupport::TimeZone.new(time_zone).parse('00:00:00').utc + 1.day }
+  let(:end_of_day) { start_of_day.end_of_day }
+  let(:before_8_am) { start_of_day + 7.hours + 59.minutes }
+  let(:after_7_pm) { start_of_day + 19.hours + 1.minutes }
+  let(:midday) { start_of_day + 12.hours }
+  let(:tomorrow_start_of_day) { start_of_day + 1.day }
+  let(:tomorrow_end_of_day) { end_of_day + 1.day }
+  let(:tomorrow_before_8_am) { before_8_am + 1.day }
+  let(:tomorrow_after_7_pm) { after_7_pm + 1.day }
+  let(:tomorrow_midday) { midday + 1.day }
+
+  context "starting and ending before 8am" do
+    let(:event) { create :event, calendar: calendar, start_at: before_8_am - 10.minutes, end_at: before_8_am }
+
+    it { is_expected.to be true }
+  end
+
+  context "starting and ending after 6pm" do
+    let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: after_7_pm + 10.minutes }
+
+    it { is_expected.to be true }
+  end
+
+  context "starting before 8am, ending before 6pm" do
+    let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: midday }
+
+    it { is_expected.to be false }
+  end
+
+  context "starting before 8am, ending before 8am the next day" do
+    let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: tomorrow_before_8_am }
+
+    it { is_expected.to be false }
+  end
+
+  context "starting before 8am, ending after 6pm" do
+    let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: after_7_pm }
+
+    it { is_expected.to be false }
+  end
+
+  context "starting after 6pm, ending before 8am the next day" do
+    let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_before_8_am }
+
+    it { is_expected.to be true }
+  end
+
+  context "starting after 6pm, ending after 6pm the next day" do
+    let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_after_7_pm }
+
+    it { is_expected.to be false }
+  end
+
+  context "all day event" do
+    let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+
+    it { is_expected.to be false }
+  end
+
+  context "all day tomorrow" do
+    let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+
+    it { is_expected.to be false }
+  end
+end
+
 describe "Event", type: :model do
   let(:new_event) { build :event }
 
   let(:pair) { create :sync_pair }
   let(:source_event) { create :event, calendar_id: pair.from_calendar_id }
   let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
+
+  describe "#outside_work_hours" do
+    subject { event.outside_work_hours }
+
+    context "Time Zone: Pacific" do
+      let(:time_zone) { 'America/Los_Angeles' }
+
+      build_tests_outside_work_hours
+    end
+
+    context "Time Zone: Eastern" do
+      let(:time_zone) { 'America/New_York' }
+
+      build_tests_outside_work_hours
+    end
+
+    context "Time Zone: UTC" do
+      let(:time_zone) { 'UTC' }
+
+      build_tests_outside_work_hours
+    end
+  end
 
   describe "#corresponding_calendar" do
     subject { event.corresponding_calendar }
@@ -253,7 +343,7 @@ describe "Event", type: :model do
     end
 
     context "on a shadow event" do
-      let(:event) { create :event, :is_shadow }
+      let(:event) { create :syncable_event, :is_shadow }
 
       it "pushes dates to the source event" do
         expect(GoogleCalendarApiHelper)
@@ -289,7 +379,7 @@ describe "Event", type: :model do
     end
 
     context "on a source event" do
-      let(:event) { create :event, :has_shadow }
+      let(:event) { create :syncable_event, :has_shadow }
 
       it "pushes dates to the shadow event" do
         expect(GoogleCalendarApiHelper)
@@ -325,7 +415,7 @@ describe "Event", type: :model do
     end
 
     context "on an event with no corresponding event" do
-      let(:event) { create :event }
+      let(:event) { create :syncable_event }
 
       it "does not touch the api" do
         expect(GoogleCalendarApiHelper)

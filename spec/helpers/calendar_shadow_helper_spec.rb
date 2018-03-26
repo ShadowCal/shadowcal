@@ -11,68 +11,83 @@ describe CalendarShadowHelper do
     let(:pair) { create :sync_pair }
     let(:from_calendar) { pair.from_calendar }
     let(:to_calendar) { pair.to_calendar }
-    let(:event_not_attending) { create :event, name: "not attending", calendar: from_calendar, is_attending: false }
-    let(:event_already_pushed) { create :event, :has_shadow, name: "already_pushed", calendar: from_calendar }
-    let(:event_on_destination_calendar) { create :event, name: "on destination calendar", calendar: to_calendar, is_attending: true }
+    let(:event_not_attending) { create :syncable_event, name: "not attending", calendar: from_calendar, is_attending: false }
+    let(:event_already_pushed) { create :syncable_event, :has_shadow, name: "already_pushed", calendar: from_calendar }
+    let(:event_on_destination_calendar) { create :syncable_event, name: "on destination calendar", calendar: to_calendar }
+    let(:event_will_be_synced) { create :syncable_event, name: "will sync", calendar: from_calendar }
+    let(:event_on_weekend) { create :syncable_event, :weekend, name: "weekend" }
+    let(:event_after_work_hours) { create :syncable_event, :after_work_hours, name: "after hours" }
 
     subject { CalendarShadowHelper.cast_from_to(from_calendar, to_calendar) }
 
-    before(:each) {
-      expect(CalendarShadowHelper)
-        .to receive(:update_calendar_events_cache)
-        .with(from_calendar)
+    context "with two calendars that are not synced" do
+      before(:each) { pair.delete }
 
-      expect(CalendarShadowHelper)
-        .to receive(:update_calendar_events_cache)
-        .with(to_calendar)
+      it "will not contact any remote services" do
+        expect{ subject }
+          .to raise_error CalendarShadowHelper::CastingUnsyncdCalendars
+      end
+    end
 
-      expect(GoogleCalendarApiHelper)
-        .not_to receive(:push_events)
-        .with(
-          anything,
-          anything,
-          array_including(event_not_attending)
-        )
+    context "with two calendars that are being synced" do
+      before(:each) {
+        expect(CalendarShadowHelper)
+          .to receive(:update_calendar_events_cache)
+          .with(from_calendar)
 
-      expect(GoogleCalendarApiHelper)
-        .not_to receive(:push_events)
-        .with(
-          anything,
-          anything,
-          array_including(event_already_pushed)
-        )
+        expect(CalendarShadowHelper)
+          .to receive(:update_calendar_events_cache)
+          .with(to_calendar)
+      }
 
-      expect(GoogleCalendarApiHelper)
-        .not_to receive(:push_events)
-        .with(
-          anything,
-          anything,
-          array_including(event_on_destination_calendar)
-        )
-    }
+      context "with no events" do
+        it { is_expected.to be_nil }
+      end
 
-    it "will cast the shadow of an event that is being attended" do
-      event_attending = create :event, name: "push me", calendar: from_calendar, is_attending: true
+      context "with events that won't be synced" do
+        before(:each) {
+          event_not_attending
+          event_already_pushed
+          event_on_destination_calendar
+          # event_on_weekend
+          # event_after_work_hours
 
-      expect(GoogleCalendarApiHelper)
-        .to receive(:push_events) do |access_token, external_id, shadows|
-          expect(access_token)
-            .to eq to_calendar.access_token
+          expect(GoogleCalendarApiHelper)
+            .not_to receive(:push_events)
+        }
 
-          expect(external_id)
-            .to eq to_calendar.external_id
+        it { is_expected.to be_nil }
+      end
 
-          expect(shadows.map(&:attributes))
-            .to contain_exactly(
-              hash_including(
-                "source_event_id" => event_attending.id,
-                "is_attending" => true
-              )
-            )
+      context "with events that will be synced" do
+        before(:each) {
+          event_will_be_synced
+
+          expect(GoogleCalendarApiHelper)
+            .to receive(:push_events) do |access_token, external_id, shadows|
+              expect(access_token)
+                .to eq to_calendar.access_token
+
+              expect(external_id)
+                .to eq to_calendar.external_id
+
+              expect(shadows.map(&:attributes))
+                .to include(
+                  hash_including(
+                    "source_event_id" => event_will_be_synced.id,
+                  )
+                )
+            end
+        }
+
+        it { is_expected.to be_nil }
+
+        context "when one of the batch requests fails" do
+          it "will save external_id of the events which were created successfully"
+          it "will not save any external_id of the events which failed to create"
+          it "will report the error"
         end
-
-      expect{ subject }
-        .to change{ Event.count }.by(1)
+      end
     end
   end
 
@@ -149,7 +164,7 @@ describe CalendarShadowHelper do
         it { is_expected.to be true }
       end
 
-      context "won't create anything when the remote service fails" do
+      context "when the remote service fails" do
         before(:each) {
           expect(event.shadow_event)
             .to be_nil
@@ -169,7 +184,7 @@ describe CalendarShadowHelper do
         it { is_expected.to be true }
       end
 
-      context "that won't push" do
+      context "when the event isn't being synced" do
         before(:each) {
           expect(event.shadow_event)
             .to be_nil
@@ -178,11 +193,9 @@ describe CalendarShadowHelper do
             .not_to receive(:push_event)
         }
 
-        context "won't create anything when the event isn't being synced" do
-          let(:event) { create :event }
+        let(:event) { create :event }
 
-          it { is_expected.to be true }
-        end
+        it { is_expected.to be true }
       end
     end
   end

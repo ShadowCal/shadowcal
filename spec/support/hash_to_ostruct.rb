@@ -3,13 +3,7 @@
 require "ostruct"
 
 class OpenStruct2 < OpenStruct
-  def id
-    @id
-  end
-
-  def id=(id)
-    @id = id
-  end
+  attr_accessor :id
 end
 
 class Hash

@@ -2,7 +2,6 @@
 
 require "rails_helper"
 
-
 describe ZoneHelper do
   let(:date_str) { '2017-01-04' }
   let(:zone_str) { 'America/Los_Angeles' }

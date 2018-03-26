@@ -7,6 +7,9 @@ describe GoogleCalendarApiHelper do
   let(:service) { double('service') }
   let(:item) { double('item') }
 
+  let(:access_token) { Faker::Internet.unique.password(10, 20) }
+  let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
+
   before(:each) {
     allow(GoogleCalendarApiHelper)
       .to receive(:build_service)
@@ -17,11 +20,62 @@ describe GoogleCalendarApiHelper do
       .and_return(Faker::Internet.unique.password(10, 20))
   }
 
+  describe "#request_events" do
+    let(:email) { generate(:email) }
+
+    subject { GoogleCalendarApiHelper.request_events(access_token, email, calendar_id) }
+
+    before(:each) {
+      allow(GoogleCalendarApiHelper)
+        .to receive(:build_service)
+        .and_return(service)
+
+      allow(GoogleCalendarApiHelper)
+        .to receive(:get_calendar_events)
+        .and_return([item])
+
+      allow(GoogleCalendarApiHelper)
+        .to receive(:upsert_service_event_item)
+        .with(email, item)
+        .and_return([nil])
+    }
+
+    it { is_expected.not_to include(nil) }
+  end
+
+  describe "#upsert_service_calendar_item" do
+    subject { GoogleCalendarApiHelper.send(:upsert_service_calendar_item, item) }
+
+    let(:item) {
+      {
+        summary: Faker::Lorem.sentence,
+        time_zone: 'Europe/Zurich'
+      }.to_ostruct
+    }
+
+    before(:each) {
+      allow(item)
+        .to receive(:id)
+        .and_return(Faker::Internet.unique.password(10, 20))
+    }
+
+    it "sets the time zone" do
+      expect(subject.time_zone)
+        .to eq item.time_zone
+    end
+  end
+
+  describe "#push_events" do
+    context "with an empty array of events" do
+      let(:events) { [] }
+      subject { GoogleCalendarApiHelper.push_events(access_token, calendar_id, events) }
+      it { is_expected.to be_nil }
+    end
+  end
+
   describe "#push_event" do
     subject { GoogleCalendarApiHelper.push_event(access_token, calendar_id, event) }
 
-    let(:access_token) { Faker::Internet.unique.password(10, 20) }
-    let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
     let(:event) { create :event, external_id: nil }
 
     before(:each) {
@@ -85,9 +139,23 @@ describe GoogleCalendarApiHelper do
       end
     end
 
+    context "with cancelled event" do
+      let(:item) {
+        {
+          etag: "3040935482068000",
+          id: "arc0vggjo2h1hqk7btopa8thd4",
+          kind: "calendar#event",
+          status: "cancelled"
+        }.to_ostruct
+      }
+
+      it "won't mirror the event" do
+        expect{ subject }.not_to(change{ Event.count })
+      end
+    end
+
     context "when event exists in db" do
       it "finds an existing event by external_id" do
-
         # puts "ITEM ID WAS ORIGINALLY", item.id
         # existing_event.update_attributes external_id: 'abc123'
         # item[:id] = existing_event.external_id

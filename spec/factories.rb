@@ -4,9 +4,15 @@ FactoryBot.define do
   factory :event do
     calendar
     name { Faker::Company.bs }
-    start_at { Faker::Time.forward(1, :afternoon) }
+    start_at { ActiveSupport::TimeZone.new(calendar.time_zone).parse('03:00:00').utc }
     end_at { start_at + 30.minutes }
     is_attending false
+
+    factory :syncable_event, traits: %i{work_hours weekday is_attending}
+
+    trait :is_attending do
+      is_attending true
+    end
 
     trait :is_shadow do
       name "(Busy)"
@@ -20,8 +26,39 @@ FactoryBot.define do
       end
     end
 
+    trait :work_hours do
+      start_at { ActiveSupport::TimeZone.new(calendar.time_zone).parse('09:30:00').utc }
+      end_at { start_at + 30.minutes }
+    end
+
+    trait :after_work_hours do
+      start_at { ActiveSupport::TimeZone.new(calendar.time_zone).parse('20:30:00').utc }
+      end_at { start_at + 30.minutes }
+    end
+
+    trait :all_day do
+      start_at { ActiveSupport::TimeZone.new(calendar.time_zone).parse('00:00:00').utc + 3.days }
+      end_at { ActiveSupport::TimeZone.new(calendar.time_zone).parse('23:59:59').utc + 3.days }
+    end
+
     trait :has_shadow do
       association :shadow_event, factory: :event
+    end
+
+    trait :weekday do
+      before(:create) do |event|
+        duration = event.end_at - event.start_at
+        event.start_at += (1 + ((3 - event.start_at.wday) % 7)).days
+        event.end_at = event.start_at + duration
+      end
+    end
+
+    trait :weekend do
+      before(:create) do |event|
+        duration = event.end_at - event.start_at
+        event.start_at += (1 + (6 - event.start_at.wday % 7)).days
+        event.end_at = event.start_at + duration
+      end
     end
   end
 
@@ -53,6 +90,7 @@ FactoryBot.define do
     name { generate(:calendar_id) }
     external_id { Faker::Internet.password(10, 20) }
     google_account { build :google_account, user: user }
+    time_zone 'America/Los_Angeles'
   end
 
   factory :user do

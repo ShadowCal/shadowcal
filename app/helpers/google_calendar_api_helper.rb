@@ -31,9 +31,13 @@ module GoogleCalendarApiHelper
     service = build_service(access_token)
 
     # Return each google api calendar as an ActiveRecord Calendar model
-    get_calendar_events(service, calendar_id).map do |item|
+    events = get_calendar_events(service, calendar_id).map do |item|
       upsert_service_event_item(my_email, item)
     end
+
+    # upsert_service_event_item sometimes returns nils, when an event doesn't
+    # get made
+    events.reject(&:nil?)
   end
 
   def get_event(access_token, my_email, calendar_id, event_id)
@@ -48,6 +52,8 @@ module GoogleCalendarApiHelper
   end
 
   def push_events(access_token, calendar_id, events)
+    return if events.empty?
+
     service = build_service(access_token)
 
     service.batch do |batch|
@@ -120,10 +126,13 @@ module GoogleCalendarApiHelper
   def upsert_service_calendar_item(item)
     Calendar.where(external_id: item.id).first_or_create do |calendar|
       calendar.name = item.summary
+      calendar.time_zone = item.time_zone
     end
   end
 
   def upsert_service_event_item(my_email, item)
+    return if item.status == "cancelled"
+
     Event.where(
       external_id: item.id
     ).first_or_initialize do |event|
@@ -137,7 +146,7 @@ module GoogleCalendarApiHelper
       event.start_at = item_start_date
       event.end_at = item_end_date
       event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item.description)
-      event.is_attending = item.attendees.find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
+      event.is_attending = (item.attendees || []).find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
     end
   end
 

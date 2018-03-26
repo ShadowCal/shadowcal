@@ -2,7 +2,6 @@
 
 require "rails_helper"
 
-
 describe DescriptionTagHelper do
   let(:description) { Faker::Lorem.sentence }
   let(:source_event_id) { 123 }
