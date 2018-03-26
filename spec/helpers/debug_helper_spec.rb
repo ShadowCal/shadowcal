@@ -33,7 +33,7 @@ describe DebugHelper do
       let(:event) { build :event, start_at: nil, end_at: nil }
 
       it "doesn't crash" do
-        expect(subject).to include("Bad start_at")
+        expect(subject).to include("[NO START DATE]")
       end
     end
 

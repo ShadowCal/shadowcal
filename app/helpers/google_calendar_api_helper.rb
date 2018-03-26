@@ -135,7 +135,7 @@ module GoogleCalendarApiHelper
 
     Event.where(
       external_id: item.id
-    ).first_or_initialize do |event|
+    ).first_or_initialize.tap do |event|
       verb = event.new_record? ? "Created" : "Found"
       Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
 
