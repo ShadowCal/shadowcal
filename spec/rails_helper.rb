@@ -7,6 +7,7 @@ require "webmock/rspec"
 WebMock.disable_net_connect!(allow_localhost: true)
 
 ENV["RAILS_ENV"] = "test"
+ENV["RACK_ENV"] = "test"
 
 require File.expand_path("../../config/environment", "" + __FILE__)
 
