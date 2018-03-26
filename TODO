@@ -1,1 +1,9 @@
-Ignore/remove shadows of events not marked YES
+push jsf.attendance, pull to master
+
+
+Account-level option to include transparent events
+Handle parsing and syncing all day events and time zones correctly
+Don't sync outside "Work hours" or on weekends
+Be able to move / delete / attend shadows
+Calendars may only be sync'd once
+Manage events through their calendar instance, instead of helpers

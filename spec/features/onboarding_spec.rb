@@ -46,8 +46,8 @@ describe "onboarding", type: :feature do
     click_button("Block Time Privately")
 
     expect(page).to have_css("table#existing_sync_pairs")
-    find("table#existing_sync_pairs").should have_content("Calendar1")
-    find("table#existing_sync_pairs").should have_content("Calendar2")
+    expect(find("table#existing_sync_pairs")).to have_content("Calendar1")
+    expect(find("table#existing_sync_pairs")).to have_content("Calendar2")
 
     # Once you have made first pair, you're onboarded and can see delete link
     expect(page).to have_link("Delete Account")

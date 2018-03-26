@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Check that the files we have changed have correct syntax' do
+describe 'Check that the files we have changed have correct syntax' do
   before do
     @files = `git diff --no-commit-id --name-only -r HEAD | grep .rb`
   end
