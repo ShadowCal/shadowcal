@@ -19,7 +19,7 @@ class SyncPairsController < ApplicationController
 
     raise ActiveRecord::RecordNotFound if pair.nil?
 
-    pair.perform_sync
+    Delayed::Job.enqueue SyncPairPerformSyncJob.new(pair.id), queue: :cal_sync_pairs
 
     redirect_to :dashboard, notice: "Okay, queued to update!"
   end

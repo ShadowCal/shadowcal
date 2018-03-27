@@ -10,10 +10,8 @@ class SyncPair < ActiveRecord::Base
 
   after_create :perform_sync, unless: :skip_callbacks
 
-  # private
   def perform_sync
     CalendarShadowHelper.cast_from_to(from_calendar, to_calendar)
-    update_attributes last_synced_at: Time.current
+    update_attributes! last_synced_at: Time.current
   end
-  handle_asynchronously :perform_sync
 end
