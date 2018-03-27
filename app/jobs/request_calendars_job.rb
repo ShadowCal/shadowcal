@@ -3,7 +3,7 @@
 class RequestCalendarsJob < Struct.new(:google_account_id)
   def perform
     account = GoogleAccount.find(google_account_id)
-    account.calendars = GoogleCalendarApiHelper.request_calendars(account.access_token)
+    account.calendars = account.request_calendars
     account.save!
   end
 

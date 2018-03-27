@@ -4,7 +4,7 @@ class GoogleAccount < ActiveRecord::Base
   belongs_to :user
   has_many :calendars
 
-  after_create :fetch_calendars, unless: :skip_callbacks
+  after_create :queue_request_calendars, unless: :skip_callbacks
 
   after_initialize :refresh_token!, if: :should_refresh_token?
 
@@ -16,10 +16,14 @@ class GoogleAccount < ActiveRecord::Base
     )
   }
 
+  def request_calendars
+    GoogleCalendarApiHelper.request_calendars(access_token)
+  end
+
   private
 
-  def fetch_calendars
-    Delayed::Job.enqueue RequestCalendarsJob.new(id), queue: :fetch_calendars
+  def queue_request_calendars
+    Delayed::Job.enqueue RequestCalendarsJob.new(id), queue: :request_calendars
   end
 
   def refresh_token!

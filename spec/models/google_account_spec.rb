@@ -36,6 +36,22 @@ describe "GoogleAccount", type: :model do
     end
   end
 
+  describe "#request_calendars" do
+    let(:account) { create :google_account }
+    let(:calendar) { build :calendar }
+
+    subject { account.request_calendars }
+
+    before(:each) {
+      expect(GoogleCalendarApiHelper)
+        .to receive(:request_calendars)
+        .with(account.access_token)
+        .and_return([calendar])
+    }
+
+    it { is_expected.to include(calendar) }
+  end
+
   describe "#refresh_token!" do
     let(:new_token) { "asdf" }
     let(:new_expires_at) { 3600 }

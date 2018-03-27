@@ -19,9 +19,8 @@ describe SyncPairPerformSyncJob do
         .with(google_account_id)
         .and_return(account)
 
-      expect(GoogleCalendarApiHelper)
+      expect(account)
         .to receive(:request_calendars)
-        .with(account.access_token)
         .and_return([calendar])
     }
 
