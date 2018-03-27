@@ -43,7 +43,7 @@ describe SyncPairPerformSyncJob do
   describe "#error_details" do
     subject { job.error_details }
 
-    context "with valid sync_pair_id" do
+    context "with missing sync_pair_id" do
       let(:sync_pair_id) { '123' }
 
       it { is_expected.to include({
@@ -52,7 +52,7 @@ describe SyncPairPerformSyncJob do
       })}
     end
 
-    context "with missing sync_pair_id" do
+    context "with valid sync_pair_id" do
       it { is_expected.to include({
         sync_pair_id: sync_pair_id,
         sync_pair: include({

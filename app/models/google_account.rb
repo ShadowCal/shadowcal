@@ -19,9 +19,8 @@ class GoogleAccount < ActiveRecord::Base
   private
 
   def fetch_calendars
-    self.calendars = GoogleCalendarApiHelper.request_calendars(access_token)
+    Delayed::Job.enqueue RequestCalendarsJob.new(id), queue: :fetch_calendars
   end
-  handle_asynchronously :fetch_calendars
 
   def refresh_token!
     resp = GoogleCalendarApiHelper.refresh_access_token(refresh_token)
