@@ -3,20 +3,20 @@
 require "rails_helper"
 
 describe SyncPairPerformSyncJob do
-  let(:account) { create :google_account }
-  let(:google_account_id) { account.id }
-  let(:job) { RequestCalendarsJob.new(google_account_id) }
+  let(:account) { create :remote_account }
+  let(:remote_account_id) { account.id }
+  let(:job) { RequestCalendarsJob.new(remote_account_id) }
 
   describe "#perform" do
     subject { job.perform }
 
-    let(:instance) { double("google_account") }
-    let(:calendar) { create :calendar, google_account: account }
+    let(:instance) { double("remote_account") }
+    let(:calendar) { create :calendar, remote_account: account }
 
     before(:each) {
-      expect(GoogleAccount)
+      expect(RemoteAccount)
         .to receive(:find)
-        .with(google_account_id)
+        .with(remote_account_id)
         .and_return(account)
 
       expect(account)
@@ -50,25 +50,29 @@ describe SyncPairPerformSyncJob do
   describe "#error_details" do
     subject { job.error_details }
 
-    context "with missing google_account_id" do
-      let(:google_account_id) { '123' }
+    context "with missing remote_account_id" do
+      let(:remote_account_id) { '123' }
 
-      it { is_expected.to include({
-        google_account_id: google_account_id,
-        google_account: nil,
-      })}
+      it {
+        is_expected.to include(
+          remote_account_id: remote_account_id,
+          remote_account: nil,
+        )
+      }
     end
 
-    context "with valid google_account_id" do
-      it { is_expected.to include({
-        google_account_id: google_account_id,
-        google_account: include({
-          'id' => google_account_id,
-        }),
-        user: include({
-          'id' => account.user.id,
-        }),
-      })}
+    context "with valid remote_account_id" do
+      it {
+        is_expected.to include(
+          remote_account_id: remote_account_id,
+          remote_account: include(
+            'id' => remote_account_id,
+          ),
+          user: include(
+            'id' => account.user.id,
+          ),
+        )
+      }
     end
   end
 end

@@ -6,11 +6,11 @@
 
     .form-group
       = f.label :from_calendar_id, 'From'
-      = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_google_account), { prompt: "Private, Personal Calendar" }, { class: 'form-control' }
+      = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_remote_account), { prompt: "[Private, Personal Calendar]" }, { class: 'form-control' }
 
     .form-group
       = f.label :to_calendar_id, 'Onto'
-      = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_google_account), { prompt: "Work Calendar" }, { class: 'form-control' }
+      = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_remote_account), { prompt: "[Work Calendar]" }, { class: 'form-control' }
     %button.btn.btn-primary{:type => "submit"} Block Time Privately
     %span.ml-1
       or

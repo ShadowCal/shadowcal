@@ -32,6 +32,6 @@ describe "dashboard", type: :feature do
 
   it "allows user to add new google account" do
     page.click_button("Add")
-    expect(page).to have_link("Another Google Account")
+    expect(page).to have_link("A Google Account")
   end
 end

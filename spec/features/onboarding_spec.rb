@@ -14,8 +14,8 @@ describe "onboarding", type: :feature do
   end
 
   it "shows form after calendars arrive" do
-    @user.google_accounts.each do |acc|
-      FactoryBot.create :calendar, google_account: acc
+    @user.remote_accounts.each do |acc|
+      FactoryBot.create :calendar, remote_account: acc
     end
 
     visit "/"
@@ -28,11 +28,11 @@ describe "onboarding", type: :feature do
   it "creates first sync_pair by submitting form" do
     expected_from_calendar = FactoryBot.create  :calendar,
                                                 name:           "Calendar1",
-                                                google_account: @user.google_accounts.first
+                                                remote_account: @user.remote_accounts.first
 
     expected_to_calendar = FactoryBot.create  :calendar,
                                               name:           "Calendar2",
-                                              google_account: @user.google_accounts.last
+                                              remote_account: @user.remote_accounts.last
 
     visit "/"
     select("Calendar1", from: "sync_pair_from_calendar_id")

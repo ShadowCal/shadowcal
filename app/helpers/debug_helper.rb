@@ -2,13 +2,13 @@
 
 module DebugHelper
   def identify_event(event)
-    if event.start_at.nil?
-      pacific_start_str = "[NO START DATE]"
-    else
-      pacific_start_str = event.start_at
-           .in_time_zone("Pacific Time (US & Canada)")
-           .strftime("%-d/%-m/%y: %H:%M %Z")
-    end
+    pacific_start_str = if event.start_at.nil?
+                          "[NO START DATE]"
+                        else
+                          event.start_at
+                               .in_time_zone("Pacific Time (US & Canada)")
+                               .strftime("%-d/%-m/%y: %H:%M %Z")
+                        end
 
     event_id_str = event.new_record? ? "new" : "##{event.id}"
 

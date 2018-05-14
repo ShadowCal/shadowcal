@@ -69,7 +69,7 @@ FactoryBot.define do
     last_synced_at nil
   end
 
-  factory :google_account do
+  factory :remote_account do
     user
     email
     access_token { Faker::Internet.password(10, 20) }
@@ -80,6 +80,9 @@ FactoryBot.define do
     trait :expired do
       token_expires_at 1.minute.ago
     end
+
+    factory :google_account, class: GoogleAccount do
+    end
   end
 
   factory :calendar do
@@ -89,7 +92,7 @@ FactoryBot.define do
 
     name { generate(:calendar_id) }
     external_id { Faker::Internet.password(10, 20) }
-    google_account { build :google_account, user: user }
+    remote_account { build :remote_account, user: user }
     time_zone 'America/Los_Angeles'
   end
 

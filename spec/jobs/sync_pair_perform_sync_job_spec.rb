@@ -46,25 +46,29 @@ describe SyncPairPerformSyncJob do
     context "with missing sync_pair_id" do
       let(:sync_pair_id) { '123' }
 
-      it { is_expected.to include({
-        sync_pair_id: sync_pair_id,
-        sync_pair: nil,
-      })}
+      it {
+        is_expected.to include(
+          sync_pair_id: sync_pair_id,
+          sync_pair: nil,
+        )
+      }
     end
 
     context "with valid sync_pair_id" do
-      it { is_expected.to include({
-        sync_pair_id: sync_pair_id,
-        sync_pair: include({
-          'id' => sync_pair_id,
-        }),
-        from_calendar: include({
-          'id' => pair.from_calendar.id,
-        }),
-        to_calendar: include({
-          'id' => pair.to_calendar.id,
-        }),
-      })}
+      it {
+        is_expected.to include(
+          sync_pair_id: sync_pair_id,
+          sync_pair: include(
+            'id' => sync_pair_id,
+          ),
+          from_calendar: include(
+            'id' => pair.from_calendar.id,
+          ),
+          to_calendar: include(
+            'id' => pair.to_calendar.id,
+          ),
+        )
+      }
     end
   end
 end

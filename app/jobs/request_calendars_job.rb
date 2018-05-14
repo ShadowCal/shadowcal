@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class RequestCalendarsJob < Struct.new(:google_account_id)
+class RequestCalendarsJob < Struct.new(:remote_account_id)
   def perform
-    account = GoogleAccount.find(google_account_id)
+    account = RemoteAccount.find(remote_account_id)
     account.calendars = account.request_calendars
     account.save!
   end
@@ -13,20 +13,20 @@ class RequestCalendarsJob < Struct.new(:google_account_id)
 
   def error_details
     account = begin
-      GoogleAccount.find(google_account_id)
+      RemoteAccount.find(remote_account_id)
     rescue ActiveRecord::RecordNotFound
       nil
     end
 
     if account.nil?
       {
-        google_account_id: google_account_id,
-        google_account: nil,
+        remote_account_id: remote_account_id,
+        remote_account: nil,
       }
     else
       {
-        google_account_id: google_account_id,
-        google_account: account.as_json,
+        remote_account_id: remote_account_id,
+        remote_account: account.as_json,
         user: account.user.try(:as_json),
         calendars: account.calendars.as_json,
       }

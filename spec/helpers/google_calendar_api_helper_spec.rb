@@ -98,7 +98,7 @@ describe GoogleCalendarApiHelper do
       GoogleCalendarApiHelper
         .send(
           :upsert_service_event_item,
-          existing_event.google_account.email,
+          existing_event.remote_account.email,
           item
         )
     }
@@ -240,7 +240,7 @@ describe GoogleCalendarApiHelper do
 
             item.attendees = [
               {
-                email: existing_event.google_account.email,
+                email: existing_event.remote_account.email,
                 response_status: 'accepted',
               }.to_ostruct,
               {
@@ -266,7 +266,7 @@ describe GoogleCalendarApiHelper do
 
             item.attendees = [
               {
-                email: existing_event.google_account.email,
+                email: existing_event.remote_account.email,
                 response_status: 'needsAction',
               }.to_ostruct,
               {
@@ -286,7 +286,7 @@ describe GoogleCalendarApiHelper do
 
             item.attendees = [
               {
-                email: existing_event.google_account.email,
+                email: existing_event.remote_account.email,
                 response_status: 'declined',
               }.to_ostruct,
               {
@@ -306,7 +306,7 @@ describe GoogleCalendarApiHelper do
 
             item.attendees = [
               {
-                email: existing_event.google_account.email,
+                email: existing_event.remote_account.email,
                 response_status: 'tentative',
               }.to_ostruct,
               {

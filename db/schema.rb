@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171122204153) do
+ActiveRecord::Schema.define(version: 20180514034130) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace",     limit: 255
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 20171122204153) do
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
 
   create_table "calendars", force: :cascade do |t|
-    t.integer  "google_account_id"
+    t.integer  "remote_account_id"
     t.string   "external_id",       limit: 255
     t.string   "name",              limit: 255
     t.datetime "created_at"
@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 20171122204153) do
     t.string   "time_zone"
   end
 
-  add_index "calendars", ["google_account_id"], name: "index_calendars_on_google_account_id"
+  add_index "calendars", ["remote_account_id"], name: "index_calendars_on_remote_account_id"
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",               default: 0, null: false
@@ -89,7 +89,7 @@ ActiveRecord::Schema.define(version: 20171122204153) do
   add_index "events", ["external_id", "calendar_id"], name: "index_events_on_external_id_and_calendar_id", unique: true
   add_index "events", ["source_event_id"], name: "index_events_on_source_event_id"
 
-  create_table "google_accounts", force: :cascade do |t|
+  create_table "remote_accounts", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "access_token",     limit: 255
     t.string   "token_secret",     limit: 255
@@ -98,9 +98,10 @@ ActiveRecord::Schema.define(version: 20171122204153) do
     t.datetime "updated_at"
     t.string   "refresh_token"
     t.datetime "token_expires_at"
+    t.string   "type"
   end
 
-  add_index "google_accounts", ["user_id"], name: "index_google_accounts_on_user_id"
+  add_index "remote_accounts", ["user_id"], name: "index_remote_accounts_on_user_id"
 
   create_table "sync_pairs", force: :cascade do |t|
     t.integer  "user_id"

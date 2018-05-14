@@ -6,7 +6,7 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     @user ||= User.find_or_create_from_omniauth(request.env["omniauth.auth"])
 
     if @user.persisted?
-      @user.add_or_update_google_account(request.env["omniauth.auth"])
+      @user.add_or_update_remote_account(request.env["omniauth.auth"], 'google_account')
 
       flash[:notice] = I18n.t "devise.omniauth_callbacks.success", kind: "Google"
       sign_in_and_redirect @user, event: :authentication

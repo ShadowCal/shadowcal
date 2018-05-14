@@ -15,9 +15,9 @@ class Event < ActiveRecord::Base
       .where("e2.source_event_id IS NULL")
   }
 
-  has_one :google_account, through: :calendar
-  has_one :user, through: :google_account
-  delegate :access_token, to: :google_account
+  has_one :remote_account, through: :calendar
+  has_one :user, through: :remote_account
+  delegate :access_token, to: :remote_account
 
   before_save :push_date_changes_to_corresponding_event, if: :moved?
   before_save :toggle_shadow, if: :is_attending_changed?
@@ -36,7 +36,7 @@ class Event < ActiveRecord::Base
     # Not just corresponding_event&.calendar because it really depends on the
     # calendar/sync-pair status, rather than just is there an event which
     # links to it as the source (of which there may be more than one... )
-    sp = calendar.google_account.user.sync_pairs.find do |pair|
+    sp = calendar.remote_account.user.sync_pairs.find do |pair|
       pair.from_calendar == calendar || pair.to_calendar == calendar
     end
 

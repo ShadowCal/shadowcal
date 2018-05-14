@@ -15,7 +15,7 @@ describe "sync_pair_form", type: :feature do
     expect(page).to have_select("From", with_options: @user.calendars.map(&:name))
     expect(page).to have_select("Onto", with_options: @user.calendars.map(&:name))
 
-    @user.google_accounts.each do |acc|
+    @user.remote_accounts.each do |acc|
       expect(page).to have_css("optgroup[label=\"#{acc.email}\"]")
       acc.calendars.each do |cal|
         expect(page).to have_css("optgroup[label=\"#{acc.email}\"] option[value=\"#{cal.id}\"]", text: cal.name)

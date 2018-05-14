@@ -2,7 +2,7 @@
 
 module CalendarAccountHelper
   def from_accounts_by_key(accounts)
-    accounts.map { |a| calendars_by_google_account(a) }
+    accounts.map { |a| calendars_by_remote_account(a) }
   end
 
   private
@@ -20,7 +20,7 @@ module CalendarAccountHelper
     [account_key, calendar_options(calendars)]
   end
 
-  def calendars_by_google_account(account)
+  def calendars_by_remote_account(account)
     calendar_options_by_account_key(account.email, account.calendars)
   end
 

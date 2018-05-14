@@ -6,9 +6,9 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable, :omniauthable
 
-  has_many :google_accounts, dependent: :destroy
+  has_many :remote_accounts, dependent: :destroy
   has_many :sync_pairs, dependent: :destroy
-  has_many :calendars, through: :google_accounts
+  has_many :calendars, through: :remote_accounts
   has_many :events, through: :calendars
 
   def self.find_or_create_from_omniauth(access_token)
@@ -20,10 +20,10 @@ class User < ActiveRecord::Base
   end
 
   def calendars?
-    google_accounts.all? { |acc| acc.calendars.any? }
+    remote_accounts.all? { |acc| acc.calendars.any? }
   end
 
-  def add_or_update_google_account(access_token)
+  def add_or_update_remote_account(access_token, type)
     data = access_token.info
 
     refresh_token = access_token.credentials.refresh_token
@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
       token_expires_at = access_token.credentials.expires_at || 40.minutes.from_now
     end
 
-    google_accounts .where(email: data["email"])
+    remote_accounts .where(email: data["email"], type: type)
                     .first_or_initialize
                     .update_attributes!(
                       access_token:     access_token.credentials.token,
@@ -44,6 +44,8 @@ class User < ActiveRecord::Base
   end
 
   def access_token
-    google_accounts.first.try(:access_token)
+    Rails.logger.warn "Deprecated: Don't ask for user.access_token. Tokens come from accounts"
+
+    remote_accounts.first.try(:access_token)
   end
 end

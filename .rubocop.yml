@@ -124,6 +124,9 @@ Style/StringLiterals:
   Enabled: false
   StyleGuide: http://relaxed.ruby.style/#stylestringliterals
 
+Style/StructInheritance:
+  Enabled: false
+
 Style/TrailingCommaInArguments:
   Enabled: false
   StyleGuide: http://relaxed.ruby.style/#styletrailingcommainarguments
