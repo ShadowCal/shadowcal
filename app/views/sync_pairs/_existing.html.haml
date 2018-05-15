@@ -28,4 +28,5 @@
             Add
           .dropdown-menu
             = link_to "New Shadow", new_sync_pair_path, {class: 'dropdown-item'}
-            = link_to "A Google Account", omniauth_authorize_path('user', 'google_oauth2'), {class: 'dropdown-item'}
+            = link_to "Google Account", omniauth_authorize_path('user', 'google_oauth2'), {class: 'dropdown-item'}
+            = link_to "Outlook Account", omniauth_authorize_path('user', 'microsoft_office365'), {class: 'dropdown-item'}
