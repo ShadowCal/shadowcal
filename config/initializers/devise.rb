@@ -233,6 +233,10 @@ Devise.setup do |config|
                   scope:  "email, profile, plus.me, calendar",
                   prompt: "select_account"
 
+  config.omniauth :microsoft_office365, ENV['OUTLOOK_APP_ID'], ENV['OUTLOOK_SECRET'],
+                  :scope => 'https://outlook.office.com/calendars.readwrite'
+
+
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.

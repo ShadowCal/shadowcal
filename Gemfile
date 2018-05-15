@@ -87,6 +87,7 @@ gem "delayed_job_active_record"
 gem "devise"
 gem "omniauth"
 gem "omniauth-google-oauth2"
+gem "omniauth-microsoft-office365"
 
 gem "execjs"
 gem "haml-rails"
