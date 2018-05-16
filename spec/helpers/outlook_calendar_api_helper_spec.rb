@@ -4,43 +4,124 @@ require "rails_helper"
 require "ostruct"
 
 describe OutlookCalendarApiHelper do
-  let(:service) { double('service') }
-  let(:item) { double('item') }
+  let(:client) { double('client') }
+
+  before(:each) {
+    allow(OutlookCalendarApiHelper)
+      .to receive(:client)
+      .and_return(client)
+  }
 
   let(:access_token) { Faker::Internet.unique.password(10, 20) }
   let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
 
-  before(:each) {
-    allow(OutlookCalendarApiHelper)
-      .to receive(:build_service)
-      .and_return(service)
+  describe "#request_calendars" do
+    subject { OutlookCalendarApiHelper.request_calendars(access_token) }
 
-    allow(item)
-      .to receive(:id)
-      .and_return(Faker::Internet.unique.password(10, 20))
-  }
+    let(:calendar_response) {
+      {
+        "@odata.id" => "https://outlook.office.com/api/v2.0/Users('ddfcd489-628b-40d7-b48b-57002df800e5@1717622f-1d94-4d0c-9d74-709fad664b77')/Calendars('AAMkAGI2TGuLAAA=')",
+        "Id" => calendar_id,
+        "Name" => "Calendar Name",
+        "Color" => "Auto",
+        "ChangeKey" => "nfZyf7VcrEKLNoU37KWlkQAAA0x0+w==",
+        "CanShare" => true,
+        "CanViewPrivateItems" => true,
+        "CanEdit" => true,
+        "Owner" => {
+          "Name" => "Fanny Downs",
+          "Address" => "fannyd@adatum.onmicrosoft.com"
+        }
+      }.to_h
+    }
+
+    let(:raw_calendar_response) {
+      {
+        "@odata.context" => "https://outlook.office.com/api/v2.0/$metadata#Me/Calendars",
+        "value" => [ calendar_response, calendar_response ],
+      }
+    }
+
+    before(:each) {
+      expect(client).to receive(:get_calendars)
+        .with(access_token, any_args)
+        .and_return(raw_calendar_response)
+    }
+
+    it 'uniquely upserts' do
+      expect{ subject }
+        .to change{ Calendar.count }.by(1)
+    end
+
+    it {
+      is_expected.to include(
+        have_attributes(
+          external_id: calendar_id,
+          name: 'Calendar Name',
+        )
+      )
+    }
+  end
 
   describe "#request_events" do
     let(:email) { generate(:email) }
 
     subject { OutlookCalendarApiHelper.request_events(access_token, email, calendar_id) }
 
-    before(:each) {
-      allow(OutlookCalendarApiHelper)
-        .to receive(:build_service)
-        .and_return(service)
+    let(:fields) { %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs} }
 
-      allow(OutlookCalendarApiHelper)
-        .to receive(:get_calendar_events)
-        .and_return([item])
+    let(:id) { Faker::Internet.unique.password(10, 20) }
+    let(:start_at_str) { 5.minutes.ago.strftime('%Y-%m-%dT%H:%M:%S') }
+    let(:end_at_str) { 5.minutes.from_now.strftime('%Y-%m-%dT%H:%M:%S') }
 
-      allow(OutlookCalendarApiHelper)
-        .to receive(:upsert_service_event_item)
-        .with(email, item)
-        .and_return([nil])
+    let(:event) {
+      {
+        Id: id,
+        Subject: 'name of event',
+        # Body: text | html
+        BodyPreview: 'short description',
+        # Calendar:
+        Start: {
+          dateTime: start_at_str,
+          timeZone: 'America/Los_Angeles',
+        },
+        End: {
+          dateTime: end_at_str,
+          timeZone: 'America/Los_Angeles',
+        },
+        # iCalUID:
+        IsAllDay: false,
+        IsCancelled: false,
+        # IsOrganizer:
+        # Recurrence: PatternedRecurrence, #https://msdn.microsoft.com/en-us/office/office365/api/complex-types-for-mail-contacts-calendar#PatternedRecurrence
+        # Instances:
+        # ResponseStatus
+        # Sensitivity: Normal = 0, Personal = 1, Private = 2, Confidential = 3.
+        ShowAs: 0, # Free = 0, Tentative = 1, Busy = 2, Oof = 3, WorkingElsewhere = 4, Unknown = -1.
+      }
     }
 
-    it { is_expected.not_to include(nil) }
+    before(:each) {
+      expect(client)
+        .to receive(:get_calendar_view)
+        .with(access_token, instance_of(DateTime), instance_of(DateTime), calendar_id, fields)
+        .and_return([event, event])
+    }
+
+    it { is_expected.to change{ Event.count }.by(1) }
+
+    it {
+      is_expected.to include(
+        have_attributes(
+          name: 'name of event',
+          start_at: ZoneHelper.from_date_str_and_zone_to_utc(start_at, 'America/Los_Angeles'),
+          end_at: ZoneHelper.from_date_str_and_zone_to_utc(end_at, 'America/Los_Angeles'),
+          external_id: id,
+          source_event_id: nil,
+          is_attending: false,
+        )
+      )
+    }
   end
 
   describe "#upsert_service_calendar_item" do

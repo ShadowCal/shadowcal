@@ -88,6 +88,7 @@ gem "devise"
 gem "omniauth"
 gem "omniauth-google-oauth2"
 gem "omniauth-microsoft-office365"
+gem "ruby_outlook", github: 'jfeldstein/ruby_outlook', branch: :master
 
 gem "execjs"
 gem "haml-rails"

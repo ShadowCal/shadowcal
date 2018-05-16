@@ -16,14 +16,19 @@ module OutlookCalendarApiHelper
   #   JSON.parse(resp.body)
   # end
 
-  # def request_calendars(access_token)
-  #   service = build_service(access_token)
+  def client
+    RubyOutlook::Client.new
+  end
 
-  #   # Return each google api calendar as an ActiveRecord Calendar model
-  #   service.list_calendar_lists.items.map do |item|
-  #     upsert_service_calendar_item(item)
-  #   end
-  # end
+  def request_calendars(access_token)
+    # Return each google api calendar as an ActiveRecord Calendar model
+    resp = client.get_calendars(access_token, 10, 1, %w{Id Name})
+
+    resp["value"].map do |item|
+      # TODO skip read only calendars
+      upsert_service_calendar_item(item)
+    end
+  end
 
   # def request_events(access_token, my_email, calendar_id)
   #   service = build_service(access_token)
@@ -121,12 +126,13 @@ module OutlookCalendarApiHelper
 
   # private
 
-  # def upsert_service_calendar_item(item)
-  #   Calendar.where(external_id: item.id).first_or_create do |calendar|
-  #     calendar.name = item.summary
-  #     calendar.time_zone = item.time_zone
-  #   end
-  # end
+  # TODO: Dedupe this from GoogleCalendarApiHelper
+  def upsert_service_calendar_item(item)
+    Calendar.where(external_id: item['Id']).first_or_create do |calendar|
+      calendar.name = item['Name']
+      calendar.time_zone = 'Etc/UTC'
+    end
+  end
 
   # def upsert_service_event_item(my_email, item)
   #   return if item.status == "cancelled"
@@ -158,14 +164,6 @@ module OutlookCalendarApiHelper
   #   end
   # end
 
-  # def build_service(access_token)
-  #   client = GoogleAccessToken.new access_token
-
-  #   service = Google::Apis::CalendarV3::CalendarService.new
-  #   service.authorization = client
-  #   service
-  # end
-
   # def get_calendar_events(service, id)
   #   service
   #     .list_events(
@@ -177,5 +175,5 @@ module OutlookCalendarApiHelper
   #     .reject { |item| item.transparency == "transparent" }
   # end
 
-  # extend self
+  extend self
 end
