@@ -30,18 +30,24 @@ module OutlookCalendarApiHelper
     end
   end
 
-  # def request_events(access_token, my_email, calendar_id)
-  #   service = build_service(access_token)
+  def request_events(access_token, my_email, calendar_id)
+    resp = client.get_calendar_view(
+      access_token,
+      DateTime.now.utc,
+      1.month.from_now.to_datetime.utc,
+      calendar_id,
+      %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs}
+    )
 
-  #   # Return each google api calendar as an ActiveRecord Calendar model
-  #   events = get_calendar_events(service, calendar_id).map do |item|
-  #     upsert_service_event_item(my_email, item)
-  #   end
+    # Return each google api calendar as an ActiveRecord Calendar model
+    events = resp['value'].map do |item|
+      upsert_service_event_item(my_email, item)
+    end
 
-  #   # upsert_service_event_item sometimes returns nils, when an event doesn't
-  #   # get made
-  #   events.reject(&:nil?)
-  # end
+    # upsert_service_event_item sometimes returns nils, when an event doesn't
+    # get made
+    events.reject(&:nil?)
+  end
 
   # def get_event(access_token, my_email, calendar_id, event_id)
   #   service_event = build_service(access_token)
@@ -130,39 +136,33 @@ module OutlookCalendarApiHelper
   def upsert_service_calendar_item(item)
     Calendar.where(external_id: item['Id']).first_or_create do |calendar|
       calendar.name = item['Name']
-      calendar.time_zone = 'Etc/UTC'
+      # calendar.time_zone = 'Etc/UTC'
     end
   end
 
-  # def upsert_service_event_item(my_email, item)
-  #   return if item.status == "cancelled"
+  def upsert_service_event_item(my_email, item)
+    return if item['IsCancelled']
 
-  #   Event.where(
-  #     external_id: item.id
-  #   ).first_or_initialize.tap do |event|
-  #     verb = event.new_record? ? "Created" : "Found"
-  #     Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
+    Event.where(
+      external_id: item['Id']
+    ).first_or_initialize.tap do |event|
+      verb = event.new_record? ? "Created" : "Found"
+      Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
 
-  #     item_start_date = service_date_to_active_support_date_time(item.start)
-  #     item_end_date = service_date_to_active_support_date_time(item.end)
+      item_start_date = service_date_to_active_support_date_time(item['Start'])
+      item_end_date = service_date_to_active_support_date_time(item['End'])
 
-  #     event.name = item.summary
-  #     event.start_at = item_start_date
-  #     event.end_at = item_end_date
-  #     event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item.description)
-  #     event.is_attending = (item.attendees || []).find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
-  #   end
-  # end
+      event.name = item['Subject']
+      event.start_at = item_start_date
+      event.end_at = item_end_date
+      event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item['BodyPreview'])
+      event.is_attending = item['ShowAs'] != 0
+    end
+  end
 
-  # def service_date_to_active_support_date_time(date)
-  #   if date.date && date.time_zone
-  #     ZoneHelper.from_date_str_and_zone_to_utc(date.date, date.time_zone)
-  #   elsif date.date
-  #     date.date.to_date
-  #   else
-  #     date.date_time
-  #   end
-  # end
+  def service_date_to_active_support_date_time(date)
+    ZoneHelper.from_date_str_and_zone_to_utc(date['DateTime'], date['TimeZone'])
+  end
 
   # def get_calendar_events(service, id)
   #   service

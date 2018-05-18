@@ -76,28 +76,28 @@ describe OutlookCalendarApiHelper do
 
     let(:event) {
       {
-        Id: id,
-        Subject: 'name of event',
+        'Id' => id,
+        'Subject' => 'name of event',
         # Body: text | html
-        BodyPreview: 'short description',
+        'BodyPreview' => 'short description',
         # Calendar:
-        Start: {
-          dateTime: start_at_str,
-          timeZone: 'America/Los_Angeles',
+        'Start' => {
+          'DateTime' => start_at_str,
+          'TimeZone' => 'America/Los_Angeles',
         },
-        End: {
-          dateTime: end_at_str,
-          timeZone: 'America/Los_Angeles',
+        'End' => {
+          'DateTime' => end_at_str,
+          'TimeZone' => 'America/Los_Angeles',
         },
         # iCalUID:
-        IsAllDay: false,
-        IsCancelled: false,
+        'IsAllDay' => false,
+        'IsCancelled' => false,
         # IsOrganizer:
         # Recurrence: PatternedRecurrence, #https://msdn.microsoft.com/en-us/office/office365/api/complex-types-for-mail-contacts-calendar#PatternedRecurrence
         # Instances:
         # ResponseStatus
         # Sensitivity: Normal = 0, Personal = 1, Private = 2, Confidential = 3.
-        ShowAs: 0, # Free = 0, Tentative = 1, Busy = 2, Oof = 3, WorkingElsewhere = 4, Unknown = -1.
+        'ShowAs' => 0, # Free = 0, Tentative = 1, Busy = 2, Oof = 3, WorkingElsewhere = 4, Unknown = -1.
       }
     }
 
@@ -105,20 +105,22 @@ describe OutlookCalendarApiHelper do
       expect(client)
         .to receive(:get_calendar_view)
         .with(access_token, instance_of(DateTime), instance_of(DateTime), calendar_id, fields)
-        .and_return([event, event])
+        .and_return(
+          "@odata.context" => "https://outlook.office.com/api/v2.0/me/calendars/{calendar_id}/events",
+          "value" => [event, event]
+        )
     }
-
-    it { is_expected.to change{ Event.count }.by(1) }
 
     it {
       is_expected.to include(
         have_attributes(
           name: 'name of event',
-          start_at: ZoneHelper.from_date_str_and_zone_to_utc(start_at, 'America/Los_Angeles'),
-          end_at: ZoneHelper.from_date_str_and_zone_to_utc(end_at, 'America/Los_Angeles'),
+          start_at: ZoneHelper.from_date_str_and_zone_to_utc(start_at_str, 'America/Los_Angeles'),
+          end_at: ZoneHelper.from_date_str_and_zone_to_utc(end_at_str, 'America/Los_Angeles'),
           external_id: id,
           source_event_id: nil,
           is_attending: false,
+          persisted?: false,
         )
       )
     }
@@ -127,23 +129,26 @@ describe OutlookCalendarApiHelper do
   describe "#upsert_service_calendar_item" do
     subject { OutlookCalendarApiHelper.send(:upsert_service_calendar_item, item) }
 
+    let(:name) { Faker::Lorem.sentence }
+    let(:external_id) { Faker::Internet.unique.password(10, 20) }
+    let(:CanEdit) { true }
+
     let(:item) {
       {
-        summary: Faker::Lorem.sentence,
-        time_zone: 'Europe/Zurich'
+        # # TODO: support read-only calendars
+        # CanEdit: CanEdit,
+        Id: external_id,
+        Name: name,
       }.to_ostruct
     }
 
-    before(:each) {
-      allow(item)
-        .to receive(:id)
-        .and_return(Faker::Internet.unique.password(10, 20))
+    it {
+      is_expected.to have_attributes(
+        time_zone: nil,
+        name: name,
+        external_id: external_id,
+      )
     }
-
-    it "sets the time zone" do
-      expect(subject.time_zone)
-        .to eq item.time_zone
-    end
   end
 
   describe "#push_events" do
