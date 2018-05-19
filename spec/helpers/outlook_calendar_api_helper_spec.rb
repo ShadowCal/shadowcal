@@ -152,10 +152,135 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#push_events" do
+    let(:batch_size) { 20 }
+    subject { OutlookCalendarApiHelper.push_events(access_token, calendar_id, events, batch_size) }
+
     context "with an empty array of events" do
       let(:events) { [] }
-      subject { OutlookCalendarApiHelper.push_events(access_token, calendar_id, events) }
-      it { is_expected.to be_nil }
+      it { is_expected.to eq [] }
+    end
+
+    # TODO: Edge cases? eg all day event or wild time zones
+    context "with an event" do
+      let(:start_at) { 5.minutes.ago.to_datetime }
+      let(:end_at) { 5.minutes.from_now.to_datetime }
+      let(:event) { build :event, start_at: start_at, end_at: end_at }
+      let(:events) { [event] }
+      let(:event_external_id) { Faker::Internet.unique.password(10, 20) }
+      let(:outlook_formatted_event) {
+        {
+          Body: event.description,
+          Start: {
+            'DateTime' => start_at.strftime('%Y-%m-%dT%H:%M:%S'),
+            'TimeZone' => 'Etc/GMT',
+          },
+          End: {
+            'DateTime' => end_at.strftime('%Y-%m-%dT%H:%M:%S'),
+            'TimeZone' => 'Etc/GMT',
+          },
+          Subject: event.name,
+          Sensitivity: 0,
+          ShowAs: 2,
+          Type: 0,
+          # # TODO:
+          # IsAllDay:
+          #
+        }
+      }
+      let(:outlook_event_with_id) {
+        outlook_formatted_event.dup.tap{ |ofe| ofe['Id'] = event_external_id }
+      }
+
+      before(:each) {
+        expect(client)
+          .to receive(:batch_create_events)
+          .with(
+            access_token,
+            array_including(
+              hash_including(outlook_formatted_event)
+            ),
+            calendar_id
+          )
+        .and_return([outlook_event_with_id])
+      }
+
+      it {
+        is_expected
+          .to contain_exactly(
+            have_attributes(
+              external_id: event_external_id
+            )
+          )
+      }
+
+      after(:each) {
+        expect(event)
+          .to have_attributes(
+            persisted?: true,
+            external_id: event_external_id
+          )
+      }
+    end
+
+    context "with multiple events" do
+      let(:a) { build :event }
+      let(:b) { build :event }
+      let(:c) { build :event }
+      let(:events) { [a, b, c] }
+
+      let(:id_a) { Faker::Internet.unique.password(10, 20) }
+      let(:id_b) { Faker::Internet.unique.password(10, 20) }
+      let(:id_c) { Faker::Internet.unique.password(10, 20) }
+
+      let(:batch_size) { 2 }
+
+      before(:each) {
+        expect(client)
+          .to receive(:batch_create_events)
+          .with(
+            access_token,
+            [
+              hash_including(Subject: a.name),
+              hash_including(Subject: b.name),
+            ],
+            calendar_id
+          )
+          .and_return([
+            { 'Id' => id_a },
+            { 'Id' => id_b },
+          ])
+          .ordered
+
+        expect(client)
+          .to receive(:batch_create_events)
+          .with(
+            access_token,
+            [
+              hash_including(Subject: c.name),
+            ],
+            calendar_id
+          )
+          .and_return([
+            { 'Id' => id_c },
+          ])
+          .ordered
+      }
+
+      it {
+        is_expected
+          .to contain_exactly(
+            have_attributes(
+              external_id: id_a,
+            ),
+            have_attributes(
+              external_id: id_b,
+            ),
+            have_attributes(
+              external_id: id_c,
+            ),
+          )
+      }
+
     end
   end
 
