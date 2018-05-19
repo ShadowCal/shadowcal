@@ -68,19 +68,23 @@ module OutlookCalendarApiHelper
         resps = client.batch_create_events(
           access_token,
           batch.map { |event| {
-            Body: event.description,
-            Start: {
+            'Body' => {
+              'ContentType' => 0,
+              'Content' => event.description,
+            },
+            'Start' => {
               'DateTime' => event.start_at.strftime('%Y-%m-%dT%H:%M:%S'),
               'TimeZone' => 'Etc/GMT',
             },
-            End: {
+            'End' => {
               'DateTime' => event.end_at.strftime('%Y-%m-%dT%H:%M:%S'),
               'TimeZone' => 'Etc/GMT',
             },
-            Subject: event.name,
-            Sensitivity: 0,
-            ShowAs: 2,
-            Type: 0,
+            'Subject' => event.name,
+            'Sensitivity' => 0,
+            'ShowAs' => if event.is_attending then 2 else 0 end,
+            'Type' => 0,
+            'IsCancelled' => false,
           } },
           calendar_id
         )
@@ -92,26 +96,9 @@ module OutlookCalendarApiHelper
     end
   end
 
-  # def push_event(access_token, calendar_id, event)
-  #   service = build_service(access_token)
-
-  #   item = service.insert_event(
-  #     calendar_id,
-  #     Google::Apis::CalendarV3::Event.new(
-  #       summary:     event.name,
-  #       description: event.description,
-  #       start:       {
-  #         date_time: event.start_at.iso8601
-  #       },
-  #       end:         {
-  #         date_time: event.end_at.iso8601
-  #       },
-  #       visibility:  "public"
-  #     )
-  #   )
-
-  #   event.update_attributes external_id: item.id
-  # end
+  def push_event(access_token, calendar_id, event)
+    push_events(access_token, calendar_id, [event])
+  end
 
   # def delete_event(access_token, calendar_id, event_id)
   #   build_service(access_token)
@@ -147,6 +134,7 @@ module OutlookCalendarApiHelper
 
   def upsert_service_event_item(my_email, item)
     return if item['IsCancelled']
+    return if item['ShowAs'] < 2
 
     Event.where(
       external_id: item['Id']
@@ -154,19 +142,16 @@ module OutlookCalendarApiHelper
       verb = event.new_record? ? "Created" : "Found"
       Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
 
-      item_start_date = service_date_to_active_support_date_time(item['Start'])
-      item_end_date = service_date_to_active_support_date_time(item['End'])
-
       event.name = item['Subject']
-      event.start_at = item_start_date
-      event.end_at = item_end_date
-      event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item['BodyPreview'])
-      event.is_attending = item['ShowAs'] != 0
+      event.start_at = service_date_to_active_support_date_time(item['Start'])
+      event.end_at = service_date_to_active_support_date_time(item['End'])
+      event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item['Body']['Content'])
+      event.is_attending = ['Organizer', 'TentativelyAccepted', 'Accepted'].include?(item['ResponseStatus']['Response'])
     end
   end
 
   def service_date_to_active_support_date_time(date)
-    ZoneHelper.from_date_str_and_zone_to_utc(date['DateTime'], date['TimeZone'])
+    ZoneHelper.from_zoneless_timestamp_and_zone_to_utc(date['DateTime'], date['TimeZone'])
   end
 
   # def get_calendar_events(service, id)

@@ -12,13 +12,108 @@ describe OutlookCalendarApiHelper do
       .and_return(client)
   }
 
+  # Account data
   let(:access_token) { Faker::Internet.unique.password(10, 20) }
+  let(:account) { create :remote_account, access_token: access_token }
+
+  # Calendar data
   let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
+  let(:calendar) { create :calendar, remote_account: account }
+
+  # Event data
+  let(:start_at) { 5.minutes.ago.to_datetime }
+  let(:end_at) { 5.minutes.from_now.to_datetime }
+  let(:is_attending) { false }
+  let(:event_external_id) { Faker::Internet.unique.password(10, 20) }
+  let(:event_description) { '' }
+
+  let(:event) {
+    build(:event,
+      calendar: calendar,
+      start_at: start_at,
+      end_at: end_at,
+      is_attending: is_attending
+    )
+  }
+
+  let(:existing_event) {
+    create(:event,
+      external_id: event_external_id,
+      calendar: calendar
+    )
+  }
+
+  let(:events) { [event] }
+
+  let(:start_at_str) { start_at.strftime('%Y-%m-%dT%H:%M:%S') }
+  let(:end_at_str) { end_at.strftime('%Y-%m-%dT%H:%M:%S') }
+  let(:is_cancelled) { false }
+  let(:response) { 'None' }
+
+  let(:outlook_event_show_as) {
+    # Free = 0, Tentative = 1, Busy = 2, Oof = 3, WorkingElsewhere = 4, Unknown = -1.
+    if event.is_attending then 2 else 0 end
+  }
+
+  let(:outlook_formatted_event) {
+    {
+      'Body' => {
+        'ContentType' => 0,
+        'Content' => event_description,
+      },
+      'Start' => {
+        'DateTime' => start_at_str,
+        'TimeZone' => 'Etc/GMT',
+      },
+      'End' => {
+        'DateTime' => end_at_str,
+        'TimeZone' => 'Etc/GMT',
+      },
+      'Subject' => event.name,
+      'Sensitivity' => 0,
+      'ShowAs' => outlook_event_show_as,
+      'Type' => 0,
+      'IsCancelled' => is_cancelled,
+      # # TODO:
+      # IsAllDay:
+      #
+    }
+  }
+  let(:outlook_event_with_america_timezone) {
+    outlook_formatted_event.dup.tap{ |ofe|
+      ofe['Start']['TimeZone'] = 'America/Los_Angeles'
+      ofe['End']['TimeZone'] = 'America/Los_Angeles'
+    }
+  }
+  let(:outlook_event_with_id) {
+    outlook_formatted_event.dup.tap{ |ofe| ofe['Id'] = event_external_id }
+  }
+  let(:outlook_event_with_id_and_response) {
+    outlook_event_with_id.dup.tap{ |ofe| ofe['ResponseStatus'] = { 'Response' => response } }
+  }
+  let(:outlook_event_shown_as_free) {
+    outlook_formatted_event.dup.tap{ |ofe| ofe['ShowAs'] = 1 }
+  }
+  let(:outlook_event_with_id_and_america_timezone) {
+    outlook_event_with_america_timezone.dup.tap{ |ofe|
+      ofe['Id'] = event_external_id
+    }
+  }
+
+  let(:raw_outlook_calendar_view_response) {
+    {
+      "@odata.context" => "https://outlook.office.com/api/v2.0/me/calendars/{calendar_id}/events",
+      "value" => [
+        outlook_event_with_id_and_america_timezone,
+        outlook_event_shown_as_free,
+      ]
+    }
+  }
 
   describe "#request_calendars" do
     subject { OutlookCalendarApiHelper.request_calendars(access_token) }
 
-    let(:calendar_response) {
+    let(:outlook_formatted_calendar) {
       {
         "@odata.id" => "https://outlook.office.com/api/v2.0/Users('ddfcd489-628b-40d7-b48b-57002df800e5@1717622f-1d94-4d0c-9d74-709fad664b77')/Calendars('AAMkAGI2TGuLAAA=')",
         "Id" => calendar_id,
@@ -35,17 +130,20 @@ describe OutlookCalendarApiHelper do
       }.to_h
     }
 
-    let(:raw_calendar_response) {
+    let(:raw_outlook_calendar_response) {
       {
         "@odata.context" => "https://outlook.office.com/api/v2.0/$metadata#Me/Calendars",
-        "value" => [ calendar_response, calendar_response ],
+        "value" => [
+          outlook_formatted_calendar,
+          outlook_formatted_calendar,
+        ],
       }
     }
 
     before(:each) {
       expect(client).to receive(:get_calendars)
         .with(access_token, any_args)
-        .and_return(raw_calendar_response)
+        .and_return(raw_outlook_calendar_response)
     }
 
     it 'uniquely upserts' do
@@ -63,6 +161,38 @@ describe OutlookCalendarApiHelper do
     }
   end
 
+  describe "#upsert_service_calendar_item" do
+    subject { OutlookCalendarApiHelper.send(:upsert_service_calendar_item, item) }
+
+    let(:name) { Faker::Lorem.sentence }
+
+    let(:item) {
+      {
+        CanEdit: can_edit,
+        Id: calendar_id,
+        Name: name,
+      }.to_ostruct
+    }
+
+    context "writeable calendar" do
+      let(:can_edit) { true }
+
+      it {
+        is_expected.to have_attributes(
+          time_zone: nil,
+          name: name,
+          external_id: calendar_id,
+        )
+      }
+    end
+
+    # context "read-only calendar" do
+    #   let(:can_edit) { false }
+
+    #   it { is_expected.to be_nil }
+    # end
+  end
+
   describe "#request_events" do
     let(:email) { generate(:email) }
 
@@ -70,85 +200,25 @@ describe OutlookCalendarApiHelper do
 
     let(:fields) { %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs} }
 
-    let(:id) { Faker::Internet.unique.password(10, 20) }
-    let(:start_at_str) { 5.minutes.ago.strftime('%Y-%m-%dT%H:%M:%S') }
-    let(:end_at_str) { 5.minutes.from_now.strftime('%Y-%m-%dT%H:%M:%S') }
-
-    let(:event) {
-      {
-        'Id' => id,
-        'Subject' => 'name of event',
-        # Body: text | html
-        'BodyPreview' => 'short description',
-        # Calendar:
-        'Start' => {
-          'DateTime' => start_at_str,
-          'TimeZone' => 'America/Los_Angeles',
-        },
-        'End' => {
-          'DateTime' => end_at_str,
-          'TimeZone' => 'America/Los_Angeles',
-        },
-        # iCalUID:
-        'IsAllDay' => false,
-        'IsCancelled' => false,
-        # IsOrganizer:
-        # Recurrence: PatternedRecurrence, #https://msdn.microsoft.com/en-us/office/office365/api/complex-types-for-mail-contacts-calendar#PatternedRecurrence
-        # Instances:
-        # ResponseStatus
-        # Sensitivity: Normal = 0, Personal = 1, Private = 2, Confidential = 3.
-        'ShowAs' => 0, # Free = 0, Tentative = 1, Busy = 2, Oof = 3, WorkingElsewhere = 4, Unknown = -1.
-      }
-    }
-
     before(:each) {
       expect(client)
         .to receive(:get_calendar_view)
         .with(access_token, instance_of(DateTime), instance_of(DateTime), calendar_id, fields)
-        .and_return(
-          "@odata.context" => "https://outlook.office.com/api/v2.0/me/calendars/{calendar_id}/events",
-          "value" => [event, event]
-        )
+        .and_return(raw_outlook_calendar_view_response)
+
+      expect(OutlookCalendarApiHelper)
+        .to receive(:upsert_service_event_item)
+        .with(email, outlook_event_with_id_and_america_timezone)
+        .and_return(event)
+
+      expect(OutlookCalendarApiHelper)
+        .to receive(:upsert_service_event_item)
+        .with(email, outlook_event_shown_as_free)
+        .and_return(nil)
     }
 
-    it {
-      is_expected.to include(
-        have_attributes(
-          name: 'name of event',
-          start_at: ZoneHelper.from_date_str_and_zone_to_utc(start_at_str, 'America/Los_Angeles'),
-          end_at: ZoneHelper.from_date_str_and_zone_to_utc(end_at_str, 'America/Los_Angeles'),
-          external_id: id,
-          source_event_id: nil,
-          is_attending: false,
-          persisted?: false,
-        )
-      )
-    }
-  end
-
-  describe "#upsert_service_calendar_item" do
-    subject { OutlookCalendarApiHelper.send(:upsert_service_calendar_item, item) }
-
-    let(:name) { Faker::Lorem.sentence }
-    let(:external_id) { Faker::Internet.unique.password(10, 20) }
-    let(:CanEdit) { true }
-
-    let(:item) {
-      {
-        # # TODO: support read-only calendars
-        # CanEdit: CanEdit,
-        Id: external_id,
-        Name: name,
-      }.to_ostruct
-    }
-
-    it {
-      is_expected.to have_attributes(
-        time_zone: nil,
-        name: name,
-        external_id: external_id,
-      )
-    }
+    it { is_expected.to include(event) }
+    it { is_expected.not_to include(nil) }
   end
 
   describe "#push_events" do
@@ -162,34 +232,7 @@ describe OutlookCalendarApiHelper do
 
     # TODO: Edge cases? eg all day event or wild time zones
     context "with an event" do
-      let(:start_at) { 5.minutes.ago.to_datetime }
-      let(:end_at) { 5.minutes.from_now.to_datetime }
-      let(:event) { build :event, start_at: start_at, end_at: end_at }
-      let(:events) { [event] }
-      let(:event_external_id) { Faker::Internet.unique.password(10, 20) }
-      let(:outlook_formatted_event) {
-        {
-          Body: event.description,
-          Start: {
-            'DateTime' => start_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            'TimeZone' => 'Etc/GMT',
-          },
-          End: {
-            'DateTime' => end_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            'TimeZone' => 'Etc/GMT',
-          },
-          Subject: event.name,
-          Sensitivity: 0,
-          ShowAs: 2,
-          Type: 0,
-          # # TODO:
-          # IsAllDay:
-          #
-        }
-      }
-      let(:outlook_event_with_id) {
-        outlook_formatted_event.dup.tap{ |ofe| ofe['Id'] = event_external_id }
-      }
+      let(:is_attending) { true }
 
       before(:each) {
         expect(client)
@@ -208,16 +251,9 @@ describe OutlookCalendarApiHelper do
         is_expected
           .to contain_exactly(
             have_attributes(
+              persisted?: true,
               external_id: event_external_id
             )
-          )
-      }
-
-      after(:each) {
-        expect(event)
-          .to have_attributes(
-            persisted?: true,
-            external_id: event_external_id
           )
       }
     end
@@ -240,8 +276,8 @@ describe OutlookCalendarApiHelper do
           .with(
             access_token,
             [
-              hash_including(Subject: a.name),
-              hash_including(Subject: b.name),
+              hash_including('Subject' => a.name),
+              hash_including('Subject' => b.name),
             ],
             calendar_id
           )
@@ -256,7 +292,7 @@ describe OutlookCalendarApiHelper do
           .with(
             access_token,
             [
-              hash_including(Subject: c.name),
+              hash_including('Subject' => c.name),
             ],
             calendar_id
           )
@@ -287,21 +323,25 @@ describe OutlookCalendarApiHelper do
   describe "#push_event" do
     subject { OutlookCalendarApiHelper.push_event(access_token, calendar_id, event) }
 
-    let(:event) { create :event, external_id: nil }
-
     before(:each) {
-      expect(service)
-        .to receive(:insert_event)
-        .with(calendar_id, instance_of(Google::Apis::CalendarV3::Event))
-        .and_return(item)
+      expect(client)
+        .to receive(:batch_create_events)
+        .with(
+          access_token,
+          [
+            hash_including(outlook_formatted_event),
+          ],
+          calendar_id
+        )
+        .and_return([outlook_event_with_id])
     }
 
     after(:each) {
       expect(event.external_id)
-        .to eq item.id
+        .to eq outlook_event_with_id['Id']
     }
 
-    it { is_expected.to be true }
+    it { is_expected.to include event }
   end
 
   describe "#upsert_service_event_item" do
@@ -310,237 +350,120 @@ describe OutlookCalendarApiHelper do
         .send(
           :upsert_service_event_item,
           existing_event.remote_account.email,
-          item
+          outlook_event_with_id_and_response
         )
     }
 
-    let!(:existing_event) { create :event, external_id: Faker::Internet.password(10, 20) }
-    let(:item) {
-      {
-        start: {
-          date: Date.today
-        },
-        attendees: [],
-        end: {
-          date: Date.today + 1.day
-        },
-        summary: Faker::Lorem.sentence,
-        description: "",
-      }.to_ostruct
-    }
+    let(:outlook_event_show_as) { 2 }
 
-    before(:each) {
-      allow(item).to receive(:id).and_return(existing_event.external_id)
-    }
+    it { is_expected.to be_a Event }
 
-    it "returns an Event" do
-      expect(subject).to be_a Event
+    context "when ShowAs < 2" do
+      context "when ShowAs == 1" do
+        let(:outlook_event_show_as) { 1 }
+        it { is_expected.to be_nil }
+      end
+
+      context "when ShowAs == 0" do
+        let(:outlook_event_show_as) { 0 }
+        it { is_expected.to be_nil }
+      end
+
+      context "when ShowAs == -1" do
+        let(:outlook_event_show_as) { -1 }
+        it { is_expected.to be_nil }
+      end
+
     end
 
-    context "with an un-previously-seen event" do
+    context "with a previously un-seen event" do
       before(:each) do
         existing_event.destroy
       end
 
-      it "creates a new instance but does not save it" do
-        expect(
-          subject
-            .new_record?
-        ).to be true
-      end
-    end
-
-    context "with cancelled event" do
-      let(:item) {
-        {
-          etag: "3040935482068000",
-          id: "arc0vggjo2h1hqk7btopa8thd4",
-          kind: "calendar#event",
-          status: "cancelled"
-        }.to_ostruct
+      it {
+        is_expected.to have_attributes(
+          new_record?: true,
+          persisted?: false
+        )
       }
 
-      it "won't mirror the event" do
-        expect{ subject }.not_to(change{ Event.count })
+      context "that's been cancelled" do
+        before(:each) { outlook_formatted_event['IsCancelled'] = true }
+
+        it "won't mirror the event" do
+          expect{ subject }.not_to change{ Event.count }
+        end
+
+        it { is_expected.to be_nil }
       end
     end
 
     context "when event exists in db" do
       it "finds an existing event by external_id" do
-        # puts "ITEM ID WAS ORIGINALLY", item.id
-        # existing_event.update_attributes external_id: 'abc123'
-        # item[:id] = existing_event.external_id
-
-        # puts "LOOKING FOR EVENT", existing_event.inspect
-        # puts "BASED ON ITEM", item.inspect
-        # puts "WITH ITEM.ID", item.id.inspect
-
         expect(
           subject
         ).to eq existing_event
       end
 
-      context "with start.date.date" do
-        it "updates start_at" do
-          item.start.date = Date.today.strftime('%Y-%m-%d')
-          item.start.date_time = nil
-          item.start.time_zone = 'America/Los_Angeles'
+      describe "start_at and end_at" do
+        before(:each) {
+          expect(event.start_at)
+            .not_to eq existing_event.start_at
 
-          expect(
-            subject
-              .start_at
-              .to_s
-          ).to eq ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.now.beginning_of_day).to_s
-        end
+          expect(event.end_at)
+            .not_to eq existing_event.end_at
+        }
 
-        it "updates end_at" do
-          item.end.date = Date.today.strftime('%Y-%m-%d')
-          item.end.date_time = nil
-          item.end.time_zone = 'America/Los_Angeles'
-
-          expect(
-            subject
-              .end_at
-              .to_s
-          ).to eq ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.now.beginning_of_day).to_s
-        end
-      end
-
-      context "with start.date.date_time" do
-        it "updates start_at" do
-          item.start.date = nil
-          item.start.date_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
-          item.start.time_zone = nil
-
-          expect(
-            subject
-              .start_at
-          ).to be_within(1.second).of(Time.now)
-        end
-
-        it "updates end_at" do
-          item.end.date = nil
-          item.end.date_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
-          item.end.time_zone = nil
-
-          expect(
-            subject
-              .end_at
-          ).to be_within(1.second).of(Time.now)
-        end
-      end
-
-      it "updates name" do
-        item.summary = "new name"
-
-        expect(
-          subject
-            .name
-        ).to eq "new name"
+        it {
+          is_expected.to have_attributes(
+            start_at: within(1.second).of(start_at),
+            end_at: within(1.second).of(end_at)
+          )
+        }
       end
 
       describe "is_attending" do
-        context "is set true" do
-          before(:each) do
-            # Set cached event to not attending, so item can update it to true
-            existing_event.update_attributes is_attending: false
-          end
+        context "when Response is None" do
+          let(:response) { 'None' }
 
-          it "when attending" do
-            expect(existing_event.is_attending).to be_falsy # sanity
-
-            item.attendees = [
-              {
-                email: existing_event.remote_account.email,
-                response_status: 'accepted',
-              }.to_ostruct,
-              {
-                email: 'someone@else.com',
-                response_status: 'tentative',
-              }.to_ostruct
-            ]
-
-            expect(
-              subject
-                .is_attending
-            ).to be true
-          end
+          it { is_expected.to have_attributes is_attending: false }
         end
 
-        context "is set false" do
-          before(:each) do
-            existing_event.update_attributes is_attending: true
-          end
+        context "when Response is Organizer" do
+          let(:response) { 'Organizer' }
 
-          it "when not responded" do
-            expect(existing_event.is_attending).to be_truthy # sanity
+          it { is_expected.to have_attributes is_attending: true }
+        end
 
-            item.attendees = [
-              {
-                email: existing_event.remote_account.email,
-                response_status: 'needsAction',
-              }.to_ostruct,
-              {
-                email: 'someone@else.com',
-                response_status: 'accepted',
-              }.to_ostruct
-            ]
+        context "when Response is TentativelyAccepted" do
+          let(:response) { 'TentativelyAccepted' }
 
-            expect(
-              subject
-                .is_attending
-            ).to be false
-          end
+          it { is_expected.to have_attributes is_attending: true }
+        end
 
-          it "when declined" do
-            expect(existing_event.is_attending).to be_truthy # sanity
+        context "when Response is Accepted" do
+          let(:response) { 'Accepted' }
 
-            item.attendees = [
-              {
-                email: existing_event.remote_account.email,
-                response_status: 'declined',
-              }.to_ostruct,
-              {
-                email: 'someone@else.com',
-                response_status: 'accepted',
-              }.to_ostruct
-            ]
+          it { is_expected.to have_attributes is_attending: true }
+        end
 
-            expect(
-              subject
-                .is_attending
-            ).to be false
-          end
+        context "when Response is Declined" do
+          let(:response) { 'Declined' }
 
-          it "when tentative" do
-            expect(existing_event.is_attending).to be_truthy # sanity
+          it { is_expected.to have_attributes is_attending: false }
+        end
 
-            item.attendees = [
-              {
-                email: existing_event.remote_account.email,
-                response_status: 'tentative',
-              }.to_ostruct,
-              {
-                email: 'someone@else.com',
-                response_status: 'accepted',
-              }.to_ostruct
-            ]
+        context "when Response is NotResponded" do
+          let(:response) { 'NotResponded' }
 
-            expect(
-              subject
-                .is_attending
-            ).to be false
-          end
+          it { is_expected.to have_attributes is_attending: false }
         end
       end
 
-      it "looks for source_event_id in the description" do
-        item.description = Faker::Lorem.sentence + "\n\nSourceEvent#123"
-
-        expect(
-          subject
-            .source_event_id
-        ).to eq 123
+      context "when description contains a source event id" do
+        let(:event_description) { Faker::Lorem.sentence + "\n\nSourceEvent#123" }
+        it { is_expected.to have_attributes(source_event_id: 123) }
       end
     end
   end
