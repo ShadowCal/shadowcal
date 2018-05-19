@@ -2,7 +2,7 @@
 
 class OutlookAccount < RemoteAccount
   def request_calendars
-    []
+    OutlookCalendarApiHelper.request_calendars(access_token)
   end
 
   def refresh_token!

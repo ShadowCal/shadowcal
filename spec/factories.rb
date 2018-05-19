@@ -83,6 +83,9 @@ FactoryBot.define do
 
     factory :google_account, class: GoogleAccount do
     end
+
+    factory :outlook_account, class: OutlookAccount do
+    end
   end
 
   factory :calendar do
