@@ -4,8 +4,13 @@ require "rails_helper"
 
 def build_tests_outside_work_hours
   let(:calendar) { create :calendar, time_zone: time_zone }
-  let(:start_of_day) { ActiveSupport::TimeZone.new(time_zone).parse('00:00:00').utc + 1.day }
-  let(:end_of_day) { start_of_day.end_of_day }
+  let(:original_utc) { ActiveSupport::TimeZone.new(time_zone).parse('00:00:01').utc }
+  let(:saturday) { original_utc - original_utc.wday.days - 1.day }
+  let(:sunday) { original_utc - original_utc.wday.days }
+  let(:tuesday) { original_utc - original_utc.wday.days + 2.days }
+  let(:friday) { original_utc - original_utc.wday.days - 2.day }
+  # let(:start_of_day) defined in contexts, below
+  let(:end_of_day) { start_of_day + 23.hours + 59.minutes }
   let(:before_8_am) { start_of_day + 7.hours + 59.minutes }
   let(:after_7_pm) { start_of_day + 19.hours + 1.minutes }
   let(:midday) { start_of_day + 12.hours }
@@ -15,58 +20,248 @@ def build_tests_outside_work_hours
   let(:tomorrow_after_7_pm) { after_7_pm + 1.day }
   let(:tomorrow_midday) { midday + 1.day }
 
-  context "starting and ending before 8am" do
-    let(:event) { create :event, calendar: calendar, start_at: before_8_am - 10.minutes, end_at: before_8_am }
+  context "tuesday" do
+    let(:start_of_day) { tuesday }
 
-    it { is_expected.to be true }
+    context "starting and ending before 8am" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am - 10.minutes, end_at: before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting and ending after 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: after_7_pm + 10.minutes }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting before 8am, ending before 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: midday }
+
+      it { is_expected.to be false }
+    end
+
+    context "starting before 8am, ending before 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: tomorrow_before_8_am }
+
+      it { is_expected.to be false }
+    end
+
+    context "starting before 8am, ending after 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: after_7_pm }
+
+      it { is_expected.to be false }
+    end
+
+    context "starting after 6pm, ending before 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting after 6pm, ending after 6pm the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_after_7_pm }
+
+      it { is_expected.to be false }
+    end
+
+    context "all day today" do
+      let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+
+      it { is_expected.to be false }
+    end
+
+    context "all day tomorrow" do
+      let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+
+      it { is_expected.to be false }
+    end
   end
 
-  context "starting and ending after 6pm" do
-    let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: after_7_pm + 10.minutes }
+  context "saturday" do
+    let(:start_of_day) { saturday }
 
-    it { is_expected.to be true }
+    context "starting and ending before 8am" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am - 10.minutes, end_at: before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting and ending after 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: after_7_pm + 10.minutes }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting before 8am, ending before 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: midday }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting before 8am, ending before 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: tomorrow_before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting before 8am, ending after 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: after_7_pm }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting after 6pm, ending before 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting after 6pm, ending after 6pm the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_after_7_pm }
+
+      it { is_expected.to be true }
+    end
+
+    context "all day today" do
+      let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+
+      it { is_expected.to be true }
+    end
+
+    context "all day tomorrow" do
+      let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+
+      it { is_expected.to be true }
+    end
   end
 
-  context "starting before 8am, ending before 6pm" do
-    let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: midday }
+  context "sunday" do
+    let(:start_of_day) { sunday }
 
-    it { is_expected.to be false }
+    context "starting and ending before 8am" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am - 10.minutes, end_at: before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting and ending after 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: after_7_pm + 10.minutes }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting before 8am, ending before 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: midday }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting before 8am, ending before 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: tomorrow_before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting before 8am, ending after 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: after_7_pm }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting after 6pm, ending before 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting after 6pm, ending after 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_midday }
+
+      it { is_expected.to be false }
+    end
+
+    context "starting after 6pm, ending after 6pm the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_after_7_pm }
+
+      it { is_expected.to be false }
+    end
+
+    context "all day today" do
+      let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+
+      it { is_expected.to be true }
+    end
+
+    context "all day tomorrow" do
+      let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+
+      it { is_expected.to be false }
+    end
   end
 
-  context "starting before 8am, ending before 8am the next day" do
-    let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: tomorrow_before_8_am }
+  context "friday" do
+    let(:start_of_day) { friday }
 
-    it { is_expected.to be false }
-  end
+    context "starting and ending before 8am" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am - 10.minutes, end_at: before_8_am }
 
-  context "starting before 8am, ending after 6pm" do
-    let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: after_7_pm }
+      it { is_expected.to be true }
+    end
 
-    it { is_expected.to be false }
-  end
+    context "starting and ending after 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: after_7_pm + 10.minutes }
 
-  context "starting after 6pm, ending before 8am the next day" do
-    let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_before_8_am }
+      it { is_expected.to be true }
+    end
 
-    it { is_expected.to be true }
-  end
+    context "starting before 8am, ending before 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: midday }
 
-  context "starting after 6pm, ending after 6pm the next day" do
-    let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_after_7_pm }
+      it { is_expected.to be false }
+    end
 
-    it { is_expected.to be false }
-  end
+    context "starting before 8am, ending before 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: tomorrow_before_8_am }
 
-  context "all day event" do
-    let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+      it { is_expected.to be false }
+    end
 
-    it { is_expected.to be false }
-  end
+    context "starting before 8am, ending after 6pm" do
+      let(:event) { create :event, calendar: calendar, start_at: before_8_am, end_at: after_7_pm }
 
-  context "all day tomorrow" do
-    let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+      it { is_expected.to be false }
+    end
 
-    it { is_expected.to be false }
+    context "starting after 6pm, ending before 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_before_8_am }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting after 6pm, ending after 8am the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_midday }
+
+      it { is_expected.to be true }
+    end
+
+    context "starting after 6pm, ending after 6pm the next day" do
+      let(:event) { create :event, calendar: calendar, start_at: after_7_pm, end_at: tomorrow_after_7_pm }
+
+      it { is_expected.to be true }
+    end
+
+    context "all day today" do
+      let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+
+      it { is_expected.to be false }
+    end
+
+    context "all day tomorrow" do
+      let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+
+      it { is_expected.to be true }
+    end
   end
 end
 

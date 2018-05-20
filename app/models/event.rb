@@ -68,13 +68,21 @@ class Event < ActiveRecord::Base
     start_day = local_start_at.beginning_of_day
     end_day = local_end_at.beginning_of_day
 
-    start_weekend = start_at.saturday? || start_at.sunday?
-    end_weekend = end_at.saturday? || end_at.sunday?
-    return true if start_weekend && end_weekend && end_day - start_day < 2.day
+    start_weekend = local_start_at.saturday? ||
+      local_start_at.sunday? ||
+      (local_start_at.friday? && start_hour >= 19) ||
+      (local_start_at.monday? && start_hour < 8)
+
+    end_weekend = local_end_at.saturday? ||
+      local_end_at.sunday? ||
+      (local_end_at.friday? && end_hour >= 19) ||
+      (local_end_at.monday? && end_hour < 8)
+
+    return true if start_weekend && end_weekend && (end_day - start_day < 2.day)
 
     return true if start_hour < 8 && end_hour < 8 && same_day
     return true if start_hour >= 19 && end_hour >= 19 && same_day
-    return true if start_hour >= 19 && end_hour < 8 && end_day - start_day == 1.day
+    return true if start_hour >= 19 && end_hour < 8 && (end_day - start_day == 1.day)
 
     false
   end
