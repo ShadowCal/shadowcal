@@ -12,9 +12,13 @@ describe OutlookCalendarApiHelper do
       .and_return(client)
   }
 
+  # API config
+  let(:event_fields) { %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs} }
+
   # Account data
   let(:access_token) { Faker::Internet.unique.password(10, 20) }
   let(:account) { create :remote_account, access_token: access_token }
+  let(:email) { generate(:email) }
 
   # Calendar data
   let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
@@ -120,6 +124,24 @@ describe OutlookCalendarApiHelper do
     }
 
     it { is_expected.to be_nil }
+  end
+
+  describe "#get_event" do
+    subject { OutlookCalendarApiHelper.get_event(access_token, email, event_external_id) }
+
+    before(:each) {
+      expect(client)
+        .to receive(:get_event_by_id)
+        .with(access_token, event_external_id, event_fields)
+        .and_return(outlook_event_with_id)
+
+      expect(OutlookCalendarApiHelper)
+        .to receive(:upsert_service_event_item)
+        .with(email, outlook_event_with_id)
+        .and_return(existing_event)
+    }
+
+    it { is_expected.to eq existing_event }
   end
 
   describe "#move_event" do
@@ -235,16 +257,12 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#request_events" do
-    let(:email) { generate(:email) }
-
     subject { OutlookCalendarApiHelper.request_events(access_token, email, calendar_id) }
-
-    let(:fields) { %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs} }
 
     before(:each) {
       expect(client)
         .to receive(:get_calendar_view)
-        .with(access_token, instance_of(DateTime), instance_of(DateTime), calendar_id, fields)
+        .with(access_token, instance_of(DateTime), instance_of(DateTime), calendar_id, event_fields)
         .and_return(raw_outlook_calendar_view_response)
 
       expect(OutlookCalendarApiHelper)

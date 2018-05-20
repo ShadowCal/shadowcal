@@ -16,6 +16,8 @@ module OutlookCalendarApiHelper
   #   JSON.parse(resp.body)
   # end
 
+  EVENT_FIELDS = %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs}.freeze
+
   def client
     RubyOutlook::Client.new
   end
@@ -36,7 +38,7 @@ module OutlookCalendarApiHelper
       DateTime.now.utc,
       1.month.from_now.to_datetime.utc,
       calendar_id,
-      %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs}
+      EVENT_FIELDS
     )
 
     # Return each google api calendar as an ActiveRecord Calendar model
@@ -49,16 +51,11 @@ module OutlookCalendarApiHelper
     events.reject(&:nil?)
   end
 
-  # def get_event(access_token, my_email, calendar_id, event_id)
-  #   service_event = build_service(access_token)
-  #                   .get_event(
-  #                     calendar_id,
-  #                     event_id
-  #                   )
-  #                   .item
+  def get_event(access_token, my_email, event_id)
+    service_event = client.get_event_by_id(access_token, event_id, EVENT_FIELDS)
 
-  #   upsert_service_event_item(my_email, service_event)
-  # end
+    upsert_service_event_item(my_email, service_event)
+  end
 
   def push_events(access_token, calendar_id, events, batch_size=20)
     return [] if events.empty?
