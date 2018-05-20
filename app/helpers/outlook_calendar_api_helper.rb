@@ -17,6 +17,7 @@ module OutlookCalendarApiHelper
   # end
 
   EVENT_FIELDS = %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs}.freeze
+  CALENDAR_FIELDS = %w{Id Name}.freeze
 
   def client
     RubyOutlook::Client.new
@@ -24,7 +25,7 @@ module OutlookCalendarApiHelper
 
   def request_calendars(access_token)
     # Return each google api calendar as an ActiveRecord Calendar model
-    resp = client.get_calendars(access_token, 10, 1, %w{Id Name})
+    resp = client.get_calendars(access_token, 10, 1, CALENDAR_FIELDS)
 
     resp["value"].map do |item|
       # TODO skip read only calendars
