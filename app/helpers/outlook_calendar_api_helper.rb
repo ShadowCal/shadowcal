@@ -104,22 +104,22 @@ module OutlookCalendarApiHelper
     client.delete_event(access_token, event_id)
   end
 
-  # def move_event(access_token, calendar_id, event_id, start_at, end_at)
-  #   service = build_service(access_token)
-
-  #   service.patch_event(
-  #     calendar_id,
-  #     event_id,
-  #     Google::Apis::CalendarV3::Event.new(
-  #       start: {
-  #         date_time: start_at.iso8601
-  #       },
-  #       end: {
-  #         date_time: end_at.iso8601
-  #       },
-  #     )
-  #   )
-  # end
+  def move_event(access_token, event_id, start_at, end_at)
+    client.update_event(
+      access_token,
+      {
+        'Start' => {
+          'DateTime' => start_at.strftime('%Y-%m-%dT%H:%M:%S'),
+          'TimeZone' => 'Etc/GMT',
+        },
+        'End' => {
+          'DateTime' => end_at.strftime('%Y-%m-%dT%H:%M:%S'),
+          'TimeZone' => 'Etc/GMT',
+        },
+      },
+      event_id
+    )
+  end
 
   private
 
@@ -152,17 +152,6 @@ module OutlookCalendarApiHelper
   def service_date_to_active_support_date_time(date)
     ZoneHelper.from_zoneless_timestamp_and_zone_to_utc(date['DateTime'], date['TimeZone'])
   end
-
-  # def get_calendar_events(service, id)
-  #   service
-  #     .list_events(
-  #       id,
-  #       time_max: 1.month.from_now.iso8601,
-  #       time_min: Time.now.iso8601
-  #     )
-  #     .items
-  #     .reject { |item| item.transparency == "transparent" }
-  # end
 
   extend self
 end

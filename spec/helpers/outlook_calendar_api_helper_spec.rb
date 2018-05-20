@@ -122,6 +122,35 @@ describe OutlookCalendarApiHelper do
     it { is_expected.to be_nil }
   end
 
+  describe "#move_event" do
+    let(:new_start_at) { Faker::Time.forward(23, :morning).utc }
+    let(:new_end_at) { new_start_at + Faker::Number.between(1, 10).hours }
+
+    subject { OutlookCalendarApiHelper.move_event(access_token, event_external_id, new_start_at, new_end_at) }
+
+    before(:each) {
+      expect(client)
+        .to receive(:update_event)
+        .with(
+          access_token,
+          hash_including(
+            'Start' => {
+              'DateTime' => new_start_at.strftime('%Y-%m-%dT%H:%M:%S'),
+              'TimeZone' => 'Etc/GMT',
+            },
+            'End' => {
+              'DateTime' => new_end_at.strftime('%Y-%m-%dT%H:%M:%S'),
+              'TimeZone' => 'Etc/GMT',
+            },
+          ),
+          event_external_id
+        )
+    }
+
+    it { is_expected.to be_nil }
+  end
+
+
   describe "#request_calendars" do
     subject { OutlookCalendarApiHelper.request_calendars(access_token) }
 
