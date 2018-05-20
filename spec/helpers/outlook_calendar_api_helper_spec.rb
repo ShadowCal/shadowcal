@@ -110,6 +110,18 @@ describe OutlookCalendarApiHelper do
     }
   }
 
+  describe "#delete_event" do
+    subject { OutlookCalendarApiHelper.delete_event(access_token, event_external_id) }
+
+    before(:each) {
+      expect(client)
+        .to receive(:delete_event)
+        .with(access_token, event_external_id)
+    }
+
+    it { is_expected.to be_nil }
+  end
+
   describe "#request_calendars" do
     subject { OutlookCalendarApiHelper.request_calendars(access_token) }
 

@@ -100,10 +100,9 @@ module OutlookCalendarApiHelper
     push_events(access_token, calendar_id, [event])
   end
 
-  # def delete_event(access_token, calendar_id, event_id)
-  #   build_service(access_token)
-  #     .delete_event(calendar_id, event_id)
-  # end
+  def delete_event(access_token, event_id)
+    client.delete_event(access_token, event_id)
+  end
 
   # def move_event(access_token, calendar_id, event_id, start_at, end_at)
   #   service = build_service(access_token)
