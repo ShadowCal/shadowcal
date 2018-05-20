@@ -121,7 +121,7 @@ module OutlookCalendarApiHelper
   #   )
   # end
 
-  # private
+  private
 
   # TODO: Dedupe this from GoogleCalendarApiHelper
   def upsert_service_calendar_item(item)
