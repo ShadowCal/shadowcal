@@ -58,44 +58,38 @@ module OutlookCalendarApiHelper
     upsert_service_event_item(my_email, service_event)
   end
 
-  def push_events(access_token, calendar_id, events, batch_size=20)
+  def push_events(access_token, calendar_id, events)
     return [] if events.empty?
 
-    events.tap do |e|
-      e.each_slice(batch_size).each do |batch|
-        resps = client.batch_create_events(
-          access_token,
-          batch.map { |event| {
-            'Body' => {
-              'ContentType' => 0,
-              'Content' => event.description,
-            },
-            'Start' => {
-              'DateTime' => event.start_at.strftime('%Y-%m-%dT%H:%M:%S'),
-              'TimeZone' => 'Etc/GMT',
-            },
-            'End' => {
-              'DateTime' => event.end_at.strftime('%Y-%m-%dT%H:%M:%S'),
-              'TimeZone' => 'Etc/GMT',
-            },
-            'Subject' => event.name,
-            'Sensitivity' => 0,
-            'ShowAs' => if event.is_attending then 2 else 0 end,
-            'Type' => 0,
-            'IsCancelled' => false,
-          } },
-          calendar_id
-        )
-
-        resps.each_with_index do |resp, i|
-          batch[i].update_attributes external_id: resp['Id'] unless resp.nil?
-        end
-      end
-    end
+    events.map{ |e| push_event(access_token, calendar_id, e) }
   end
 
   def push_event(access_token, calendar_id, event)
-    push_events(access_token, calendar_id, [event])
+    resp = client.create_event(
+      access_token,
+      {
+        'Body' => {
+          'ContentType' => 0,
+          'Content' => event.description,
+        },
+        'Start' => {
+          'DateTime' => event.start_at.strftime('%Y-%m-%dT%H:%M:%S'),
+          'TimeZone' => 'Etc/GMT',
+        },
+        'End' => {
+          'DateTime' => event.end_at.strftime('%Y-%m-%dT%H:%M:%S'),
+          'TimeZone' => 'Etc/GMT',
+        },
+        'Subject' => event.name,
+        'Sensitivity' => 0,
+        'ShowAs' => if event.is_attending then 2 else 0 end,
+        'Type' => 0,
+        'IsCancelled' => false,
+      },
+      calendar_id
+    )
+
+    event.tap{ |e| e.update_attributes external_id: resp['Id'] unless resp.nil? }
   end
 
   def delete_event(access_token, event_id)

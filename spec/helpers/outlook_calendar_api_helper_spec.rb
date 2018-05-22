@@ -281,8 +281,7 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#push_events" do
-    let(:batch_size) { 20 }
-    subject { OutlookCalendarApiHelper.push_events(access_token, calendar_id, events, batch_size) }
+    subject { OutlookCalendarApiHelper.push_events(access_token, calendar_id, events) }
 
     context "with an empty array of events" do
       let(:events) { [] }
@@ -295,15 +294,13 @@ describe OutlookCalendarApiHelper do
 
       before(:each) {
         expect(client)
-          .to receive(:batch_create_events)
+          .to receive(:create_event)
           .with(
             access_token,
-            array_including(
-              hash_including(outlook_formatted_event)
-            ),
+            outlook_formatted_event,
             calendar_id
           )
-        .and_return([outlook_event_with_id])
+        .and_return(outlook_event_with_id)
       }
 
       it {
@@ -327,37 +324,35 @@ describe OutlookCalendarApiHelper do
       let(:id_b) { Faker::Internet.unique.password(10, 20) }
       let(:id_c) { Faker::Internet.unique.password(10, 20) }
 
-      let(:batch_size) { 2 }
-
       before(:each) {
         expect(client)
-          .to receive(:batch_create_events)
+          .to receive(:create_event)
           .with(
             access_token,
-            [
-              hash_including('Subject' => a.name),
-              hash_including('Subject' => b.name),
-            ],
+            hash_including('Subject' => a.name),
             calendar_id
           )
-          .and_return([
-            { 'Id' => id_a },
-            { 'Id' => id_b },
-          ])
+          .and_return({ 'Id' => id_a })
           .ordered
 
         expect(client)
-          .to receive(:batch_create_events)
+          .to receive(:create_event)
           .with(
             access_token,
-            [
-              hash_including('Subject' => c.name),
-            ],
+            hash_including('Subject' => b.name),
             calendar_id
           )
-          .and_return([
-            { 'Id' => id_c },
-          ])
+          .and_return({ 'Id' => id_b })
+          .ordered
+
+        expect(client)
+          .to receive(:create_event)
+          .with(
+            access_token,
+            hash_including('Subject' => c.name),
+            calendar_id
+          )
+          .and_return({ 'Id' => id_c })
           .ordered
       }
 
@@ -384,15 +379,13 @@ describe OutlookCalendarApiHelper do
 
     before(:each) {
       expect(client)
-        .to receive(:batch_create_events)
+        .to receive(:create_event)
         .with(
           access_token,
-          [
-            hash_including(outlook_formatted_event),
-          ],
+          hash_including(outlook_formatted_event),
           calendar_id
         )
-        .and_return([outlook_event_with_id])
+        .and_return(outlook_event_with_id)
     }
 
     after(:each) {
@@ -400,7 +393,7 @@ describe OutlookCalendarApiHelper do
         .to eq outlook_event_with_id['Id']
     }
 
-    it { is_expected.to include event }
+    it { is_expected.to eq event }
   end
 
   describe "#upsert_service_event_item" do
