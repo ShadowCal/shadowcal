@@ -36,8 +36,8 @@ module OutlookCalendarApiHelper
   def request_events(access_token, my_email, calendar_id)
     resp = client.get_calendar_view(
       access_token,
-      DateTime.now.utc,
-      1.month.from_now.to_datetime.utc,
+      Time.now.utc,
+      1.month.from_now.utc,
       calendar_id,
       EVENT_FIELDS
     )
@@ -82,7 +82,7 @@ module OutlookCalendarApiHelper
         },
         'Subject' => event.name,
         'Sensitivity' => 0,
-        'ShowAs' => if event.is_attending then 2 else 0 end,
+        'ShowAs' => event.is_attending ? 2 : 0,
         'Type' => 0,
         'IsCancelled' => false,
       },
@@ -123,7 +123,7 @@ module OutlookCalendarApiHelper
     end
   end
 
-  def upsert_service_event_item(my_email, item)
+  def upsert_service_event_item(_my_email, item)
     return if item['IsCancelled']
     return if item['ShowAs'] < 2
 

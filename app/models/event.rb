@@ -69,14 +69,14 @@ class Event < ActiveRecord::Base
     end_day = local_end_at.beginning_of_day
 
     start_weekend = local_start_at.saturday? ||
-      local_start_at.sunday? ||
-      (local_start_at.friday? && start_hour >= 19) ||
-      (local_start_at.monday? && start_hour < 8)
+                    local_start_at.sunday? ||
+                    (local_start_at.friday? && start_hour >= 19) ||
+                    (local_start_at.monday? && start_hour < 8)
 
     end_weekend = local_end_at.saturday? ||
-      local_end_at.sunday? ||
-      (local_end_at.friday? && end_hour >= 19) ||
-      (local_end_at.monday? && end_hour < 8)
+                  local_end_at.sunday? ||
+                  (local_end_at.friday? && end_hour >= 19) ||
+                  (local_end_at.monday? && end_hour < 8)
 
     return true if start_weekend && end_weekend && (end_day - start_day < 2.day)
 

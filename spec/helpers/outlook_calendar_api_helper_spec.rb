@@ -32,7 +32,8 @@ describe OutlookCalendarApiHelper do
   let(:event_description) { '' }
 
   let(:event) {
-    build(:event,
+    build(
+      :event,
       calendar: calendar,
       start_at: start_at,
       end_at: end_at,
@@ -41,7 +42,8 @@ describe OutlookCalendarApiHelper do
   }
 
   let(:existing_event) {
-    create(:event,
+    create(
+      :event,
       external_id: event_external_id,
       calendar: calendar
     )
@@ -56,7 +58,7 @@ describe OutlookCalendarApiHelper do
 
   let(:outlook_event_show_as) {
     # Free = 0, Tentative = 1, Busy = 2, Oof = 3, WorkingElsewhere = 4, Unknown = -1.
-    if event.is_attending then 2 else 0 end
+    event.is_attending ? 2 : 0
   }
 
   let(:outlook_formatted_event) {
@@ -172,7 +174,6 @@ describe OutlookCalendarApiHelper do
     it { is_expected.to be_nil }
   end
 
-
   describe "#request_calendars" do
     subject { OutlookCalendarApiHelper.request_calendars(access_token) }
 
@@ -262,7 +263,13 @@ describe OutlookCalendarApiHelper do
     before(:each) {
       expect(client)
         .to receive(:get_calendar_view)
-        .with(access_token, instance_of(DateTime), instance_of(DateTime), calendar_id, event_fields)
+        .with(
+          access_token,
+          within(10.second).of(Time.now),
+          within(10.second).of(1.month.from_now),
+          calendar_id,
+          event_fields
+        )
         .and_return(raw_outlook_calendar_view_response)
 
       expect(OutlookCalendarApiHelper)
@@ -300,7 +307,7 @@ describe OutlookCalendarApiHelper do
             outlook_formatted_event,
             calendar_id
           )
-        .and_return(outlook_event_with_id)
+          .and_return(outlook_event_with_id)
       }
 
       it {
@@ -332,7 +339,7 @@ describe OutlookCalendarApiHelper do
             hash_including('Subject' => a.name),
             calendar_id
           )
-          .and_return({ 'Id' => id_a })
+          .and_return('Id' => id_a)
           .ordered
 
         expect(client)
@@ -342,7 +349,7 @@ describe OutlookCalendarApiHelper do
             hash_including('Subject' => b.name),
             calendar_id
           )
-          .and_return({ 'Id' => id_b })
+          .and_return('Id' => id_b)
           .ordered
 
         expect(client)
@@ -352,7 +359,7 @@ describe OutlookCalendarApiHelper do
             hash_including('Subject' => c.name),
             calendar_id
           )
-          .and_return({ 'Id' => id_c })
+          .and_return('Id' => id_c)
           .ordered
       }
 
@@ -370,7 +377,6 @@ describe OutlookCalendarApiHelper do
             ),
           )
       }
-
     end
   end
 
@@ -425,7 +431,6 @@ describe OutlookCalendarApiHelper do
         let(:outlook_event_show_as) { -1 }
         it { is_expected.to be_nil }
       end
-
     end
 
     context "with a previously un-seen event" do
@@ -444,7 +449,7 @@ describe OutlookCalendarApiHelper do
         before(:each) { outlook_formatted_event['IsCancelled'] = true }
 
         it "won't mirror the event" do
-          expect{ subject }.not_to change{ Event.count }
+          expect{ subject }.not_to(change{ Event.count })
         end
 
         it { is_expected.to be_nil }
