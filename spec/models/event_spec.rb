@@ -300,12 +300,6 @@ describe "Event", type: :model do
       let(:event) { create :event }
 
       it { is_expected.to be_nil }
-
-      context "but has a stale shadow" do
-        let(:event) { create :event, :has_shadow }
-
-        it { is_expected.to be_nil }
-      end
     end
 
     context "when event is synced" do
@@ -330,7 +324,7 @@ describe "Event", type: :model do
       let(:event_to_test) { create :event }
 
       before(:each) {
-        expect(GoogleCalendarApiHelper).not_to receive(:push_events)
+        expect(CalendarApiHelper::Google).not_to receive(:push_events)
         expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
       }
 
@@ -354,7 +348,7 @@ describe "Event", type: :model do
           let(:event_to_test) { shadow_event }
 
           before(:each) {
-            expect(GoogleCalendarApiHelper).not_to receive(:push_events)
+            expect(CalendarApiHelper::Google).not_to receive(:push_events)
             expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
           }
 
@@ -417,7 +411,7 @@ describe "Event", type: :model do
           let(:event_to_test) { shadow_event }
 
           before(:each) {
-            expect(GoogleCalendarApiHelper).not_to receive(:push_events)
+            expect(CalendarApiHelper::Google).not_to receive(:push_events)
             expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
           }
 
@@ -532,7 +526,7 @@ describe "Event", type: :model do
     }
 
     before :each do
-      allow(GoogleCalendarApiHelper)
+      allow(TestCalendarApiHelper)
         .to receive(:move_event)
         .and_return(true)
     end
@@ -541,14 +535,15 @@ describe "Event", type: :model do
       let(:event) { create :syncable_event, :is_shadow }
 
       it "pushes dates to the source event" do
-        expect(GoogleCalendarApiHelper)
-          .to receive(:move_event) do |access_token, calendar_id, event_id, start_at, end_at|
-          expect(access_token).to eq event.source_event.access_token
-          expect(calendar_id).to eq event.source_event.calendar.external_id
-          expect(event_id).to eq event.source_event.external_id
-          expect(start_at).to eq event.start_at
-          expect(end_at).to eq event.end_at
-        end
+        expect(TestCalendarApiHelper)
+          .to receive(:move_event)
+          .with(
+            event.source_event.access_token,
+            event.source_event.calendar.external_id,
+            event.source_event.external_id,
+            event.start_at,
+            event.end_at
+          )
         subject
       end
 
@@ -561,7 +556,7 @@ describe "Event", type: :model do
       end
 
       it "doesn't update db if source event fails to push" do
-        expect(GoogleCalendarApiHelper)
+        expect(TestCalendarApiHelper)
           .to receive(:move_event)
           .and_raise "Fail"
 
@@ -577,14 +572,15 @@ describe "Event", type: :model do
       let(:event) { create :syncable_event, :has_shadow }
 
       it "pushes dates to the shadow event" do
-        expect(GoogleCalendarApiHelper)
-          .to receive(:move_event) do |access_token, calendar_id, event_id, start_at, end_at|
-          expect(access_token).to eq event.shadow_event.access_token
-          expect(calendar_id).to eq event.shadow_event.calendar.external_id
-          expect(event_id).to eq event.shadow_event.external_id
-          expect(start_at).to eq event.start_at
-          expect(end_at).to eq event.end_at
-        end
+        expect(TestCalendarApiHelper)
+          .to receive(:move_event)
+          .with(
+            event.shadow_event.access_token,
+            event.shadow_event.calendar.external_id,
+            event.shadow_event.external_id,
+            event.start_at,
+            event.end_at
+          )
         subject
       end
 
@@ -597,7 +593,7 @@ describe "Event", type: :model do
       end
 
       it "doesn't update db if shadow event fails to push" do
-        expect(GoogleCalendarApiHelper)
+        expect(TestCalendarApiHelper)
           .to receive(:move_event)
           .and_raise "Fail"
 
@@ -613,7 +609,7 @@ describe "Event", type: :model do
       let(:event) { create :syncable_event }
 
       it "does not touch the api" do
-        expect(GoogleCalendarApiHelper)
+        expect(TestCalendarApiHelper)
           .not_to receive(:move_event)
         subject
       end

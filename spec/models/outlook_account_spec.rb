@@ -10,7 +10,7 @@ describe "OutlookAccount", type: :model do
     subject { account.request_calendars }
 
     before(:each) {
-      expect(OutlookCalendarApiHelper)
+      expect(CalendarApiHelper::Outlook)
         .to receive(:request_calendars)
         .with(account.access_token)
         .and_return([calendar])
@@ -25,7 +25,7 @@ describe "OutlookAccount", type: :model do
     let(:account) { create :outlook_account, :expired }
 
     before :each do
-      expect(OutlookCalendarApiHelper).to receive(:refresh_access_token)
+      expect(CalendarApiHelper::Outlook).to receive(:refresh_access_token)
         .and_return("access_token" => new_token,
                     "expires_in"   => new_expires_at)
     end

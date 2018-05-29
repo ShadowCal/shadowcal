@@ -16,9 +16,42 @@ class RemoteAccount < ActiveRecord::Base
     )
   }
 
-  def request_calendars
-    raise NotImplementedError, "#request_calendars must be implemented by a subclass (based on type)"
+  def self.calendar_helper
+    raise NotImplementedError, "class#calendar_helper must be implemented by a subclass"
   end
+
+  def request_calendars
+    self.class.calendar_helper.request_calendars(access_token)
+  end
+
+  def request_events(calendar_id)
+    self.class.calendar_helper.request_events(access_token, email, calendar_id)
+  end
+
+  def get_event(calendar_id, event_id)
+    self.class.calendar_helper.get_event(access_token, email, calendar_id, event_id)
+  end
+
+  def push_events(calendar_id, events)
+    self.class.calendar_helper.push_events(access_token, calendar_id, events)
+  end
+
+  def push_event(calendar_id, event)
+    self.class.calendar_helper.push_event(access_token, calendar_id, event)
+  end
+
+  def delete_event(event)
+    self.class.calendar_helper.delete_event(
+      event.access_token,
+      event.calendar.external_id,
+      event.external_id
+    )
+  end
+
+  def move_event(calendar_id, event_id, start_at, end_at)
+    self.class.calendar_helper.move_event(access_token, calendar_id, event_id, start_at, end_at)
+  end
+
 
   private
 
@@ -32,6 +65,6 @@ class RemoteAccount < ActiveRecord::Base
 
   def should_refresh_token?
     return false if skip_callbacks
-    token_expires_at < Time.current unless token_expires_at.nil? || refresh_token.blank?
+    token_expires_at < Time.current unless (token_expires_at.nil? || refresh_token.blank?)
   end
 end

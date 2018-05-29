@@ -23,7 +23,7 @@ describe "RemoteAccount", type: :model do
     it "refreshes automatically if stale" do
       expired_instance # Create so we can find it, later
 
-      expect_any_instance_of(RemoteAccount).to receive(:refresh_token!)
+      expect_any_instance_of(TestRemoteAccount).to receive(:refresh_token!)
 
       RemoteAccount.find(expired_instance.id)
     end
@@ -34,18 +34,6 @@ describe "RemoteAccount", type: :model do
       expect_any_instance_of(RemoteAccount).to_not receive(:refresh_token!)
 
       RemoteAccount.find(valid_instance.id)
-    end
-  end
-
-  describe "#request_calendars" do
-    it "throws an error" do
-      expect{ account.request_calendars }.to raise_error NotImplementedError
-    end
-  end
-
-  describe "#refresh_token!" do
-    it "throws an error" do
-      expect{ account.send(:refresh_token!) }.to raise_error NotImplementedError
     end
   end
 

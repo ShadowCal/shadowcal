@@ -3,7 +3,7 @@
 require "rails_helper"
 require "ostruct"
 
-describe GoogleCalendarApiHelper do
+describe CalendarApiHelper::Google do
   let(:service) { double('service') }
   let(:item) { double('item') }
 
@@ -11,7 +11,7 @@ describe GoogleCalendarApiHelper do
   let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
 
   before(:each) {
-    allow(GoogleCalendarApiHelper)
+    allow(CalendarApiHelper::Google)
       .to receive(:build_service)
       .and_return(service)
 
@@ -23,18 +23,18 @@ describe GoogleCalendarApiHelper do
   describe "#request_events" do
     let(:email) { generate(:email) }
 
-    subject { GoogleCalendarApiHelper.request_events(access_token, email, calendar_id) }
+    subject { CalendarApiHelper::Google.request_events(access_token, email, calendar_id) }
 
     before(:each) {
-      allow(GoogleCalendarApiHelper)
+      allow(CalendarApiHelper::Google)
         .to receive(:build_service)
         .and_return(service)
 
-      allow(GoogleCalendarApiHelper)
+      allow(CalendarApiHelper::Google)
         .to receive(:get_calendar_events)
         .and_return([item])
 
-      allow(GoogleCalendarApiHelper)
+      allow(CalendarApiHelper::Google)
         .to receive(:upsert_service_event_item)
         .with(email, item)
         .and_return([nil])
@@ -44,7 +44,7 @@ describe GoogleCalendarApiHelper do
   end
 
   describe "#upsert_service_calendar_item" do
-    subject { GoogleCalendarApiHelper.send(:upsert_service_calendar_item, item) }
+    subject { CalendarApiHelper::Google.send(:upsert_service_calendar_item, item) }
 
     let(:item) {
       {
@@ -68,13 +68,13 @@ describe GoogleCalendarApiHelper do
   describe "#push_events" do
     context "with an empty array of events" do
       let(:events) { [] }
-      subject { GoogleCalendarApiHelper.push_events(access_token, calendar_id, events) }
+      subject { CalendarApiHelper::Google.push_events(access_token, calendar_id, events) }
       it { is_expected.to be_nil }
     end
   end
 
   describe "#push_event" do
-    subject { GoogleCalendarApiHelper.push_event(access_token, calendar_id, event) }
+    subject { CalendarApiHelper::Google.push_event(access_token, calendar_id, event) }
 
     let(:event) { create :event, external_id: nil }
 
@@ -95,7 +95,7 @@ describe GoogleCalendarApiHelper do
 
   describe "#upsert_service_event_item" do
     subject {
-      GoogleCalendarApiHelper
+      CalendarApiHelper::Google
         .send(
           :upsert_service_event_item,
           existing_event.remote_account.email,

@@ -236,6 +236,8 @@ Devise.setup do |config|
   config.omniauth :microsoft_office365, ENV['OUTLOOK_APP_ID'], ENV['OUTLOOK_SECRET'],
                   :scope => 'https://outlook.office.com/calendars.readwrite'
 
+  OmniAuth.config.logger = Rails.logger if Rails.env.development?
+
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

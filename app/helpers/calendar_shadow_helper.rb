@@ -41,11 +41,7 @@ module CalendarShadowHelper
 
     begin
       unless shadow.external_id.blank?
-        GoogleCalendarApiHelper.delete_event(
-          shadow.access_token,
-          shadow.calendar.external_id,
-          shadow.external_id
-        )
+        shadow.remote_account.delete_event(shadow)
       end
 
       shadow.destroy
@@ -64,11 +60,8 @@ module CalendarShadowHelper
     return true unless source_event&.shadow_event&.external_id.nil?
 
     begin
-      GoogleCalendarApiHelper.push_event(
-        source_event.corresponding_calendar.access_token,
-        source_event.corresponding_calendar.external_id,
-        shadow_of_event(source_event)
-      )
+      shadow = shadow_of_event(source_event)
+      shadow.calendar.push_event(shadow)
     rescue StandardError => e
       Rails.logger.debug [DebugHelper.identify_event(source_event), "Remote service fail? ", e].join(" ")
     end
@@ -79,7 +72,7 @@ module CalendarShadowHelper
   private
 
   def update_calendar_events_cache(calendar)
-    events = request_events_for_calendar(calendar)
+    events = calendar.request_events
 
     events.each do |event|
       event.calendar = calendar
@@ -108,7 +101,7 @@ module CalendarShadowHelper
 
       Event.where(id: shadows).update_all(calendar_id: to_calendar.id)
 
-      create_remote_events(to_calendar, shadows)
+      to_calendar.push_events(shadows)
     end
   end
 
@@ -140,20 +133,5 @@ module CalendarShadowHelper
     }
   end
 
-  def create_remote_events(calendar, events)
-    GoogleCalendarApiHelper.push_events(
-      calendar.access_token,
-      calendar.external_id,
-      events
-    )
-  end
-
-  def request_events_for_calendar(calendar)
-    GoogleCalendarApiHelper.request_events(
-      calendar.access_token,
-      calendar.remote_account.email,
-      calendar.external_id
-    )
-  end
   extend self
 end

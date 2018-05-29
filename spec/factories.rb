@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require Rails.root.join("spec", "support", 'test_remote_account.rb')
+
 FactoryBot.define do
   factory :event do
     calendar
@@ -19,10 +21,18 @@ FactoryBot.define do
       external_id { Faker::Internet.password(10, 20) }
 
       after :create do |event|
+        user = event.calendar.remote_account.user
+        pair = user.sync_pairs.find do |sp|
+          sp.to_calendar == event.calendar
+        end
+        pair ||= create :sync_pair, user: user, to_calendar: event.calendar
+
         if event.source_event.nil?
-          event.source_event = create :event
+          event.source_event = create :event, calendar: pair.from_calendar
           event.save!
         end
+
+        user.reload
       end
     end
 
@@ -42,7 +52,20 @@ FactoryBot.define do
     end
 
     trait :has_shadow do
-      association :shadow_event, factory: :event
+      after(:create) do |event|
+        user = event.calendar.remote_account.user
+        pair = user.sync_pairs.find do |sp|
+          sp.from_calendar == event.calendar
+        end
+        pair ||= create :sync_pair, user: user, from_calendar: event.calendar
+
+        if event.shadow_event.nil?
+          event.shadow_event = create :event, calendar: pair.to_calendar, source_event: event
+          event.save!
+        end
+
+        user.reload
+      end
     end
 
     trait :weekday do
@@ -69,13 +92,14 @@ FactoryBot.define do
     last_synced_at nil
   end
 
-  factory :remote_account do
+  factory :remote_account, class: TestRemoteAccount do
     user
     email
     access_token { Faker::Internet.password(10, 20) }
     refresh_token { Faker::Internet.password(10, 20) }
     token_secret { Faker::Internet.password(10, 20) }
     token_expires_at { 1.month.from_now }
+    type 'TestRemoteAccount'
 
     trait :expired do
       token_expires_at 1.minute.ago

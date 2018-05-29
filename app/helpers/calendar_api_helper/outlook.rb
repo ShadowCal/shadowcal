@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
-module OutlookCalendarApiHelper
-  # def refresh_access_token(refresh_token)
-  #   url = URI("https://accounts.google.com/o/oauth2/token")
-
-  #   params = {
-  #     "refresh_token" => refresh_token,
-  #     "client_id"     => ENV["GOOGLE_CLIENT_ID"],
-  #     "client_secret" => ENV["GOOGLE_CLIENT_SECRET"],
-  #     "grant_type"    => "refresh_token"
-  #   }
-
-  #   resp = Net::HTTP.post_form(url, params)
-
-  #   JSON.parse(resp.body)
-  # end
-
+module CalendarApiHelper::Outlook
   EVENT_FIELDS = %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs}.freeze
   CALENDAR_FIELDS = %w{Id Name}.freeze
+
+  def refresh_access_token(refresh_token)
+    url = URI("https://outlook.office365.com/o/oauth2/token")
+
+    params = {
+      "refresh_token" => refresh_token,
+      "client_id"     => ENV["OUTLOOK_APP_ID"],
+      "client_secret" => ENV["OUTLOOK_SECRET"],
+      "grant_type"    => "refresh_token"
+    }
+
+    resp = Net::HTTP.post_form(url, params)
+
+    JSON.parse(resp.body)
+  end
 
   def client
     RubyOutlook::Client.new
@@ -115,7 +115,7 @@ module OutlookCalendarApiHelper
 
   private
 
-  # TODO: Dedupe this from GoogleCalendarApiHelper
+  # TODO: Dedupe this from CalendarApiHelper::Google
   def upsert_service_calendar_item(item)
     Calendar.where(external_id: item['Id']).first_or_create do |calendar|
       calendar.name = item['Name']

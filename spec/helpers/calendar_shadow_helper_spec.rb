@@ -7,10 +7,10 @@ describe CalendarShadowHelper do
   let(:source_event) { create :event, calendar_id: pair.from_calendar_id }
   let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
 
+  let(:from_calendar) { pair.from_calendar }
+  let(:to_calendar) { pair.to_calendar }
+
   describe "#cast_from_to" do
-    let(:pair) { create :sync_pair }
-    let(:from_calendar) { pair.from_calendar }
-    let(:to_calendar) { pair.to_calendar }
     let(:event_not_attending) { create :syncable_event, name: "not attending", calendar: from_calendar, is_attending: false }
     let(:event_already_pushed) { create :syncable_event, :has_shadow, name: "already_pushed", calendar: from_calendar }
     let(:event_on_destination_calendar) { create :syncable_event, name: "on destination calendar", calendar: to_calendar }
@@ -52,7 +52,7 @@ describe CalendarShadowHelper do
           # event_on_weekend
           # event_after_work_hours
 
-          expect(GoogleCalendarApiHelper)
+          expect(to_calendar)
             .not_to receive(:push_events)
         }
 
@@ -61,23 +61,15 @@ describe CalendarShadowHelper do
 
       context "with events that will be synced" do
         before(:each) {
-          event_will_be_synced
-
-          expect(GoogleCalendarApiHelper)
-            .to receive(:push_events) do |access_token, external_id, shadows|
-              expect(access_token)
-                .to eq to_calendar.access_token
-
-              expect(external_id)
-                .to eq to_calendar.external_id
-
-              expect(shadows.map(&:attributes))
-                .to include(
-                  hash_including(
-                    "source_event_id" => event_will_be_synced.id,
-                  )
+          expect(to_calendar)
+            .to receive(:push_events)
+            .with(
+              array_including(
+                have_attributes(
+                  "source_event_id" => event_will_be_synced.id,
                 )
-            end
+              )
+            )
         }
 
         it { is_expected.to be_nil }
@@ -97,12 +89,10 @@ describe CalendarShadowHelper do
     context "with a shadow" do
       let(:event) { shadow_event }
 
-      before(:each) {
-        expect(GoogleCalendarApiHelper)
-          .not_to receive(:push_event)
-      }
-
       it "will complain without calling the remote service" do
+        expect(TestCalendarApiHelper)
+          .not_to receive(:push_event)
+
         expect{ subject }
           .to raise_error CalendarShadowHelper::ShadowHelperError
       end
@@ -116,7 +106,7 @@ describe CalendarShadowHelper do
           expect(event.shadow_event)
             .to be_nil
 
-          expect(GoogleCalendarApiHelper)
+          expect(TestCalendarApiHelper)
             .to receive(:push_event)
             .with(
               shadow_event.access_token,
@@ -134,10 +124,10 @@ describe CalendarShadowHelper do
       end
 
       context "with a local shadow with no external_id" do
-        before(:each) { shadow_event.update_attributes external_id: nil }
-
         before(:each) {
-          expect(GoogleCalendarApiHelper)
+          shadow_event.update_attributes external_id: nil
+
+          expect(TestCalendarApiHelper)
             .to receive(:push_event)
             .with(
               shadow_event.access_token,
@@ -157,7 +147,7 @@ describe CalendarShadowHelper do
         before(:each) {
           shadow_event
 
-          expect(GoogleCalendarApiHelper)
+          expect(TestCalendarApiHelper)
             .not_to receive(:push_event)
         }
 
@@ -169,14 +159,13 @@ describe CalendarShadowHelper do
           expect(event.shadow_event)
             .to be_nil
 
-          expect(GoogleCalendarApiHelper)
+          expect(TestCalendarApiHelper)
             .to receive(:push_event)
             .with(
               shadow_event.access_token,
               shadow_event.calendar.external_id,
-              shadow_event
-            )
-            .and_raise(CalendarShadowHelper::ShadowHelperError)
+              shadow_event)
+            .and_raise(StandardError)
         }
 
         it { expect{ subject }.not_to(change{ Event.count }) }
@@ -189,7 +178,7 @@ describe CalendarShadowHelper do
           expect(event.shadow_event)
             .to be_nil
 
-          expect(GoogleCalendarApiHelper)
+          expect(TestCalendarApiHelper)
             .not_to receive(:push_event)
         }
 
@@ -207,7 +196,7 @@ describe CalendarShadowHelper do
       let(:event) { shadow_event }
 
       before(:each) {
-        expect(GoogleCalendarApiHelper)
+        expect(TestCalendarApiHelper)
           .not_to receive(:delete_event)
       }
 
@@ -230,7 +219,7 @@ describe CalendarShadowHelper do
           before(:each) {
             shadow_event.update_attributes external_id: nil
 
-            expect(GoogleCalendarApiHelper)
+            expect(TestCalendarApiHelper)
               .not_to receive(:delete_event)
           }
 
@@ -239,7 +228,7 @@ describe CalendarShadowHelper do
 
         context "when the shadow does have an external_id" do
           it "will also delete from the remote source" do
-            expect(GoogleCalendarApiHelper)
+            expect(TestCalendarApiHelper)
               .to receive(:delete_event)
               .with(
                 shadow_event.access_token,
@@ -256,7 +245,7 @@ describe CalendarShadowHelper do
         it "quietly won't try to delete anything" do
           expect(event.shadow_event).to be_nil # Sanity
 
-          expect(GoogleCalendarApiHelper)
+          expect(TestCalendarApiHelper)
             .not_to receive(:delete_event)
 
           expect(subject).to be true
@@ -271,7 +260,7 @@ describe CalendarShadowHelper do
 
         context "when the remote service throws an error" do
           before(:each) {
-            expect(GoogleCalendarApiHelper)
+            expect(TestCalendarApiHelper)
               .to receive(:delete_event)
               .and_raise "Fail"
           }

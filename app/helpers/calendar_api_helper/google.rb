@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module GoogleCalendarApiHelper
+module CalendarApiHelper::Google
   def refresh_access_token(refresh_token)
     url = URI("https://accounts.google.com/o/oauth2/token")
 

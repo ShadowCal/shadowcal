@@ -3,11 +3,11 @@
 require "rails_helper"
 require "ostruct"
 
-describe OutlookCalendarApiHelper do
+describe CalendarApiHelper::Outlook do
   let(:client) { double('client') }
 
   before(:each) {
-    allow(OutlookCalendarApiHelper)
+    allow(CalendarApiHelper::Outlook)
       .to receive(:client)
       .and_return(client)
   }
@@ -117,7 +117,7 @@ describe OutlookCalendarApiHelper do
   }
 
   describe "#delete_event" do
-    subject { OutlookCalendarApiHelper.delete_event(access_token, event_external_id) }
+    subject { CalendarApiHelper::Outlook.delete_event(access_token, event_external_id) }
 
     before(:each) {
       expect(client)
@@ -129,7 +129,7 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#get_event" do
-    subject { OutlookCalendarApiHelper.get_event(access_token, email, event_external_id) }
+    subject { CalendarApiHelper::Outlook.get_event(access_token, email, event_external_id) }
 
     before(:each) {
       expect(client)
@@ -137,7 +137,7 @@ describe OutlookCalendarApiHelper do
         .with(access_token, event_external_id, event_fields)
         .and_return(outlook_event_with_id)
 
-      expect(OutlookCalendarApiHelper)
+      expect(CalendarApiHelper::Outlook)
         .to receive(:upsert_service_event_item)
         .with(email, outlook_event_with_id)
         .and_return(existing_event)
@@ -150,7 +150,7 @@ describe OutlookCalendarApiHelper do
     let(:new_start_at) { Faker::Time.forward(23, :morning).utc }
     let(:new_end_at) { new_start_at + Faker::Number.between(1, 10).hours }
 
-    subject { OutlookCalendarApiHelper.move_event(access_token, event_external_id, new_start_at, new_end_at) }
+    subject { CalendarApiHelper::Outlook.move_event(access_token, event_external_id, new_start_at, new_end_at) }
 
     before(:each) {
       expect(client)
@@ -175,7 +175,7 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#request_calendars" do
-    subject { OutlookCalendarApiHelper.request_calendars(access_token) }
+    subject { CalendarApiHelper::Outlook.request_calendars(access_token) }
 
     let(:outlook_formatted_calendar) {
       {
@@ -226,7 +226,7 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#upsert_service_calendar_item" do
-    subject { OutlookCalendarApiHelper.send(:upsert_service_calendar_item, item) }
+    subject { CalendarApiHelper::Outlook.send(:upsert_service_calendar_item, item) }
 
     let(:name) { Faker::Lorem.sentence }
 
@@ -258,7 +258,7 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#request_events" do
-    subject { OutlookCalendarApiHelper.request_events(access_token, email, calendar_id) }
+    subject { CalendarApiHelper::Outlook.request_events(access_token, email, calendar_id) }
 
     before(:each) {
       expect(client)
@@ -272,12 +272,12 @@ describe OutlookCalendarApiHelper do
         )
         .and_return(raw_outlook_calendar_view_response)
 
-      expect(OutlookCalendarApiHelper)
+      expect(CalendarApiHelper::Outlook)
         .to receive(:upsert_service_event_item)
         .with(email, outlook_event_with_id_and_america_timezone)
         .and_return(event)
 
-      expect(OutlookCalendarApiHelper)
+      expect(CalendarApiHelper::Outlook)
         .to receive(:upsert_service_event_item)
         .with(email, outlook_event_shown_as_free)
         .and_return(nil)
@@ -288,7 +288,7 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#push_events" do
-    subject { OutlookCalendarApiHelper.push_events(access_token, calendar_id, events) }
+    subject { CalendarApiHelper::Outlook.push_events(access_token, calendar_id, events) }
 
     context "with an empty array of events" do
       let(:events) { [] }
@@ -381,7 +381,7 @@ describe OutlookCalendarApiHelper do
   end
 
   describe "#push_event" do
-    subject { OutlookCalendarApiHelper.push_event(access_token, calendar_id, event) }
+    subject { CalendarApiHelper::Outlook.push_event(access_token, calendar_id, event) }
 
     before(:each) {
       expect(client)
@@ -404,7 +404,7 @@ describe OutlookCalendarApiHelper do
 
   describe "#upsert_service_event_item" do
     subject {
-      OutlookCalendarApiHelper
+      CalendarApiHelper::Outlook
         .send(
           :upsert_service_event_item,
           existing_event.remote_account.email,

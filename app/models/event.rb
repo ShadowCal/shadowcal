@@ -36,6 +36,8 @@ class Event < ActiveRecord::Base
     # Not just corresponding_event&.calendar because it really depends on the
     # calendar/sync-pair status, rather than just is there an event which
     # links to it as the source (of which there may be more than one... )
+    calendar.remote_account.user.reload
+
     sp = calendar.remote_account.user.sync_pairs.find do |pair|
       pair.from_calendar == calendar || pair.to_calendar == calendar
     end
@@ -103,10 +105,8 @@ class Event < ActiveRecord::Base
 
     log "Moving corresponding event:", DebugHelper.identify_event(corresponding_event)
 
-    GoogleCalendarApiHelper
+    corresponding_calendar
       .move_event(
-        corresponding_event.access_token,
-        corresponding_event.calendar.external_id,
         corresponding_event.external_id,
         start_at,
         end_at

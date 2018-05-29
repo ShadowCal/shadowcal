@@ -521,6 +521,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    colorize (0.8.1)
     concurrent-ruby (1.0.5)
     config (1.5.0)
       activesupport (>= 3.0)
@@ -643,6 +644,9 @@ GEM
       nokogiri (>= 1.6.0)
       ruby_parser (~> 3.5)
     httpclient (2.8.3)
+    httplog (1.0.3)
+      colorize (~> 0.8)
+      rack (>= 1.0)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     inflecto (0.0.2)
@@ -903,6 +907,7 @@ DEPENDENCIES
   haml-rails
   haml_coffee_assets
   has-bit-field
+  httplog
   jbuilder (~> 1.2)
   jquery-rails
   json (= 1.8.3)
