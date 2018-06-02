@@ -234,7 +234,10 @@ Devise.setup do |config|
                   prompt: "select_account"
 
   config.omniauth :microsoft_office365, ENV['OUTLOOK_APP_ID'], ENV['OUTLOOK_SECRET'],
-                  :scope => 'https://outlook.office.com/calendars.readwrite'
+                  :scope => [
+                    'https://outlook.office.com/calendars.readwrite',
+                    'offline_access',
+                  ].join(' ')
 
   OmniAuth.config.logger = Rails.logger if Rails.env.development?
 
