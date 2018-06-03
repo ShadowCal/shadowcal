@@ -7,8 +7,8 @@ namespace :oauth do
 
   desc "Refresh all the tokens of all the accounts which are stale"
   task refresh_tokens: :environment do
-    log "There are #{GoogleAccount.count} total accounts. #{GoogleAccount.to_be_refreshed.count} need to be refreshed."
-    GoogleAccount.to_be_refreshed.each do |account|
+    log "There are #{RemoteAccount.count} total accounts. #{RemoteAccount.to_be_refreshed.count} need to be refreshed."
+    RemoteAccount.to_be_refreshed.each do |account|
       # We don't need to do anything with the instance, because each
       # access_token is refreshed automatically when the instance is
       # initialized.
