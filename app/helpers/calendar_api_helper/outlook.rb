@@ -4,13 +4,17 @@ module CalendarApiHelper::Outlook
   EVENT_FIELDS = %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs}.freeze
   CALENDAR_FIELDS = %w{Id Name}.freeze
 
+  TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
+  CLIENT_ID = ENV["OUTLOOK_APP_ID"]
+  CLIENT_SECRET = ENV["OUTLOOK_SECRET"]
+
   def refresh_access_token(refresh_token)
-    url = URI("https://outlook.office365.com/o/oauth2/token")
+    url = URI(TOKEN_URL)
 
     params = {
       "refresh_token" => refresh_token,
-      "client_id"     => ENV["OUTLOOK_APP_ID"],
-      "client_secret" => ENV["OUTLOOK_SECRET"],
+      "client_id"     => CLIENT_ID,
+      "client_secret" => CLIENT_SECRET,
       "grant_type"    => "refresh_token"
     }
 

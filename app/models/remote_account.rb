@@ -60,7 +60,12 @@ class RemoteAccount < ActiveRecord::Base
   end
 
   def refresh_token!
-    raise NotImplementedError, "#refresh_token! must be implemented by a subclass (based on type)"
+    resp = self.class.calendar_helper.refresh_access_token(refresh_token)
+    attrs = {}
+    attrs[:access_token] = resp["access_token"]
+    attrs[:token_expires_at] = resp["expires_in"].to_i.seconds.from_now
+    attrs[:refresh_token] = resp["refresh_token"] if resp["refresh_token"]
+    update_attributes(attrs)
   end
 
   def should_refresh_token?

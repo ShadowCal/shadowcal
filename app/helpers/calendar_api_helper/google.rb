@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 module CalendarApiHelper::Google
+  TOKEN_URL = "https://accounts.google.com/o/oauth2/token"
+  CLIENT_ID = ENV["GOOGLE_CLIENT_ID"]
+  CLIENT_SECRET = ENV["GOOGLE_CLIENT_SECRET"]
+
   def refresh_access_token(refresh_token)
-    url = URI("https://accounts.google.com/o/oauth2/token")
+    url = URI(TOKEN_URL)
 
     params = {
       "refresh_token" => refresh_token,
-      "client_id"     => ENV["GOOGLE_CLIENT_ID"],
-      "client_secret" => ENV["GOOGLE_CLIENT_SECRET"],
+      "client_id"     => CLIENT_ID,
+      "client_secret" => CLIENT_SECRET,
       "grant_type"    => "refresh_token"
     }
 
