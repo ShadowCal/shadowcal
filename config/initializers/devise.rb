@@ -237,6 +237,8 @@ Devise.setup do |config|
                   :scope => [
                     'https://outlook.office.com/calendars.readwrite',
                     'offline_access',
+                    'openid',
+                    'email',
                   ].join(' ')
 
   OmniAuth.config.logger = Rails.logger if Rails.env.development?
