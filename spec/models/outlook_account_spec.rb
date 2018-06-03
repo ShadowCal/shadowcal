@@ -26,6 +26,7 @@ describe "OutlookAccount", type: :model do
 
     before :each do
       expect(CalendarApiHelper::Outlook).to receive(:refresh_access_token)
+        .with(account.refresh_token)
         .and_return("access_token" => new_token,
                     "expires_in"   => new_expires_at)
     end
