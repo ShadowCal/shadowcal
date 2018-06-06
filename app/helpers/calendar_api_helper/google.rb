@@ -150,7 +150,9 @@ module CalendarApiHelper::Google
       event.start_at = item_start_date
       event.end_at = item_end_date
       event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item.description)
+
       event.is_attending = (item.attendees || []).find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
+      event.is_attending ||= item&.creator&.self
     end
   end
 
@@ -177,7 +179,10 @@ module CalendarApiHelper::Google
       .list_events(
         id,
         time_max: 1.month.from_now.iso8601,
-        time_min: Time.now.iso8601
+        time_min: Time.now.iso8601,
+        single_events: true,
+        max_results: 500,
+        order_by: 'startTime'
       )
       .items
       .reject { |item| item.transparency == "transparent" }
