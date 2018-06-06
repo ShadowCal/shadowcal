@@ -52,7 +52,6 @@ class RemoteAccount < ActiveRecord::Base
     self.class.calendar_helper.move_event(access_token, calendar_id, event_id, start_at, end_at)
   end
 
-
   private
 
   def queue_request_calendars
@@ -70,6 +69,6 @@ class RemoteAccount < ActiveRecord::Base
 
   def should_refresh_token?
     return false if skip_callbacks
-    token_expires_at < Time.current unless (token_expires_at.nil? || refresh_token.blank?)
+    token_expires_at < Time.current unless token_expires_at.nil? || refresh_token.blank?
   end
 end

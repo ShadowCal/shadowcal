@@ -164,7 +164,8 @@ describe CalendarShadowHelper do
             .with(
               shadow_event.access_token,
               shadow_event.calendar.external_id,
-              shadow_event)
+              shadow_event
+            )
             .and_raise(StandardError)
         }
 
