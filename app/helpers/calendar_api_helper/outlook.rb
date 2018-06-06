@@ -73,7 +73,7 @@ module CalendarApiHelper::Outlook
       access_token,
       {
         'Body' => {
-          'ContentType' => 0,
+          'ContentType' => 'Text',
           'Content' => event.description,
         },
         'Start' => {
@@ -85,9 +85,8 @@ module CalendarApiHelper::Outlook
           'TimeZone' => 'Etc/GMT',
         },
         'Subject' => event.name,
-        'Sensitivity' => 0,
-        'ShowAs' => event.is_attending ? 2 : 0,
-        'Type' => 0,
+        'Sensitivity' => 'normal',
+        'ShowAs' => event.is_attending ? 'busy' : 'free',
         'IsCancelled' => false,
       },
       calendar_id
