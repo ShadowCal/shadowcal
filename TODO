@@ -1,3 +1,4 @@
+Delete events
 Collect "free" (transparent / ShowAs < 2) events with their own column
 Account-level option to include transparent events
 Handle parsing and syncing all day events and time zones correctly
