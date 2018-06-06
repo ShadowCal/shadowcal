@@ -83,7 +83,9 @@ class Event < ActiveRecord::Base
     return true if start_weekend && end_weekend && (end_day - start_day < 2.day)
 
     return true if start_hour < 8 && end_hour < 8 && same_day
+
     return true if start_hour >= 19 && end_hour >= 19 && same_day
+
     return true if start_hour >= 19 && end_hour < 8 && (end_day - start_day == 1.day)
 
     false
