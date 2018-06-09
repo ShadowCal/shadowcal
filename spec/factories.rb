@@ -10,14 +10,14 @@ FactoryBot.define do
     end_at { start_at + 30.minutes }
     is_attending false
 
-    factory :syncable_event, traits: %i{work_hours weekday is_attending is_busy}
+    factory :syncable_event, traits: %i{work_hours weekday is_attending is_blocking}
 
     trait :is_attending do
       is_attending true
     end
 
-    trait :is_busy do
-      is_busy true
+    trait :is_blocking do
+      is_blocking true
     end
 
     trait :is_shadow do

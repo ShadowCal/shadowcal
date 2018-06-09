@@ -16,7 +16,7 @@ describe CalendarShadowHelper do
   let(:event_on_destination_calendar) { create :syncable_event, name: "on destination calendar", calendar: to_calendar }
   let(:event_on_weekend) { create :syncable_event, :weekend, name: "weekend", calendar: from_calendar }
   let(:event_after_work_hours) { create :syncable_event, :after_work_hours, name: "after hours", calendar: from_calendar }
-  let(:event_not_blocking) { create :syncable_event, is_busy: false, calendar: from_calendar }
+  let(:event_not_blocking) { create :syncable_event, is_blocking: false, calendar: from_calendar }
 
   describe "#events_needing_shadows" do
     subject { CalendarShadowHelper.send(:events_needing_shadows, from_calendar) }

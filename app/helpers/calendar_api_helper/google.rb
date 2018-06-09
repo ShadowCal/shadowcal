@@ -143,7 +143,7 @@ module CalendarApiHelper::Google
       event.is_attending = item&.creator&.self
       event.is_attending ||= (item.attendees || []).find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
 
-      event.is_busy = item.transparency == 'opaque'
+      event.is_blocking = item.transparency == 'opaque'
     end
   end
 

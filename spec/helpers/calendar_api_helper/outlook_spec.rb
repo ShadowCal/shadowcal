@@ -399,32 +399,32 @@ describe CalendarApiHelper::Outlook do
     context "ShowAs" do
       context "when == tentative" do
         let(:outlook_event_show_as) { 'tentative' }
-        it { is_expected.to have_attributes(is_busy: false) }
+        it { is_expected.to have_attributes(is_blocking: false) }
       end
 
       context "when == free" do
         let(:outlook_event_show_as) { 'free' }
-        it { is_expected.to have_attributes(is_busy: false) }
+        it { is_expected.to have_attributes(is_blocking: false) }
       end
 
       context "when == unknown" do
         let(:outlook_event_show_as) { 'unknown' }
-        it { is_expected.to have_attributes(is_busy: false) }
+        it { is_expected.to have_attributes(is_blocking: false) }
       end
 
       context "when == busy" do
         let(:outlook_event_show_as) { 'busy' }
-        it { is_expected.to have_attributes(is_busy: true) }
+        it { is_expected.to have_attributes(is_blocking: true) }
       end
 
       context "when == oof" do
         let(:outlook_event_show_as) { 'oof' }
-        it { is_expected.to have_attributes(is_busy: true) }
+        it { is_expected.to have_attributes(is_blocking: true) }
       end
 
       context "when == workingElsewhere" do
         let(:outlook_event_show_as) { 'workingElsewhere' }
-        it { is_expected.to have_attributes(is_busy: true) }
+        it { is_expected.to have_attributes(is_blocking: true) }
       end
     end
 

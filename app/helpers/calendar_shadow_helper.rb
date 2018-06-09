@@ -86,7 +86,7 @@ module CalendarShadowHelper
     from_calendar
       .events
       .attending
-      .busy
+      .blocking
       .without_shadows
       .reject(&:outside_work_hours)
   end

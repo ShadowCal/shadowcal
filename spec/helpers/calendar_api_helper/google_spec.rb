@@ -141,17 +141,17 @@ describe CalendarApiHelper::Google do
       end
     end
 
-    describe "is_busy" do
+    describe "is_blocking" do
       context "when transparent" do
         let(:transparency) { 'transparent' }
 
-        it { is_expected.to have_attributes(is_busy: false) }
+        it { is_expected.to have_attributes(is_blocking: false) }
       end
 
       context "when opaque" do
         let(:transparency) { 'opaque' }
 
-        it { is_expected.to have_attributes(is_busy: true) }
+        it { is_expected.to have_attributes(is_blocking: true) }
       end
     end
 

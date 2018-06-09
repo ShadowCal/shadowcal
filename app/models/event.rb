@@ -10,9 +10,9 @@ class Event < ActiveRecord::Base
     where("events.is_attending = ?", true)
   }
 
-  scope :busy, lambda {
+  scope :blocking, lambda {
     # Fully qualified table name to prevent "ambuous column" when also joining to self
-    where("events.is_busy = ?", true)
+    where("events.is_blocking = ?", true)
   }
 
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180606033217) do
+ActiveRecord::Schema.define(version: 20180609190021) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace",     limit: 255
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 20180606033217) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.boolean  "is_attending"
-    t.boolean  "is_busy"
+    t.boolean  "is_blocking"
   end
 
   add_index "events", ["calendar_id"], name: "index_events_on_calendar_id"
