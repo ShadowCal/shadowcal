@@ -10,11 +10,13 @@
     /[if lt IE 9]
       = javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js"
     = stylesheet_link_tag "application", :media => "all"
-    = favicon_link_tag 'apple-touch-icon-144x144-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '144x144'
-    = favicon_link_tag 'apple-touch-icon-114x114-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '114x114'
-    = favicon_link_tag 'apple-touch-icon-72x72-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '72x72'
-    = favicon_link_tag 'apple-touch-icon-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png'
-    = favicon_link_tag 'favicon.ico', :rel => 'shortcut icon'
+
+    / = favicon_link_tag 'apple-touch-icon-144x144-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '144x144'
+    / = favicon_link_tag 'apple-touch-icon-114x114-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '114x114'
+    / = favicon_link_tag 'apple-touch-icon-72x72-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '72x72'
+    / = favicon_link_tag 'apple-touch-icon-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png'
+    / = favicon_link_tag 'favicon.ico', :rel => 'shortcut icon'
+
     = javascript_include_tag "header_includes"
 
   %body
@@ -29,7 +31,7 @@
             %li{ class: 'nav-item ' + active_class(new_sync_pair_path)}= link_to "New Shadow", new_sync_pair_path, { class: 'nav-link' }
             %li.nav-item= link_to "Sign Out", destroy_user_session_path, method: :delete, class: 'nav-link'
           - else
-            %li.nav-item= link_to "Join By Connecting Google Account", omniauth_authorize_path(resource_name, 'google_oauth2'), { class: 'nav-link' }
+            %li.nav-item= link_to "Sign Up", new_user_session_path, { class: 'nav-link' }
 
     .container
       .row

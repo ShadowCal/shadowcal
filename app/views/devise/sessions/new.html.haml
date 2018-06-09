@@ -1,1 +1,14 @@
-= link_to "Sign in with Google", omniauth_authorize_path(resource_name, 'google_oauth2')
+.jumbotron
+  %h1
+    Protect your personal time.
+
+  %h2
+    Block time on your work calendar for personal events, without sharing the details of those events.
+
+  %br
+  %h3
+    Sign up with
+    = link_to "Google", omniauth_authorize_path(resource_name, 'google_oauth2')
+    or
+    = link_to "Outlook", omniauth_authorize_path(resource_name, 'microsoft_office365')
+
