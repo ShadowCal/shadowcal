@@ -14,6 +14,16 @@ class SyncPairsController < ApplicationController
     @calendars_by_remote_account = CalendarAccountHelper.from_accounts_by_key(@remote_accounts)
   end
 
+  def delete
+    pair = SyncPair.find(params[:id])
+
+    render nothing: true, status: :unauthorized if pair.user_id != current_user.id
+
+    pair.destroy
+
+    redirect_to :dashboard, success: "Will no longer cast that shadow."
+  end
+
   def sync_now
     pair = SyncPair.find(params[:id])
 

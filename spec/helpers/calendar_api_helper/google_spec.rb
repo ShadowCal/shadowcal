@@ -49,7 +49,7 @@ describe CalendarApiHelper::Google do
     let(:item) {
       {
         summary: Faker::Lorem.sentence,
-        time_zone: 'Europe/Zurich'
+        time_zone: 'Europe/Zurich',
       }.to_ostruct
     }
 
@@ -103,6 +103,7 @@ describe CalendarApiHelper::Google do
         )
     }
 
+    let(:transparency) { 'transparent' }
     let!(:existing_event) { create :event, external_id: Faker::Internet.password(10, 20) }
     let(:item) {
       {
@@ -115,6 +116,7 @@ describe CalendarApiHelper::Google do
         },
         summary: Faker::Lorem.sentence,
         description: "",
+        transparency: transparency,
       }.to_ostruct
     }
 
@@ -136,6 +138,20 @@ describe CalendarApiHelper::Google do
           subject
             .new_record?
         ).to be true
+      end
+    end
+
+    describe "is_busy" do
+      context "when transparent" do
+        let(:transparency) { 'transparent' }
+
+        it { is_expected.to have_attributes(is_busy: false) }
+      end
+
+      context "when opaque" do
+        let(:transparency) { 'opaque' }
+
+        it { is_expected.to have_attributes(is_busy: true) }
       end
     end
 

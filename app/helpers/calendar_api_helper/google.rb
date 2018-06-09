@@ -143,16 +143,18 @@ module CalendarApiHelper::Google
       verb = event.new_record? ? "Created" : "Found"
       Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
 
-      item_start_date = service_date_to_active_support_date_time(item.start)
-      item_end_date = service_date_to_active_support_date_time(item.end)
-
       event.name = item.summary
-      event.start_at = item_start_date
-      event.end_at = item_end_date
       event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item.description)
 
-      event.is_attending = (item.attendees || []).find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
-      event.is_attending ||= item&.creator&.self
+      item_start_date = service_date_to_active_support_date_time(item.start)
+      item_end_date = service_date_to_active_support_date_time(item.end)
+      event.start_at = item_start_date
+      event.end_at = item_end_date
+
+      event.is_attending = item&.creator&.self
+      event.is_attending ||= (item.attendees || []).find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
+
+      event.is_busy = item.transparency == 'opaque'
     end
   end
 
@@ -185,7 +187,6 @@ module CalendarApiHelper::Google
         order_by: 'startTime'
       )
       .items
-      .reject { |item| item.transparency == "transparent" }
   end
 
   extend self

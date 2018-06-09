@@ -57,14 +57,13 @@ describe CalendarApiHelper::Outlook do
   let(:response) { 'None' }
 
   let(:outlook_event_show_as) {
-    # Free = 0, Tentative = 1, Busy = 2, Oof = 3, WorkingElsewhere = 4, Unknown = -1.
-    event.is_attending ? 2 : 0
+    event.is_attending ? 'busy' : 'free'
   }
 
   let(:outlook_formatted_event) {
     {
       'Body' => {
-        'ContentType' => 0,
+        'ContentType' => 'Text',
         'Content' => event_description,
       },
       'Start' => {
@@ -76,9 +75,8 @@ describe CalendarApiHelper::Outlook do
         'TimeZone' => 'Etc/GMT',
       },
       'Subject' => event.name,
-      'Sensitivity' => 0,
+      'Sensitivity' => 'normal',
       'ShowAs' => outlook_event_show_as,
-      'Type' => 0,
       'IsCancelled' => is_cancelled,
       # # TODO:
       # IsAllDay:
@@ -98,7 +96,7 @@ describe CalendarApiHelper::Outlook do
     outlook_event_with_id.dup.tap{ |ofe| ofe['ResponseStatus'] = { 'Response' => response } }
   }
   let(:outlook_event_shown_as_free) {
-    outlook_formatted_event.dup.tap{ |ofe| ofe['ShowAs'] = 1 }
+    outlook_formatted_event.dup.tap{ |ofe| ofe['ShowAs'] = 'free' }
   }
   let(:outlook_event_with_id_and_america_timezone) {
     outlook_event_with_america_timezone.dup.tap{ |ofe|
@@ -412,24 +410,39 @@ describe CalendarApiHelper::Outlook do
         )
     }
 
-    let(:outlook_event_show_as) { 2 }
+    let(:outlook_event_show_as) { 'busy' }
 
     it { is_expected.to be_a Event }
 
-    context "when ShowAs < 2" do
-      context "when ShowAs == 1" do
-        let(:outlook_event_show_as) { 1 }
-        it { is_expected.to be_nil }
+    context "ShowAs" do
+      context "when == tentative" do
+        let(:outlook_event_show_as) { 'tentative' }
+        it { is_expected.to have_attributes(is_busy: false) }
       end
 
-      context "when ShowAs == 0" do
-        let(:outlook_event_show_as) { 0 }
-        it { is_expected.to be_nil }
+      context "when == free" do
+        let(:outlook_event_show_as) { 'free' }
+        it { is_expected.to have_attributes(is_busy: false) }
       end
 
-      context "when ShowAs == -1" do
-        let(:outlook_event_show_as) { -1 }
-        it { is_expected.to be_nil }
+      context "when == unknown" do
+        let(:outlook_event_show_as) { 'unknown' }
+        it { is_expected.to have_attributes(is_busy: false) }
+      end
+
+      context "when == busy" do
+        let(:outlook_event_show_as) { 'busy' }
+        it { is_expected.to have_attributes(is_busy: true) }
+      end
+
+      context "when == oof" do
+        let(:outlook_event_show_as) { 'oof' }
+        it { is_expected.to have_attributes(is_busy: true) }
+      end
+
+      context "when == workingElsewhere" do
+        let(:outlook_event_show_as) { 'workingElsewhere' }
+        it { is_expected.to have_attributes(is_busy: true) }
       end
     end
 

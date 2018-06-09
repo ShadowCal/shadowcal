@@ -128,7 +128,6 @@ module CalendarApiHelper::Outlook
 
   def upsert_service_event_item(_my_email, item)
     return if item['IsCancelled']
-    return if item['ShowAs'] < 2
 
     Event.where(
       external_id: item['Id']
@@ -141,6 +140,7 @@ module CalendarApiHelper::Outlook
       event.end_at = service_date_to_active_support_date_time(item['End'])
       event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item['Body']['Content'])
       event.is_attending = ['Organizer', 'TentativelyAccepted', 'Accepted'].include?(item['ResponseStatus']['Response'])
+      event.is_busy = ['free', 'tentative', 'unknown'].exclude?(item['ShowAs'])
     end
   end
 
