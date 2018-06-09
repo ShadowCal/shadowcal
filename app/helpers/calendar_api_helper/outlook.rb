@@ -56,12 +56,6 @@ module CalendarApiHelper::Outlook
     events.reject(&:nil?)
   end
 
-  def get_event(access_token, my_email, event_id)
-    service_event = client.get_event_by_id(access_token, event_id, EVENT_FIELDS)
-
-    upsert_service_event_item(my_email, service_event)
-  end
-
   def push_events(access_token, calendar_id, events)
     return [] if events.empty?
 

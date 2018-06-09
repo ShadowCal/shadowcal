@@ -126,24 +126,6 @@ describe CalendarApiHelper::Outlook do
     it { is_expected.to be_nil }
   end
 
-  describe "#get_event" do
-    subject { CalendarApiHelper::Outlook.get_event(access_token, email, event_external_id) }
-
-    before(:each) {
-      expect(client)
-        .to receive(:get_event_by_id)
-        .with(access_token, event_external_id, event_fields)
-        .and_return(outlook_event_with_id)
-
-      expect(CalendarApiHelper::Outlook)
-        .to receive(:upsert_service_event_item)
-        .with(email, outlook_event_with_id)
-        .and_return(existing_event)
-    }
-
-    it { is_expected.to eq existing_event }
-  end
-
   describe "#move_event" do
     let(:new_start_at) { Faker::Time.forward(23, :morning).utc }
     let(:new_end_at) { new_start_at + Faker::Number.between(1, 10).hours }

@@ -7,8 +7,6 @@ module TestCalendarApiHelper
 
   def request_events(_access_token, _my_email, _calendar_id); end
 
-  def get_event(_access_token, _my_email, _calendar_id, _event_id); end
-
   def push_events(_access_token, _calendar_id, _events); end
 
   def push_event(_access_token, _calendar_id, _event); end

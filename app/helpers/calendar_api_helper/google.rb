@@ -44,17 +44,6 @@ module CalendarApiHelper::Google
     events.reject(&:nil?)
   end
 
-  def get_event(access_token, my_email, calendar_id, event_id)
-    service_event = build_service(access_token)
-                    .get_event(
-                      calendar_id,
-                      event_id
-                    )
-                    .item
-
-    upsert_service_event_item(my_email, service_event)
-  end
-
   def push_events(access_token, calendar_id, events)
     return if events.empty?
 
