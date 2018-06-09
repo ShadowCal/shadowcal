@@ -82,13 +82,19 @@ module CalendarShadowHelper
     calendar.reload
   end
 
-  def cast_new_shadows(from_calendar, to_calendar, batch_size = 100)
+  def events_needing_shadows(from_calendar)
     from_calendar
       .events
       .attending
+      .busy
       .without_shadows
+      .reject(&:outside_work_hours)
+  end
+
+  def cast_new_shadows(from_calendar, to_calendar, batch_size = 100)
+    events_needing_shadows(from_calendar)
       .tap { |result| Rails.logger.debug [from_calendar.name, to_calendar.name, "Need to create #{result.count} shadow(s)"].join "\t" }
-      .find_in_batches(batch_size: batch_size) do |events_batch|
+      .in_groups_of(batch_size, false).each do |events_batch|
         cast_shadows_of_events_on_calendar(events_batch, to_calendar)
       end
   end
@@ -96,7 +102,6 @@ module CalendarShadowHelper
   def cast_shadows_of_events_on_calendar(events_batch, to_calendar)
     Event.transaction do
       shadows = events_batch
-                .reject(&:outside_work_hours)
                 .map { |source_event| shadow_of_event(source_event) }
 
       Event.where(id: shadows).update_all(calendar_id: to_calendar.id)

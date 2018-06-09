@@ -10,6 +10,12 @@ class Event < ActiveRecord::Base
     where("events.is_attending = ?", true)
   }
 
+  scope :busy, lambda {
+    # Fully qualified table name to prevent "ambuous column" when also joining to self
+    where("events.is_busy = ?", true)
+  }
+
+
   scope :without_shadows, lambda {
     joins("LEFT JOIN events as e2 on events.id = e2.source_event_id")
       .where("e2.source_event_id IS NULL")

@@ -10,13 +10,39 @@ describe CalendarShadowHelper do
   let(:from_calendar) { pair.from_calendar }
   let(:to_calendar) { pair.to_calendar }
 
+  let(:event_will_be_synced) { create :syncable_event, name: "will sync", calendar: from_calendar }
+  let(:event_not_attending) { create :syncable_event, name: "not attending", calendar: from_calendar, is_attending: false }
+  let(:event_already_pushed) { create :syncable_event, :has_shadow, name: "already_pushed", calendar: from_calendar }
+  let(:event_on_destination_calendar) { create :syncable_event, name: "on destination calendar", calendar: to_calendar }
+  let(:event_on_weekend) { create :syncable_event, :weekend, name: "weekend", calendar: from_calendar }
+  let(:event_after_work_hours) { create :syncable_event, :after_work_hours, name: "after hours", calendar: from_calendar }
+  let(:event_not_blocking) { create :syncable_event, is_busy: false, calendar: from_calendar }
+
+  describe "#events_needing_shadows" do
+    subject { CalendarShadowHelper.send(:events_needing_shadows, from_calendar) }
+
+    before(:each) do
+      event_not_attending
+      event_already_pushed
+      event_on_destination_calendar
+      event_on_weekend
+      event_after_work_hours
+      event_not_blocking
+      event_will_be_synced
+    end
+
+    it { is_expected.not_to include(event_not_attending) }
+    it { is_expected.not_to include(event_already_pushed) }
+    it { is_expected.not_to include(event_on_destination_calendar) }
+    it { is_expected.not_to include(event_on_weekend) }
+    it { is_expected.not_to include(event_after_work_hours) }
+    it { is_expected.not_to include(event_not_blocking) }
+
+    it { is_expected.to include(event_will_be_synced) }
+
+  end
+
   describe "#cast_from_to" do
-    let(:event_not_attending) { create :syncable_event, name: "not attending", calendar: from_calendar, is_attending: false }
-    let(:event_already_pushed) { create :syncable_event, :has_shadow, name: "already_pushed", calendar: from_calendar }
-    let(:event_on_destination_calendar) { create :syncable_event, name: "on destination calendar", calendar: to_calendar }
-    let(:event_will_be_synced) { create :syncable_event, name: "will sync", calendar: from_calendar }
-    let(:event_on_weekend) { create :syncable_event, :weekend, name: "weekend" }
-    let(:event_after_work_hours) { create :syncable_event, :after_work_hours, name: "after hours" }
 
     subject { CalendarShadowHelper.cast_from_to(from_calendar, to_calendar) }
 
@@ -41,22 +67,7 @@ describe CalendarShadowHelper do
       }
 
       context "with no events" do
-        it { is_expected.to be_nil }
-      end
-
-      context "with events that won't be synced" do
-        before(:each) {
-          event_not_attending
-          event_already_pushed
-          event_on_destination_calendar
-          # event_on_weekend
-          # event_after_work_hours
-
-          expect(to_calendar)
-            .not_to receive(:push_events)
-        }
-
-        it { is_expected.to be_nil }
+        it { is_expected.to be_empty }
       end
 
       context "with events that will be synced" do
@@ -72,7 +83,7 @@ describe CalendarShadowHelper do
             )
         }
 
-        it { is_expected.to be_nil }
+        it { is_expected.to an_instance_of(Array) }
 
         context "when one of the batch requests fails" do
           it "will save external_id of the events which were created successfully"
