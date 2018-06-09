@@ -73,8 +73,22 @@ ActiveRecord::Schema.define(version: 20180606033217) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
 
-# Could not dump table "events" because of following NoMethodError
-#   undefined method `[]' for nil:NilClass
+  create_table "events", force: :cascade do |t|
+    t.integer  "calendar_id"
+    t.string   "name"
+    t.datetime "start_at"
+    t.datetime "end_at"
+    t.string   "external_id"
+    t.integer  "source_event_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.boolean  "is_attending"
+    t.boolean  "is_busy"
+  end
+
+  add_index "events", ["calendar_id"], name: "index_events_on_calendar_id"
+  add_index "events", ["external_id", "calendar_id"], name: "index_events_on_external_id_and_calendar_id", unique: true
+  add_index "events", ["source_event_id"], name: "index_events_on_source_event_id"
 
   create_table "remote_accounts", force: :cascade do |t|
     t.integer  "user_id"
