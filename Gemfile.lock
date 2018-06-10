@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/jfeldstein/ruby_outlook.git
-  revision: 3a0ad1703e773ba015b314ef967b83bf570dc528
+  revision: cc1dc0c0e73c952b575ad70641d5b030e43de8a1
   branch: master
   specs:
     ruby_outlook (0.3.1)
