@@ -1,9 +1,8 @@
 %h1 Welcome!
 
-%p Block personal events off in your work calendar (Privately):
-
-- if @existing_sync_pairs.any?
+- if current_user.sync_pairs.any?
   = render 'sync_pairs/existing'
-  = link_to 'Delete Account', user_delete_path, method: :delete, data: { confirm: "Are you sure?"}
 - else
   = render 'sync_pairs/form'
+
+= link_to 'Delete Account', user_delete_path, method: :delete, data: { confirm: "Are you sure?"}
