@@ -26,12 +26,23 @@ describe "dashboard", type: :feature do
   end
 
   it "allows user to add new shadow" do
-    page.click_button("Add")
+    within "#existing_sync_pairs" do
+      click_on('Add')
+    end
     expect(find("#existing_sync_pairs").find_link("New Shadow")[:href]).to eq new_sync_pair_path
   end
 
   it "allows user to add new google account" do
-    page.click_button("Add")
+    within "#existing_remote_accounts" do
+      click_on('Add')
+    end
     expect(page).to have_link("Google Account")
+  end
+
+  it "allows user to add new outlook account" do
+    within "#existing_remote_accounts" do
+      click_on('Add')
+    end
+    expect(page).to have_link("Outlook Account")
   end
 end

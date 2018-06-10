@@ -21,8 +21,6 @@ describe "onboarding", type: :feature do
     visit "/"
     expect(page).to have_no_content("Loading your calendars")
     expect(page).to have_css("form")
-
-    expect(page).to have_link("add another Google account")
   end
 
   it "creates first sync_pair by submitting form" do

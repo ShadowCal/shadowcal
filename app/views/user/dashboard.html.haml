@@ -3,7 +3,10 @@
 - if current_user.sync_pairs.any?
   = render 'sync_pairs/existing'
 - else
-  = render 'sync_pairs/form'
+  - unless current_user.calendars?
+    %h3 Loading your calendars. Please refresh.
+  - else
+    = render 'sync_pairs/form'
 
 %h3.mt-4 Connected Accounts
 = render 'remote_account/existing'

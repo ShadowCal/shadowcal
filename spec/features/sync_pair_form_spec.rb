@@ -22,8 +22,4 @@ describe "sync_pair_form", type: :feature do
       end
     end
   end
-
-  it "allows user to add new google account" do
-    expect(page).to have_link("add another Google account")
-  end
 end
