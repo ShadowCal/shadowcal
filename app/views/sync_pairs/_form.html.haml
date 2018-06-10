@@ -4,14 +4,9 @@
 
   .form-group
     = f.label :from_calendar_id, 'From'
-    = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_remote_account), { prompt: "[Choose your private, personal calendar]" }, { class: 'form-control' }
+    = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_remote_account), { prompt: "[Choose your private, personal calendar]" }, { class: 'form-control', required: true }
 
   .form-group
     = f.label :to_calendar_id, 'Onto'
-    = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_remote_account), { prompt: "[Choose your shared, work calendar]" }, { class: 'form-control' }
+    = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_remote_account), { prompt: "[Choose your shared, work calendar]" }, { class: 'form-control', required: true }
   %button.btn.btn-primary{:type => "submit"} Block Time Privately
-  %span.ml-1
-    or
-    %ul
-      %li= link_to "add another Google account", omniauth_authorize_path('user', 'google_oauth2')
-      %li= link_to "add another Outlook account", omniauth_authorize_path('user', 'microsoft_office365')

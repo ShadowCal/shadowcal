@@ -5,4 +5,8 @@
 - else
   = render 'sync_pairs/form'
 
+%h3.mt-4 Connected Accounts
+= render 'remote_account/existing'
+
+
 = link_to 'Delete Account', user_delete_path, method: :delete, data: { confirm: "Are you sure?"}

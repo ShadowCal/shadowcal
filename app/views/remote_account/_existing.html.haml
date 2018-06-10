@@ -1,0 +1,21 @@
+
+%table.table#existing_remote_accounts
+  %thead
+    %th{scope: 'col'} Username
+    %th{scope: 'col'} Type
+    %th{scope: 'col'}
+  %tbody
+    - current_user.remote_accounts.each do |account|
+      %tr
+        %td= account.email
+        %td= account.type
+        %td
+          = link_to "Delete", delete_remote_account_path(account)
+    %tr
+      %td{colspan: 3}
+        .btn-group{role: "group"}
+          %button.btn.btn-secondary.dropdown-toggle{type: 'button', 'data-toggle' => 'dropdown', 'aria-haspopup' => 'true', 'aria-expanded' => 'false'}
+            Add
+          .dropdown-menu
+            = link_to "Google Account", omniauth_authorize_path('user', 'google_oauth2'), {class: 'dropdown-item'}
+            = link_to "Outlook Account", omniauth_authorize_path('user', 'microsoft_office365'), {class: 'dropdown-item'}
