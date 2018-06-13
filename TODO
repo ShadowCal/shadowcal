@@ -1,3 +1,5 @@
+FIX Delelting remote account, and make sure deleting account removes all dependent data
+Don't dupe syncPairs
 Refactor shadow job to ensure models initialize and refresh token
 Handle parsing and syncing all day events and time zones correctly
 Delete events
