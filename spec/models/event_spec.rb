@@ -269,7 +269,7 @@ describe "Event", type: :model do
   let(:new_event) { build :event }
 
   let(:pair) { create :sync_pair }
-  let(:source_event) { create :syncable_event, calendar_id: pair.from_calendar_id }
+  let(:source_event) { create :syncable_event, :is_attending, :is_blocking, calendar_id: pair.from_calendar_id }
   let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
 
   describe "#outside_work_hours" do
@@ -320,164 +320,104 @@ describe "Event", type: :model do
   describe "#toggle_shadow" do
     subject { event_to_test.send(:toggle_shadow) }
 
-    context "on a newly created shadow" do
-      let(:event_to_test) { shadow_event }
-
+    context "makes a shadow" do
       before(:each) {
-        allow(event_to_test)
-          .to receive(:new_record?)
-          .and_return(true)
-          #.once
+        expect(CalendarShadowHelper).to receive(:push_shadow_of_event)
+          .with(event_to_test)
       }
 
-      it {
-        expect{ subject }
-          .to avoid_changing{ Event.count }
-      }
-    end
+      context "when the event is syncing, attended, blocking, and persisted, and the persisted shadow doesn't exist" do
+        let(:event_to_test) { create :event, :work_hours, :weekday, :is_attending, :is_blocking, calendar: pair.from_calendar }
 
-    context "on an unsynced event" do
-      let(:event_to_test) { create :event }
-
-      before(:each) {
-        expect(CalendarApiHelper::Google).not_to receive(:push_events)
-        expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
-      }
-
-      it { is_expected.to be true }
-
-      after(:each) {
-        event_to_test.reload
-        expect(event_to_test.shadow_event).to be_nil
-      }
-    end
-
-    context "on a synced event" do
-      context "when is_attending is changing from false to true" do
-        before(:each) {
-          Event.where(id: event_to_test).update_all is_attending: false # Includes a save to clear callbacks
-          event_to_test.reload
-        }
-        before(:each) { event_to_test.is_attending = true } # Leaves unsaved, so callbacks are called
-
-        context "when the event is a shadow" do
-          let(:event_to_test) { shadow_event }
-
-          before(:each) {
-            expect(CalendarApiHelper::Google).not_to receive(:push_events)
-            expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
-          }
-
-          it { is_expected.to be true }
-        end
-
-        context "and the event is a proper source event" do
-          let(:event_to_test) { source_event }
-
-          context "and a shadow event exists in the DB" do
-            before(:each) { shadow_event }
-            before(:each) { expect(event_to_test.shadow_event).not_to be_nil } # Sanity
-
-            it "won't try to create the remote calendar event" do
-              expect(CalendarShadowHelper)
-                .not_to receive(:push_shadow_of_event)
-                .with(event_to_test)
-
-              expect(subject).to be true
-            end
-          end
-
-          context "but the shadow event does not yet exist in the DB" do
-            before(:each) { expect(event_to_test.shadow_event).to be_nil } # Sanity
-
-            context "and the remote calendar request fails" do
-              before(:each) {
-                expect(CalendarShadowHelper)
-                  .to receive(:push_shadow_of_event)
-                  .with(event_to_test)
-                  .and_raise(CalendarShadowHelper::ShadowHelperError, "failure")
-              }
-
-              it { is_expected.to be true }
-            end
-
-            context "and the remote calendar request succeeds" do
-              before(:each) {
-                expect(CalendarShadowHelper)
-                  .to receive(:push_shadow_of_event)
-                  .with(event_to_test) do
-                    shadow_event
-                  end
-              }
-
-              it { is_expected.to be true }
-            end
-          end
-        end
+        it { is_expected.to be_truthy }
       end
 
-      context "when is_attending is changing from true to false" do
-        before(:each) {
-          Event.where(id: event_to_test).update_all is_attending: true # Includes a save to clear callbacks
-          event_to_test.reload
-        }
-        before(:each) { event_to_test.is_attending = false } # Leaves unsaved, so callbacks are called
+      context "when the event is syncing, attended, blocking, and persisted, and the persisted shadow does exist but doesn't have an external ID" do
+        let(:event_to_test) { create :event, :has_shadow, :work_hours, :weekday, :is_attending, :is_blocking, calendar: pair.from_calendar }
 
-        context "and the event is the shadow" do
-          let(:event_to_test) { shadow_event }
-
-          before(:each) {
-            expect(CalendarApiHelper::Google).not_to receive(:push_events)
-            expect(CalendarShadowHelper).not_to receive(:shadow_of_event)
-          }
-
-          it { is_expected.to be true }
-        end
-
-        context "and the event is a proper source event" do
-          let(:event_to_test) { source_event }
-
-          context "but a shadow event already doesn't exist in the DB" do
-            before(:each) { expect(event_to_test.shadow_event).to be_nil } # Sanity
-
-            it "won't try to destroy the remote calendar event" do
-              expect(CalendarShadowHelper)
-                .not_to receive(:destroy_shadow_of_event)
-                .with(event_to_test)
-
-              expect(subject).to be true
-            end
-          end
-
-          context "and the shadow event already exists in the DB" do
-            before(:each) { shadow_event }
-            before(:each) { expect(event_to_test.shadow_event).not_to be_nil } # Sanity
-
-            context "and the remote calendar request fails" do
-              before(:each) {
-                expect(CalendarShadowHelper)
-                  .to receive(:destroy_shadow_of_event)
-                  .with(event_to_test)
-                  .and_raise(CalendarShadowHelper::ShadowHelperError, "failure")
-              }
-
-              it { is_expected.to be true }
-            end
-
-            context "and the remote calendar request succeeds" do
-              before(:each) {
-                expect(CalendarShadowHelper)
-                  .to receive(:destroy_shadow_of_event)
-                  .with(event_to_test) do
-                    shadow_event
-                  end
-              }
-
-              it { is_expected.to be true }
-            end
-          end
-        end
+        it { is_expected.to be_truthy }
       end
+
+      context "when the event is all day, but attended and blocking and on a weekday" do
+        let(:event_to_test) { create :event, :all_day, :weekday, :is_attending, :is_blocking, calendar: pair.from_calendar }
+
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    context "doesn't make a shadow" do
+      before(:each) {
+        expect(CalendarShadowHelper).not_to receive(:push_shadow_of_event)
+      }
+
+      context "when the event is syncing, attended, blocking, but only just now persisted" do
+        let(:event_to_test) { create :syncable_event, :is_attending, :is_blocking, calendar: pair.from_calendar }
+
+        before(:each) {
+          allow(event_to_test)
+            .to receive(:new_record?)
+            .and_return(true)
+        }
+
+        it { is_expected.to be_truthy }
+      end
+
+      context "when the event is syncing, attended, blocking, and persisted, but the shadow is already created" do
+        let(:event_to_test) { create(:syncable_event, :is_shadow).source_event }
+
+        it { is_expected.to be_truthy }
+      end
+
+
+      context "when the event is syncing, attended, and persisted, but not blocking" do
+        let(:event_to_test) { create :syncable_event, :is_attending, is_blocking: false, calendar: pair.from_calendar }
+
+        it { is_expected.to be_truthy }
+      end
+
+      context "when the event is syncing, blocking, and persisted, but not attended" do
+        let(:event_to_test) { create :syncable_event, :is_blocking, is_attending: false, calendar: pair.from_calendar }
+
+        it { is_expected.to be_truthy }
+      end
+
+      context "when the event is blocking, attended, and persisted, but not syncing" do
+        let(:event_to_test) { create :syncable_event, :is_blocking, is_attending: false }
+
+        it { is_expected.to be_truthy }
+      end
+
+      context "when the event itself is a shadow" do
+        let(:event_to_test) { create :syncable_event, :is_shadow, :is_blocking, :is_attending, calendar: pair.to_calendar }
+
+        it { is_expected.to be_truthy }
+      end
+
+      context "when the event is on a weekend" do
+        let(:event_to_test) { create :syncable_event, :weekend, calendar: pair.from_calendar }
+
+        it { is_expected.to be_truthy }
+      end
+
+      context "when the event is after work hours" do
+        let(:event_to_test) { create :syncable_event, :after_work_hours, calendar: pair.from_calendar }
+
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    context "destroys the shadow" do
+      before(:each) {
+        expect(CalendarShadowHelper).to receive(:destroy_shadow_of_event)
+          .with(event_to_test)
+      }
+
+    end
+
+    context "doesn't destroy the shadow" do
+      before(:each) {
+        expect(CalendarShadowHelper).not_to receive(:destroy_shadow_of_event)
+      }
     end
   end
 

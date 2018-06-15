@@ -121,16 +121,24 @@ class Event < ActiveRecord::Base
   end
 
   def shadow?
-    !shadow_event&.id.nil?
+    !shadow_event&.external_id.nil?
   end
 
   def toggle_shadow
     return true if skip_callbacks
-    log "is_attending is #{is_attending.inspect} (was #{is_attending_was.inspect})"
 
-    # Ignore attendance changes on shadows themselves
-    if !source_event_id.nil?
-      log "Event is a shadow, ignoring that is_attending changed. Aborting."
+    if new_record?
+      log "Event is being imported. Ignoring toggle_shadow because sync importer will create in bulk"
+      return true
+    end
+
+    if shadow?
+      log "Event is itself a shadow, ignoring."
+      return true
+    end
+
+    if outside_work_hours
+      log "Event is outside work hours. Ignoring"
       return true
     end
 
@@ -165,6 +173,7 @@ class Event < ActiveRecord::Base
       end
     rescue CalendarShadowHelper::ShadowHelperError => e
       log "Calendar Error: ", e
+      raise
     end
 
     true
