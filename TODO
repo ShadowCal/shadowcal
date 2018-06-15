@@ -1,5 +1,4 @@
 Events from Personal > Test cal don't propogate
-FIX Delelting remote account, and make sure deleting account removes all dependent data
 Don't dupe syncPairs
 update rollbar-gem
 Refactor shadow job to ensure models initialize and refresh token

@@ -3,7 +3,8 @@
 class Calendar < ActiveRecord::Base
   belongs_to :remote_account
   has_many :events, dependent: :destroy
-  has_many :sync_pairs, dependent: :destroy
+  has_many :sync_pairs_from, dependent: :destroy, class_name: 'SyncPair', foreign_key: :from_calendar_id
+  has_many :sync_pairs_to, dependent: :destroy, class_name: 'SyncPair', foreign_key: :to_calendar_id
 
   delegate :access_token, :email, :user, to: :remote_account
 
