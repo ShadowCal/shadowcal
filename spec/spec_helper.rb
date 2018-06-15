@@ -46,6 +46,8 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
+  RSpec::Matchers.define_negated_matcher :avoid_changing, :change
+
   # config.order = :random
 
   # The settings below are suggested to provide a good initial experience

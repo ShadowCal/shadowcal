@@ -15,7 +15,6 @@ class Event < ActiveRecord::Base
     where("events.is_blocking = ?", true)
   }
 
-
   scope :without_shadows, lambda {
     joins("LEFT JOIN events as e2 on events.id = e2.source_event_id")
       .where("e2.source_event_id IS NULL")
@@ -26,7 +25,7 @@ class Event < ActiveRecord::Base
   delegate :access_token, to: :remote_account
 
   before_save :push_date_changes_to_corresponding_event, if: :moved?
-  before_save :toggle_shadow, if: :is_attending_changed?
+  before_save :toggle_shadow, if: :should_toggle_shadow?
 
   def moved?
     return false if new_record?
@@ -125,9 +124,22 @@ class Event < ActiveRecord::Base
       .update_all(start_at: start_at, end_at: end_at)
   end
 
+  def should_have_shadow?
+    is_attending == true && is_blocking == true && source_event_id.nil?
+  end
+
+  def should_toggle_shadow?
+    (should_have_shadow? && !shadow?) ||
+      (shadow? && !should_have_shadow?)
+  end
+
+  def shadow?
+    !shadow_event&.id.nil?
+  end
+
   def toggle_shadow
     return true if skip_callbacks
-    log "is_attending changed from #{is_attending_was.inspect} => #{is_attending.inspect}"
+    log "is_attending is #{is_attending.inspect} (was #{is_attending_was.inspect})"
 
     # Ignore attendance changes on shadows themselves
     if !source_event_id.nil?
@@ -142,11 +154,10 @@ class Event < ActiveRecord::Base
 
     begin
       transaction do
-        shadow_exists = !!(shadow_event&.external_id)
+        log "Shadow Exists?", shadow?.inspect
+        log "Shadow Should Exist?", should_have_shadow?.inspect
 
-        log "Shadow Exists?", shadow_exists.inspect
-
-        if shadow_exists && is_attending == false
+        if shadow? && !should_have_shadow?
           log(
             "No longer attending this event. Removing shadow from external calendar",
             shadow_event.calendar.external_id,
@@ -159,7 +170,7 @@ class Event < ActiveRecord::Base
 
           CalendarShadowHelper.destroy_shadow_of_event(self)
 
-        elsif !shadow_exists && is_attending == true
+        elsif !shadow? && should_have_shadow?
           log "Now attending this event. Creating remote shadow..."
 
           CalendarShadowHelper.push_shadow_of_event(self)

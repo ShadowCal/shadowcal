@@ -7,7 +7,7 @@ Rollbar.configure do |config|
   config.access_token = ENV["ROLLBAR_ACCESS_TOKEN"]
 
   # Here we'll disable in 'test':
-  config.enabled = false if Rails.env.test?
+  config.enabled = true # false if Rails.env.test?
 
   # We report our own errors
   config.delayed_job_enabled = false

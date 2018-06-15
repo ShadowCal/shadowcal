@@ -269,7 +269,7 @@ describe "Event", type: :model do
   let(:new_event) { build :event }
 
   let(:pair) { create :sync_pair }
-  let(:source_event) { create :event, calendar_id: pair.from_calendar_id }
+  let(:source_event) { create :syncable_event, calendar_id: pair.from_calendar_id }
   let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
 
   describe "#outside_work_hours" do

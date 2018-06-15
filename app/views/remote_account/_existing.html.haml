@@ -10,7 +10,7 @@
         %td= account.email
         %td= account.type
         %td
-          = link_to "Delete", delete_remote_account_path(account)
+          = link_to "Delete", delete_remote_account_path(id: account.id), method: :delete, data: { confirm: "Are you sure?"}
     %tr
       %td{colspan: 3}
         .btn-group{role: "group"}

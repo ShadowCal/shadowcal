@@ -39,11 +39,9 @@ describe CalendarShadowHelper do
     it { is_expected.not_to include(event_not_blocking) }
 
     it { is_expected.to include(event_will_be_synced) }
-
   end
 
   describe "#cast_from_to" do
-
     subject { CalendarShadowHelper.cast_from_to(from_calendar, to_calendar) }
 
     context "with two calendars that are not synced" do
@@ -95,6 +93,10 @@ describe CalendarShadowHelper do
   end
 
   describe "#push_shadow_of_event" do
+    before(:each) {
+      event.reload
+    }
+
     subject { CalendarShadowHelper.push_shadow_of_event(event).tap { event.reload } }
 
     context "with a shadow" do
@@ -102,10 +104,10 @@ describe CalendarShadowHelper do
 
       it "will complain without calling the remote service" do
         expect(TestCalendarApiHelper)
-          .not_to receive(:push_event)
+          .not_to receive(:push_events)
 
         expect{ subject }
-          .to raise_error CalendarShadowHelper::ShadowHelperError
+          .to raise_error CalendarShadowHelper::ShadowOfShadowError
       end
     end
 
@@ -118,11 +120,11 @@ describe CalendarShadowHelper do
             .to be_nil
 
           expect(TestCalendarApiHelper)
-            .to receive(:push_event)
+            .to receive(:push_events)
             .with(
               shadow_event.access_token,
               shadow_event.calendar.external_id,
-              shadow_event
+              array_including(shadow_event)
             )
         }
 
@@ -131,7 +133,7 @@ describe CalendarShadowHelper do
             .not_to be_nil
         }
 
-        it { is_expected.to be true }
+        it { is_expected.to be_nil }
       end
 
       context "with a local shadow with no external_id" do
@@ -139,15 +141,15 @@ describe CalendarShadowHelper do
           shadow_event.update_attributes external_id: nil
 
           expect(TestCalendarApiHelper)
-            .to receive(:push_event)
+            .to receive(:push_events)
             .with(
               shadow_event.access_token,
               shadow_event.calendar.external_id,
-              shadow_event
+              array_including(shadow_event)
             )
         }
 
-        it { is_expected.to be true }
+        it { is_expected.to be_nil }
 
         it "wont create any stray events" do
           expect{ subject }.not_to(change{ Event.count })
@@ -156,33 +158,38 @@ describe CalendarShadowHelper do
 
       context "with a local shadow with an existing external_id" do
         before(:each) {
-          shadow_event
+          expect(shadow_event).not_to have_attributes(external_id: nil)
+          expect(event.shadow_event).to eq(shadow_event)
 
           expect(TestCalendarApiHelper)
-            .not_to receive(:push_event)
+            .not_to receive(:push_events)
         }
 
-        it { is_expected.to be true }
+        it { is_expected.to be_nil }
       end
 
       context "when the remote service fails" do
+        let(:expected_error) { StandardError.new("Expected") }
+
         before(:each) {
           expect(event.shadow_event)
             .to be_nil
 
           expect(TestCalendarApiHelper)
-            .to receive(:push_event)
+            .to receive(:push_events)
             .with(
               shadow_event.access_token,
               shadow_event.calendar.external_id,
-              shadow_event
+              array_including(shadow_event)
             )
-            .and_raise(StandardError)
+            .and_raise(expected_error)
         }
 
-        it { expect{ subject }.not_to(change{ Event.count }) }
-
-        it { is_expected.to be true }
+        it {
+          expect{ subject }
+            .to(raise_error(expected_error))
+            .and(avoid_changing{ Event.count })
+        }
       end
 
       context "when the event isn't being synced" do
@@ -191,17 +198,25 @@ describe CalendarShadowHelper do
             .to be_nil
 
           expect(TestCalendarApiHelper)
-            .not_to receive(:push_event)
+            .not_to receive(:push_events)
         }
 
         let(:event) { create :event }
 
-        it { is_expected.to be true }
+        it {
+          expect{ subject }
+            .to(raise_error(CalendarShadowHelper::ShadowWithoutPairError))
+            .and(avoid_changing{ Event.count })
+        }
       end
     end
   end
 
   describe "#destroy_shadow_of_event" do
+    before(:each) {
+      event.reload
+    }
+
     subject { CalendarShadowHelper.destroy_shadow_of_event(event).tap { event.reload } }
 
     context "with a shadow" do
@@ -214,7 +229,7 @@ describe CalendarShadowHelper do
 
       it "will complain without calling the remote service" do
         expect{ subject }
-          .to raise_error CalendarShadowHelper::ShadowHelperError
+          .to raise_error CalendarShadowHelper::ShadowOfShadowError
       end
     end
 
@@ -235,7 +250,7 @@ describe CalendarShadowHelper do
               .not_to receive(:delete_event)
           }
 
-          it { is_expected.to be true }
+          it { is_expected.to be_nil }
         end
 
         context "when the shadow does have an external_id" do
@@ -248,7 +263,7 @@ describe CalendarShadowHelper do
                 shadow_event.external_id
               )
 
-            expect(subject).to be true
+            expect(subject).to be_nil
           end
         end
       end
@@ -260,7 +275,7 @@ describe CalendarShadowHelper do
           expect(TestCalendarApiHelper)
             .not_to receive(:delete_event)
 
-          expect(subject).to be true
+          expect(subject).to be_nil
 
           expect(event.shadow_event).to be_nil
         end
@@ -277,7 +292,11 @@ describe CalendarShadowHelper do
               .and_raise "Fail"
           }
 
-          it { is_expected.to be true }
+          it {
+            expect{ subject }
+              .to(raise_error("Fail"))
+              .and(avoid_changing{ Event.count })
+          }
         end
       end
     end

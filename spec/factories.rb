@@ -26,6 +26,8 @@ FactoryBot.define do
 
       after :create do |event|
         user = event.calendar.remote_account.user
+        user.reload
+
         pair = user.sync_pairs.find do |sp|
           sp.to_calendar == event.calendar
         end

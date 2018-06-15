@@ -6,7 +6,7 @@ ShadowCal::Application.routes.draw do
   match "sync_pair" => "sync_pairs#create", :via => [:post], :as => :sync_pairs
   match "sync_pair/:id/now" => "sync_pairs#sync_now", :via => [:get], :as => :sync_pair_now
   match "sync_pair/new" => "sync_pairs#new", :via => [:get], :as => :new_sync_pair
-  match "remote_account/delete" => "remote_account#delete", :via => [:delete], :as => :delete_remote_account
+  match "remote_account/:id" => "remote_account#delete", :via => [:delete], :as => :delete_remote_account
   match "user" => "user#delete", :via => [:delete], :as => :user_delete
 
   root to: "user#dashboard", as: :dashboard
