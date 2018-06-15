@@ -320,6 +320,22 @@ describe "Event", type: :model do
   describe "#toggle_shadow" do
     subject { event_to_test.send(:toggle_shadow) }
 
+    context "on a newly created shadow" do
+      let(:event_to_test) { shadow_event }
+
+      before(:each) {
+        allow(event_to_test)
+          .to receive(:new_record?)
+          .and_return(true)
+          #.once
+      }
+
+      it {
+        expect{ subject }
+          .to avoid_changing{ Event.count }
+      }
+    end
+
     context "on an unsynced event" do
       let(:event_to_test) { create :event }
 

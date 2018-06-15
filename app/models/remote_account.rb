@@ -32,10 +32,6 @@ class RemoteAccount < ActiveRecord::Base
     self.class.calendar_helper.push_events(access_token, calendar_id, events)
   end
 
-  def push_event(calendar_id, event)
-    self.class.calendar_helper.push_event(access_token, calendar_id, event)
-  end
-
   def delete_event(event)
     self.class.calendar_helper.delete_event(
       event.access_token,

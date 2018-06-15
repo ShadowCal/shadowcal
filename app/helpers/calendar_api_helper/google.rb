@@ -55,7 +55,7 @@ module CalendarApiHelper::Google
           calendar_id,
           Google::Apis::CalendarV3::Event.new(
             summary:     event.name,
-            description: event.description,
+            description: build_description_with_embedded_source_event_id(event.source_event_id),
             start:       {
               date_time: event.start_at.iso8601
             },
@@ -69,27 +69,6 @@ module CalendarApiHelper::Google
         end
       end
     end
-  end
-
-  def push_event(access_token, calendar_id, event)
-    service = build_service(access_token)
-
-    item = service.insert_event(
-      calendar_id,
-      Google::Apis::CalendarV3::Event.new(
-        summary:     event.name,
-        description: event.description,
-        start:       {
-          date_time: event.start_at.iso8601
-        },
-        end:         {
-          date_time: event.end_at.iso8601
-        },
-        visibility:  "public"
-      )
-    )
-
-    event.update_attributes external_id: item.id
   end
 
   def delete_event(access_token, calendar_id, event_id)
@@ -116,6 +95,19 @@ module CalendarApiHelper::Google
 
   private
 
+  def build_description_with_embedded_source_event_id(source_event_id)
+    DescriptionTagHelper.add_source_event_id_tag_to_description(
+      source_event_id,
+      "The calendar owner is busy at this time with a private event.\n\n" \
+      "This notice was created using shadowcal.com: Block personal events " \
+      "off your work calendar without sharing details."
+    )
+  end
+
+  def extract_source_event_id_from_description(description)
+    DescriptionTagHelper.extract_source_event_id_tag_from_description(description)
+  end
+
   def upsert_service_calendar_item(item)
     Calendar.where(external_id: item.id).first_or_create do |calendar|
       calendar.name = item.summary
@@ -133,7 +125,7 @@ module CalendarApiHelper::Google
       Rails.logger.debug "#{verb} #{DebugHelper.identify_event(event)}"
 
       event.name = item.summary
-      event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item.description)
+      event.source_event_id = extract_source_event_id_from_description(item.description)
 
       item_start_date = service_date_to_active_support_date_time(item.start)
       item_end_date = service_date_to_active_support_date_time(item.end)

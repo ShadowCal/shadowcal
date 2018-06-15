@@ -5,7 +5,22 @@ require "ostruct"
 
 describe CalendarApiHelper::Google do
   let(:service) { double('service') }
-  let(:item) { double('item') }
+  let(:batch) { double('batch') }
+  let(:transparency) { 'transparent' }
+  let(:item) {
+    {
+      start: {
+        date: Date.today
+      },
+      attendees: [],
+      end: {
+        date: Date.today + 1.day
+      },
+      summary: Faker::Lorem.sentence,
+      description: "",
+      transparency: transparency,
+    }.to_ostruct
+  }
 
   let(:access_token) { Faker::Internet.unique.password(10, 20) }
   let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
@@ -19,6 +34,34 @@ describe CalendarApiHelper::Google do
       .to receive(:id)
       .and_return(Faker::Internet.unique.password(10, 20))
   }
+
+  describe "embedding and extracting source_event_id" do
+    it "embeds and extracts the source_event_id" do
+      shadow = create :event, :is_shadow
+
+      expect(service)
+        .to receive(:batch)
+        .and_yield(batch)
+
+      expect(batch)
+        .to receive(:insert_event)
+        .with(
+          calendar_id,
+          have_attributes(
+            description: end_with("SourceEvent##{shadow.source_event_id}"),
+          )
+        )
+
+      CalendarApiHelper::Google.push_events(access_token, calendar_id, [shadow])
+
+      allow(item)
+        .to receive(:description)
+        .and_return("lorem ipsum \n\n\n\n\nSourceEvent##{shadow.source_event_id}")
+
+      expect(CalendarApiHelper::Google.send(:upsert_service_event_item, '', item))
+        .to have_attributes(source_event_id: shadow.source_event_id)
+    end
+  end
 
   describe "#request_events" do
     let(:email) { generate(:email) }
@@ -66,31 +109,12 @@ describe CalendarApiHelper::Google do
   end
 
   describe "#push_events" do
+    subject { CalendarApiHelper::Google.push_events(access_token, calendar_id, events) }
+
     context "with an empty array of events" do
       let(:events) { [] }
-      subject { CalendarApiHelper::Google.push_events(access_token, calendar_id, events) }
       it { is_expected.to be_nil }
     end
-  end
-
-  describe "#push_event" do
-    subject { CalendarApiHelper::Google.push_event(access_token, calendar_id, event) }
-
-    let(:event) { create :event, external_id: nil }
-
-    before(:each) {
-      expect(service)
-        .to receive(:insert_event)
-        .with(calendar_id, instance_of(Google::Apis::CalendarV3::Event))
-        .and_return(item)
-    }
-
-    after(:each) {
-      expect(event.external_id)
-        .to eq item.id
-    }
-
-    it { is_expected.to be true }
   end
 
   describe "#upsert_service_event_item" do
@@ -103,22 +127,7 @@ describe CalendarApiHelper::Google do
         )
     }
 
-    let(:transparency) { 'transparent' }
     let!(:existing_event) { create :event, external_id: Faker::Internet.password(10, 20) }
-    let(:item) {
-      {
-        start: {
-          date: Date.today
-        },
-        attendees: [],
-        end: {
-          date: Date.today + 1.day
-        },
-        summary: Faker::Lorem.sentence,
-        description: "",
-        transparency: transparency,
-      }.to_ostruct
-    }
 
     before(:each) {
       allow(item).to receive(:id).and_return(existing_event.external_id)

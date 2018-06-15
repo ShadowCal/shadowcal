@@ -12,10 +12,6 @@ class Calendar < ActiveRecord::Base
     remote_account.push_events(external_id, events)
   end
 
-  def push_event(event)
-    remote_account.push_event(external_id, event)
-  end
-
   def request_events
     remote_account.request_events(external_id)
   end

@@ -52,19 +52,6 @@ class Event < ActiveRecord::Base
     sp.to_calendar == calendar ? sp.from_calendar : sp.to_calendar
   end
 
-  def description
-    if source_event_id.blank?
-      ""
-    else
-      DescriptionTagHelper.add_source_event_id_tag_to_description(
-        id,
-        "The calendar owner is busy at this time with a private event.\n\n" \
-        "This notice was created using shadowcal.com: Block personal events " \
-        "off your work calendar without sharing details."
-      )
-    end
-  end
-
   def outside_work_hours
     local_start_at = start_at.in_time_zone(calendar.time_zone)
     local_end_at = end_at.in_time_zone(calendar.time_zone)
@@ -153,28 +140,28 @@ class Event < ActiveRecord::Base
     end
 
     begin
-      transaction do
-        log "Shadow Exists?", shadow?.inspect
-        log "Shadow Should Exist?", should_have_shadow?.inspect
+      log "Shadow Exists?", shadow?.inspect
+      log "Shadow Should Exist?", should_have_shadow?.inspect
 
-        if shadow? && !should_have_shadow?
-          log(
-            "No longer attending this event. Removing shadow from external calendar",
-            shadow_event.calendar.external_id,
-            shadow_event.external_id
-          )
+      if shadow? && !should_have_shadow?
+        log(
+          "No longer attending this event. Removing shadow from external calendar",
+          shadow_event.calendar.external_id,
+          shadow_event.external_id
+        )
 
+
+        transaction do
           Event
             .where(id: shadow_event.id)
             .destroy_all
 
           CalendarShadowHelper.destroy_shadow_of_event(self)
-
-        elsif !shadow? && should_have_shadow?
-          log "Now attending this event. Creating remote shadow..."
-
-          CalendarShadowHelper.push_shadow_of_event(self)
         end
+      elsif !shadow? && should_have_shadow?
+        log "Now attending this event. Creating remote shadow..."
+
+        CalendarShadowHelper.push_shadow_of_event(self)
       end
     rescue CalendarShadowHelper::ShadowHelperError => e
       log "Calendar Error: ", e

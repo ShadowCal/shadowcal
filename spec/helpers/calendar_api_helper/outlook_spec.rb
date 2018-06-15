@@ -78,6 +78,9 @@ describe CalendarApiHelper::Outlook do
       'Sensitivity' => 'normal',
       'ShowAs' => outlook_event_show_as,
       'IsCancelled' => is_cancelled,
+      'ResponseStatus' => {
+        'Response' => response,
+      },
       # # TODO:
       # IsAllDay:
       #
@@ -98,6 +101,9 @@ describe CalendarApiHelper::Outlook do
   let(:outlook_event_shown_as_free) {
     outlook_formatted_event.dup.tap{ |ofe| ofe['ShowAs'] = 'free' }
   }
+  let(:outlook_event_with_description) {
+    outlook_formatted_event.dup.tap{ |ofe| ofe[''] }
+  }
   let(:outlook_event_with_id_and_america_timezone) {
     outlook_event_with_america_timezone.dup.tap{ |ofe|
       ofe['Id'] = event_external_id
@@ -113,6 +119,26 @@ describe CalendarApiHelper::Outlook do
       ]
     }
   }
+
+  describe "embedding and extracting the source event's ID" do
+    let(:event) { create :event, :is_shadow }
+    let(:event_description) { "lorem ipsum \n\n\n\n\nSourceEvent##{event.source_event_id}" }
+
+    it "embeds and extracts the shadow's source_event_id" do
+      expect(client)
+        .to receive(:create_event) do |_access_token, item|
+          expect(item['Body']['Content'])
+            .to end_with("SourceEvent##{event.source_event_id}")
+
+          outlook_formatted_event
+        end
+
+      CalendarApiHelper::Outlook.push_events(access_token, calendar_id, events)
+
+      expect(CalendarApiHelper::Outlook.send(:upsert_service_event_item, '', outlook_formatted_event))
+        .to have_attributes(source_event_id: event.source_event_id)
+    end
+  end
 
   describe "#delete_event" do
     subject { CalendarApiHelper::Outlook.delete_event(access_token, event_external_id) }
@@ -277,7 +303,19 @@ describe CalendarApiHelper::Outlook do
 
     # TODO: Edge cases? eg all day event or wild time zones
     context "with an event" do
+      let(:event) {
+        create(
+          :event,
+          :is_shadow,
+          calendar: calendar,
+          start_at: start_at,
+          end_at: end_at,
+          is_attending: is_attending
+        )
+      }
       let(:is_attending) { true }
+      let(:response) { 'Organizer' }
+      let(:event_description) { end_with("SourceEvent##{event.source_event_id}") }
 
       before(:each) {
         expect(client)
@@ -358,28 +396,6 @@ describe CalendarApiHelper::Outlook do
           )
       }
     end
-  end
-
-  describe "#push_event" do
-    subject { CalendarApiHelper::Outlook.push_event(access_token, calendar_id, event) }
-
-    before(:each) {
-      expect(client)
-        .to receive(:create_event)
-        .with(
-          access_token,
-          hash_including(outlook_formatted_event),
-          calendar_id
-        )
-        .and_return(outlook_event_with_id)
-    }
-
-    after(:each) {
-      expect(event.external_id)
-        .to eq outlook_event_with_id['Id']
-    }
-
-    it { is_expected.to eq event }
   end
 
   describe "#upsert_service_event_item" do

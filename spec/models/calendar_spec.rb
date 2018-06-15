@@ -17,16 +17,6 @@ describe "Calendar", type: :model do
     end
   end
 
-  describe "#push_event" do
-    it "delegates to remote_account" do
-      expect(calendar.remote_account)
-        .to receive(:push_event)
-        .with(calendar.external_id, event)
-
-      calendar.push_event(event)
-    end
-  end
-
   describe "#move_event" do
     it "delegates to remote_account" do
       start_at = double('start_at')

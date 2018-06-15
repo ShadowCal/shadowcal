@@ -47,6 +47,7 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
   RSpec::Matchers.define_negated_matcher :avoid_changing, :change
+  RSpec::Matchers.define_negated_matcher :omit, :include
 
   # config.order = :random
 

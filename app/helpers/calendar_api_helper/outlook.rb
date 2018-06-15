@@ -62,33 +62,6 @@ module CalendarApiHelper::Outlook
     events.map{ |e| push_event(access_token, calendar_id, e) }
   end
 
-  def push_event(access_token, calendar_id, event)
-    resp = client.create_event(
-      access_token,
-      {
-        'Body' => {
-          'ContentType' => 'Text',
-          'Content' => event.description,
-        },
-        'Start' => {
-          'DateTime' => event.start_at.strftime('%Y-%m-%dT%H:%M:%S'),
-          'TimeZone' => 'Etc/GMT',
-        },
-        'End' => {
-          'DateTime' => event.end_at.strftime('%Y-%m-%dT%H:%M:%S'),
-          'TimeZone' => 'Etc/GMT',
-        },
-        'Subject' => event.name,
-        'Sensitivity' => 'normal',
-        'ShowAs' => event.is_attending ? 'busy' : 'free',
-        'IsCancelled' => false,
-      },
-      calendar_id
-    )
-
-    event.tap{ |e| e.update_attributes external_id: resp['Id'] unless resp.nil? }
-  end
-
   def delete_event(access_token, event_id)
     client.delete_event(access_token, event_id)
   end
@@ -112,6 +85,51 @@ module CalendarApiHelper::Outlook
 
   private
 
+  def push_event(access_token, calendar_id, event)
+    resp = client.create_event(
+      access_token,
+      {
+        'Body' => {
+          'ContentType' => 'Text',
+          'Content' => build_description_with_embedded_source_event_id(event.source_event_id),
+        },
+        'Start' => {
+          'DateTime' => event.start_at.strftime('%Y-%m-%dT%H:%M:%S'),
+          'TimeZone' => 'Etc/GMT',
+        },
+        'End' => {
+          'DateTime' => event.end_at.strftime('%Y-%m-%dT%H:%M:%S'),
+          'TimeZone' => 'Etc/GMT',
+        },
+        'Subject' => event.name,
+        'Sensitivity' => 'normal',
+        'ShowAs' => event.is_attending ? 'busy' : 'free',
+        'IsCancelled' => false,
+        'ResponseStatus' => {
+          'Response' => 'Organizer',
+        },
+      },
+      calendar_id
+    )
+
+    event.tap{ |e| e.update_attributes external_id: resp['Id'] unless resp.nil? }
+  end
+
+  # TODO: Dedupe this from CalendarApiHelper::Google
+  def build_description_with_embedded_source_event_id(source_event_id)
+    DescriptionTagHelper.add_source_event_id_tag_to_description(
+      source_event_id,
+      "The calendar owner is busy at this time with a private event.\n\n" \
+      "This notice was created using shadowcal.com: Block personal events " \
+      "off your work calendar without sharing details."
+    )
+  end
+
+  # TODO: Dedupe this from CalendarApiHelper::Google
+  def extract_source_event_id_from_description(description)
+    DescriptionTagHelper.extract_source_event_id_tag_from_description(description)
+  end
+
   # TODO: Dedupe this from CalendarApiHelper::Google
   def upsert_service_calendar_item(item)
     Calendar.where(external_id: item['Id']).first_or_create do |calendar|
@@ -132,7 +150,7 @@ module CalendarApiHelper::Outlook
       event.name = item['Subject']
       event.start_at = service_date_to_active_support_date_time(item['Start'])
       event.end_at = service_date_to_active_support_date_time(item['End'])
-      event.source_event_id = DescriptionTagHelper.extract_source_event_id_tag_from_description(item['Body']['Content'])
+      event.source_event_id = extract_source_event_id_from_description(item['Body']['Content'])
       event.is_attending = ['Organizer', 'TentativelyAccepted', 'Accepted'].include?(item['ResponseStatus']['Response'])
       event.is_blocking = ['free', 'tentative', 'unknown'].exclude?(item['ShowAs'])
     end

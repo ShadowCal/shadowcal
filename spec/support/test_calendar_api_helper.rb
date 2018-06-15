@@ -9,8 +9,6 @@ module TestCalendarApiHelper
 
   def push_events(_access_token, _calendar_id, _events); end
 
-  def push_event(_access_token, _calendar_id, _event); end
-
   def delete_event(_access_token, _calendar_id, _event_id); end
 
   def move_event(_access_token, _calendar_id, _event_id, _start_at, _end_at); end

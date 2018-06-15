@@ -70,15 +70,24 @@ describe CalendarShadowHelper do
 
       context "with events that will be synced" do
         before(:each) {
+          event_will_be_synced
+          event_already_pushed
+
           expect(to_calendar)
-            .to receive(:push_events)
-            .with(
-              array_including(
-                have_attributes(
-                  "source_event_id" => event_will_be_synced.id,
+            .to receive(:push_events) do |events|
+              expect(events)
+                .to(
+                  include(
+                    have_attributes(
+                      "source_event_id" => event_will_be_synced.id,
+                    )
+                  ).and omit(
+                    have_attributes(
+                      "source_event_id" => event_already_pushed.id,
+                    )
+                  )
                 )
-              )
-            )
+            end
         }
 
         it { is_expected.to an_instance_of(Array) }
