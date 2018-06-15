@@ -2,7 +2,7 @@
 
 class RemoteAccount < ActiveRecord::Base
   belongs_to :user
-  has_many :calendars
+  has_many :calendars, dependent: :destroy
 
   after_create :queue_request_calendars, unless: :skip_callbacks
 

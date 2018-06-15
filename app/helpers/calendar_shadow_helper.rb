@@ -11,12 +11,15 @@ module CalendarShadowHelper
     end
   end
 
-  class ShadowVsSourceMismatchError < ShadowHelperError;
+  class ShadowHelperErrorWithEvent < ShadowHelperError
     def initialize(msg, event)
       @event = event
       super(msg)
     end
   end
+
+  class ShadowOfShadowError < ShadowHelperErrorWithEvent; end
+  class ShadowWithoutPairError < ShadowHelperErrorWithEvent; end
 
   def cast_from_to(from_calendar, to_calendar)
     sync_pair_between = SyncPair.find_by_from_calendar_id_and_to_calendar_id(
@@ -33,40 +36,22 @@ module CalendarShadowHelper
   end
 
   def destroy_shadow_of_event(source_event)
-    unless source_event.source_event_id.nil?
-      raise ShadowVsSourceMismatchError.new("Cannot delete the shadow of a shadow", source_event)
-    end
-
-    shadow = source_event.shadow_event
+    shadow = shadow_of_event(source_event)
 
     begin
-      unless shadow.external_id.blank?
-        shadow.remote_account.delete_event(shadow)
-      end
-
-      shadow.destroy
+      shadow.remote_account.delete_event(shadow) unless shadow.external_id.blank?
     rescue StandardError => e
       Rails.logger.debug [DebugHelper.identify_event(source_event), "Remote service fail? ", e].join(" ")
+      raise
     end
 
-    true
+    shadow.destroy
+
+    nil
   end
 
   def push_shadow_of_event(source_event)
-    unless source_event.source_event_id.nil?
-      raise ShadowVsSourceMismatchError.new("Cannot create the shadow of a shadow", source_event)
-    end
-
-    return true unless source_event&.shadow_event&.external_id.nil?
-
-    begin
-      shadow = shadow_of_event(source_event)
-      shadow.calendar.push_event(shadow)
-    rescue StandardError => e
-      Rails.logger.debug [DebugHelper.identify_event(source_event), "Remote service fail? ", e].join(" ")
-    end
-
-    true
+    cast_shadows_of_events_on_calendar([source_event], source_event.corresponding_calendar)
   end
 
   private
@@ -99,11 +84,23 @@ module CalendarShadowHelper
       end
   end
 
-  def cast_shadows_of_events_on_calendar(events_batch, to_calendar)
-    Event.transaction do
-      shadows = events_batch
-                .map { |source_event| shadow_of_event(source_event) }
+  def cast_shadows_of_events_on_calendar(events, to_calendar)
+    shadows = []
 
+    events
+      .select { |source_event| source_event.shadow_event&.external_id.nil? }
+      .each do |source_event|
+        begin
+          shadows << shadow_of_event(source_event)
+        rescue ShadowHelperError => e
+          Rails.logger.debug [DebugHelper.identify_event(source_event), e.message].join("\t")
+          raise
+        end
+      end
+
+    return if shadows.empty?
+
+    Event.transaction do
       Event.where(id: shadows).update_all(calendar_id: to_calendar.id)
 
       to_calendar.push_events(shadows)
@@ -111,16 +108,17 @@ module CalendarShadowHelper
   end
 
   def shadow_of_event(source_event)
+    unless source_event.source_event_id.nil?
+      raise ShadowOfShadowError.new("Cannot create the shadow of a shadow", source_event)
+    end
+
     if source_event.corresponding_calendar.nil?
-      msg = "Cannot find or create the shadow of an event" \
-            " which belongs to a calendar that is not casting" \
-            " a shadow."
-
-      msg = [DebugHelper.identify_event(source_event), msg].join("\t")
-
-      Rails.logger.debug msg
-
-      raise ShadowHelperError, msg
+      raise ShadowWithoutPairError.new(
+        "Cannot find or create the shadow of an event" \
+        " which belongs to a calendar that is not casting" \
+        " a shadow.",
+        source_event
+      )
     end
 
     Event.where(source_event_id: source_event.id).first_or_initialize{ |event|
@@ -129,6 +127,7 @@ module CalendarShadowHelper
       event.end_at = source_event.end_at
       event.calendar_id = source_event.corresponding_calendar.id
       event.is_attending = source_event.is_attending
+      event.is_blocking = source_event.is_blocking
     }.tap { |event|
       verb = event.new_record? ? "Created" : "Found"
 
