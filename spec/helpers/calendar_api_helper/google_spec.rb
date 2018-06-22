@@ -7,20 +7,47 @@ describe CalendarApiHelper::Google do
   let(:service) { double('service') }
   let(:batch) { double('batch') }
   let(:transparency) { 'transparent' }
-  let(:item) {
+  let(:google_formatted_event) {
     {
       start: {
-        date: Date.today
+        date_time: Time.now
       },
       attendees: [],
       end: {
-        date: Date.today + 1.day
+        date_time: Time.now + 1.day
       },
       summary: Faker::Lorem.sentence,
       description: "",
       transparency: transparency,
     }.to_ostruct
   }
+  let(:google_formatted_event_with_date_times) {
+    google_formatted_event
+      .to_h
+      .merge(
+        start: {
+          date_time: Time.now
+        },
+        end: {
+          date_time: Time.now + 1.day
+        },
+      )
+      .to_ostruct
+  }
+  let(:google_formatted_event_with_dates) {
+    google_formatted_event
+      .to_h
+      .merge(
+        start: {
+          date: Date.today
+        },
+        end: {
+          date: Date.today + 1.day
+        },
+      )
+      .to_ostruct
+  }
+  let(:item) { google_formatted_event }
 
   let(:access_token) { Faker::Internet.unique.password(10, 20) }
   let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
@@ -109,11 +136,133 @@ describe CalendarApiHelper::Google do
   end
 
   describe "#push_events" do
+    let(:calendar) { build :calendar }
     subject { CalendarApiHelper::Google.push_events(access_token, calendar_id, events) }
 
     context "with an empty array of events" do
       let(:events) { [] }
       it { is_expected.to be_nil }
+    end
+
+    describe "event.start/end" do
+      before(:each) {
+        allow(CalendarApiHelper::Google)
+          .to receive(:build_service)
+          .and_return(service)
+
+        expect(service)
+          .to receive(:batch)
+          .and_yield(batch)
+      }
+
+      context "when event is all day" do
+        let(:events) { [build(:event, :all_day, calendar: calendar)] }
+
+        before(:each) {
+          expect(batch)
+            .to receive(:insert_event)
+            .with(
+              calendar_id,
+              have_attributes(
+                start: hash_including(
+                  date: match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/),
+                  time_zone: calendar.time_zone,
+                ),
+                end: hash_including(
+                  date: match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/),
+                  time_zone: calendar.time_zone,
+                ),
+              )
+            )
+        }
+
+        it { is_expected.to include(have_attributes(is_all_day: true)) }
+      end
+
+      context "when event is not all day" do
+        let(:events) { [build(:event, calendar: calendar)] }
+
+        before(:each) {
+          expect(batch)
+            .to receive(:insert_event)
+            .with(
+              calendar_id,
+              have_attributes(
+                start: hash_including(
+                  date_time: match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T/),
+                ),
+                end: hash_including(
+                  date_time: match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T/),
+                ),
+              )
+            )
+        }
+
+        it { is_expected.to include(have_attributes(is_all_day: false)) }
+      end
+    end
+  end
+
+  describe "#move_event" do
+    let(:in_time_zone) { Time.zone.name }
+    let(:new_start_at) { (Time.now + 2.days).in_time_zone(in_time_zone) }
+    let(:new_end_at) { new_start_at + 2.hours }
+    let(:event_id) { Faker::Internet.password(10, 20) }
+
+    before(:each) {
+      allow(CalendarApiHelper::Google)
+        .to receive(:build_service)
+        .and_return(service)
+    }
+
+    subject { CalendarApiHelper::Google.move_event(access_token, calendar_id, event_id, new_start_at, new_end_at, new_is_all_day, in_time_zone) }
+
+    context "when is_all_day" do
+      let(:new_is_all_day) { true }
+
+      it "patches the new dates with Date and time_zone" do
+        expect(service)
+          .to receive(:patch_event)
+          .with(
+            calendar_id,
+            event_id,
+            have_attributes(
+              start: {
+                date: new_start_at.strftime('%Y-%m-%d'),
+                time_zone: in_time_zone,
+              },
+              end: {
+                date: new_end_at.strftime('%Y-%m-%d'),
+                time_zone: in_time_zone,
+              }
+            )
+          )
+
+        subject
+      end
+    end
+
+    context "when NOT is_all_day" do
+      let(:new_is_all_day) { false }
+
+      it "patches the new dates with Date and time_zone" do
+        expect(service)
+          .to receive(:patch_event)
+          .with(
+            calendar_id,
+            event_id,
+            have_attributes(
+              start: {
+                date_time: new_start_at.iso8601,
+              },
+              end: {
+                date_time: new_end_at.iso8601,
+              }
+            )
+          )
+
+        subject
+      end
     end
   end
 
@@ -161,6 +310,20 @@ describe CalendarApiHelper::Google do
         let(:transparency) { 'opaque' }
 
         it { is_expected.to have_attributes(is_blocking: true) }
+      end
+    end
+
+    describe "is_all_day" do
+      context "when item is not day" do
+        let(:item) { google_formatted_event_with_date_times }
+
+        it { is_expected.to have_attributes is_all_day: false }
+      end
+
+      context "when item is all day" do
+        let(:item) { google_formatted_event_with_dates }
+
+        it { is_expected.to have_attributes is_all_day: true }
       end
     end
 

@@ -3,8 +3,10 @@
 require "rails_helper"
 
 describe CalendarShadowHelper do
+  let(:is_all_day) { false }
+
   let(:pair) { create :sync_pair }
-  let(:source_event) { create :event, calendar_id: pair.from_calendar_id }
+  let(:source_event) { create :event, is_all_day: is_all_day, calendar_id: pair.from_calendar_id }
   let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
 
   let(:from_calendar) { pair.from_calendar }
@@ -81,9 +83,11 @@ describe CalendarShadowHelper do
                     have_attributes(
                       "source_event_id" => event_will_be_synced.id,
                     )
-                  ).and omit(
-                    have_attributes(
-                      "source_event_id" => event_already_pushed.id,
+                  ).and(
+                    omit(
+                      have_attributes(
+                        "source_event_id" => event_already_pushed.id,
+                      )
                     )
                   )
                 )
@@ -131,9 +135,13 @@ describe CalendarShadowHelper do
           expect(TestCalendarApiHelper)
             .to receive(:push_events)
             .with(
-              shadow_event.access_token,
-              shadow_event.calendar.external_id,
-              array_including(shadow_event)
+              event.corresponding_calendar.access_token,
+              event.corresponding_calendar.external_id,
+              array_including(
+                have_attributes(
+                  source_event_id: event.id
+                )
+              )
             )
         }
 
@@ -143,6 +151,32 @@ describe CalendarShadowHelper do
         }
 
         it { is_expected.to be_nil }
+      end
+
+      describe "it sets is_all_day" do
+        before(:each) {
+          expect(TestCalendarApiHelper)
+            .to receive(:push_events)
+            .with(
+              event.corresponding_calendar.access_token,
+              event.corresponding_calendar.external_id,
+              array_including(
+                have_attributes(
+                  is_all_day: is_all_day
+                )
+              )
+            )
+        }
+
+        context "when source_event.is_all_day" do
+          let(:is_all_day) { true }
+          it { is_expected.to be_nil }
+        end
+
+        context "when NOT source_event.is_all_day" do
+          let(:is_all_day) { false }
+          it { is_expected.to be_nil }
+        end
       end
 
       context "with a local shadow with no external_id" do

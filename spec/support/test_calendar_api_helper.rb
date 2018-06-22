@@ -11,7 +11,7 @@ module TestCalendarApiHelper
 
   def delete_event(_access_token, _calendar_id, _event_id); end
 
-  def move_event(_access_token, _calendar_id, _event_id, _start_at, _end_at); end
+  def move_event(_access_token, _calendar_id, _event_id, _start_at, _end_at, _is_all_day, _in_time_zone); end
 
   extend self
 end

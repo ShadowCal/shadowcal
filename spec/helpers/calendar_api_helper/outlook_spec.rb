@@ -13,7 +13,7 @@ describe CalendarApiHelper::Outlook do
   }
 
   # API config
-  let(:event_fields) { %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs} }
+  let(:event_fields) { %w{Id Subject Body Start End IsAllDay IsCancelled ShowAs ResponseStatus} }
 
   # Account data
   let(:access_token) { Faker::Internet.unique.password(10, 20) }
@@ -54,6 +54,7 @@ describe CalendarApiHelper::Outlook do
   let(:start_at_str) { start_at.strftime('%Y-%m-%dT%H:%M:%S') }
   let(:end_at_str) { end_at.strftime('%Y-%m-%dT%H:%M:%S') }
   let(:is_cancelled) { false }
+  let(:is_all_day) { false }
   let(:response) { 'None' }
 
   let(:outlook_event_show_as) {
@@ -81,9 +82,7 @@ describe CalendarApiHelper::Outlook do
       'ResponseStatus' => {
         'Response' => response,
       },
-      # # TODO:
-      # IsAllDay:
-      #
+      'IsAllDay' => is_all_day,
     }
   }
   let(:outlook_event_with_america_timezone) {
@@ -155,8 +154,10 @@ describe CalendarApiHelper::Outlook do
   describe "#move_event" do
     let(:new_start_at) { Faker::Time.forward(23, :morning).utc }
     let(:new_end_at) { new_start_at + Faker::Number.between(1, 10).hours }
+    let(:new_is_all_day) { false }
+    let(:in_time_zone) { "UTC" }
 
-    subject { CalendarApiHelper::Outlook.move_event(access_token, event_external_id, new_start_at, new_end_at) }
+    subject { CalendarApiHelper::Outlook.move_event(access_token, calendar_id, event_external_id, new_start_at, new_end_at, new_is_all_day, in_time_zone) }
 
     before(:each) {
       expect(client)
@@ -412,7 +413,7 @@ describe CalendarApiHelper::Outlook do
 
     it { is_expected.to be_a Event }
 
-    context "ShowAs" do
+    describe "ShowAs" do
       context "when == tentative" do
         let(:outlook_event_show_as) { 'tentative' }
         it { is_expected.to have_attributes(is_blocking: false) }
@@ -489,6 +490,26 @@ describe CalendarApiHelper::Outlook do
             end_at: within(1.second).of(end_at)
           )
         }
+      end
+
+      describe "is_all_day" do
+        context "when item.IsAllDay" do
+          let(:is_all_day) { true }
+          it {
+            is_expected.to have_attributes(
+              is_all_day: is_all_day
+            )
+          }
+        end
+
+        context "when NOT item.IsAllDay" do
+          let(:is_all_day) { false }
+          it {
+            is_expected.to have_attributes(
+              is_all_day: is_all_day
+            )
+          }
+        end
       end
 
       describe "is_attending" do

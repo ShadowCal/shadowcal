@@ -44,6 +44,13 @@ module CalendarApiHelper::Google
     events.reject(&:nil?)
   end
 
+  def clear(access_token, calendar_id)
+    service = build_service(access_token)
+
+    get_calendar_events(service, calendar_id)
+      .each { |event| delete_event(access_token, calendar_id, event.id) }
+  end
+
   def push_events(access_token, calendar_id, events)
     return if events.empty?
 
@@ -53,17 +60,7 @@ module CalendarApiHelper::Google
       events.each do |event|
         batch.insert_event(
           calendar_id,
-          Google::Apis::CalendarV3::Event.new(
-            summary:     event.name,
-            description: build_description_with_embedded_source_event_id(event.source_event_id),
-            start:       {
-              date_time: event.start_at.iso8601
-            },
-            end:         {
-              date_time: event.end_at.iso8601
-            },
-            visibility:  "public"
-          )
+          event_to_service_event_item(event, event.calendar.time_zone)
         ) do |item|
           event.update_attributes external_id: item.id
         end
@@ -76,20 +73,15 @@ module CalendarApiHelper::Google
       .delete_event(calendar_id, event_id)
   end
 
-  def move_event(access_token, calendar_id, event_id, start_at, end_at)
+  def move_event(access_token, calendar_id, event_id, start_at, end_at, is_all_day, in_time_zone)
     service = build_service(access_token)
+
+    event = Event.new is_all_day: is_all_day, start_at: start_at, end_at: end_at
 
     service.patch_event(
       calendar_id,
       event_id,
-      Google::Apis::CalendarV3::Event.new(
-        start: {
-          date_time: start_at.iso8601
-        },
-        end: {
-          date_time: end_at.iso8601
-        },
-      )
+      event_to_service_event_item_dates(event, in_time_zone)
     )
   end
 
@@ -135,6 +127,8 @@ module CalendarApiHelper::Google
       event.is_attending = item&.creator&.self
       event.is_attending ||= (item.attendees || []).find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
 
+      event.is_all_day = item&.start&.date.nil? ? false : true
+
       event.is_blocking = item.transparency != 'transparent'
     end
   end
@@ -147,6 +141,52 @@ module CalendarApiHelper::Google
     else
       date.date_time
     end
+  end
+
+  def datetime_to_service_date(date, is_all_day)
+    if is_all_day
+      {
+        date: date.strftime('%Y-%m-%d'),
+        time_zone: date.time_zone.name,
+      }
+    else
+      { date_time: date.iso8601 }
+    end
+  end
+
+  def event_to_service_event_item(event, in_time_zone)
+    Google::Apis::CalendarV3::Event.new(
+      event_to_service_event_item_hash(event, in_time_zone)
+    )
+  end
+
+  def event_to_service_event_item_dates(event, in_time_zone)
+    Google::Apis::CalendarV3::Event.new(
+      event_to_service_event_item_hash(event, in_time_zone, true)
+    )
+  end
+
+  def event_to_service_event_item_hash(event, in_time_zone, just_dates = false)
+    hash = {
+      start: datetime_to_service_date(
+        event.start_at.in_time_zone(in_time_zone),
+        event.is_all_day
+      ),
+      end: datetime_to_service_date(
+        event.end_at.in_time_zone(in_time_zone),
+        event.is_all_day
+      ),
+    }
+
+    unless just_dates
+      hash.merge!(
+        summary:     event.name,
+        description: build_description_with_embedded_source_event_id(event.source_event_id),
+        visibility:  "public"
+      )
+    end
+
+    hash
   end
 
   def build_service(access_token)

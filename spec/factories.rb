@@ -9,6 +9,7 @@ FactoryBot.define do
     start_at { ActiveSupport::TimeZone.new(calendar.time_zone).parse('03:00:00').utc }
     end_at { start_at + 30.minutes }
     is_attending false
+    is_all_day false
 
     factory :syncable_event, traits: %i{work_hours weekday is_attending is_blocking}
 
@@ -55,6 +56,7 @@ FactoryBot.define do
     trait :all_day do
       start_at { ActiveSupport::TimeZone.new(calendar.time_zone).parse('00:00:00').utc + 3.days }
       end_at { ActiveSupport::TimeZone.new(calendar.time_zone).parse('23:59:59').utc + 3.days }
+      is_all_day true
     end
 
     trait :has_shadow do

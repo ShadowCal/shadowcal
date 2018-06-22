@@ -1,11 +1,15 @@
+All Day Events from Outlook to Google shift by one day
 Multiday events?
 Events from Personal > Test cal don't propogate
 Don't dupe syncPairs
 update rollbar-gem
 Refactor shadow job to ensure models initialize and refresh token
-Handle parsing and syncing all day events and time zones correctly
+Outlook thinks events I've made but is free is actually blocking
+
 Delete events
 
 Account-level option to include transparent events
 Be able to move / delete / attend shadows
 Calendars may only be sync'd once
+
+Found an event on a shadow-test calendar, and it created an event on my main one

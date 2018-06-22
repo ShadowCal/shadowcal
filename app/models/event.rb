@@ -103,7 +103,8 @@ class Event < ActiveRecord::Base
       .move_event(
         corresponding_event.external_id,
         start_at,
-        end_at
+        end_at,
+        is_all_day
       )
 
     Event

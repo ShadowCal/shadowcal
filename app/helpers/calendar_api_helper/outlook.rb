@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module CalendarApiHelper::Outlook
-  EVENT_FIELDS = %w{Id Subject BodyPreview Start End IsAllDay IsCancelled ShowAs}.freeze
+  EVENT_FIELDS = %w{Id Subject Body Start End IsAllDay IsCancelled ShowAs ResponseStatus}.freeze
   CALENDAR_FIELDS = %w{Id Name}.freeze
 
   TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
@@ -62,11 +62,25 @@ module CalendarApiHelper::Outlook
     events.map{ |e| push_event(access_token, calendar_id, e) }
   end
 
+  def clear(access_token, calendar_id)
+    resp = client.get_calendar_view(
+      access_token,
+      Time.now.utc,
+      1.month.from_now.utc,
+      calendar_id,
+      EVENT_FIELDS
+    )
+
+    puts resp.inspect
+
+    resp['value'].each { |event| puts event.inspect; delete_event(access_token, event['Id']) }
+  end
+
   def delete_event(access_token, event_id)
     client.delete_event(access_token, event_id)
   end
 
-  def move_event(access_token, event_id, start_at, end_at)
+  def move_event(access_token, _calendar_id, event_id, start_at, end_at, _is_all_day, _in_time_zone)
     client.update_event(
       access_token,
       {
@@ -108,6 +122,7 @@ module CalendarApiHelper::Outlook
         'ResponseStatus' => {
           'Response' => 'Organizer',
         },
+        'IsAllDay' => event.is_all_day
       },
       calendar_id
     )
@@ -153,6 +168,7 @@ module CalendarApiHelper::Outlook
       event.source_event_id = extract_source_event_id_from_description(item['Body']['Content'])
       event.is_attending = ['Organizer', 'TentativelyAccepted', 'Accepted'].include?(item['ResponseStatus']['Response'])
       event.is_blocking = ['free', 'tentative', 'unknown'].exclude?(item['ShowAs'])
+      event.is_all_day = item['IsAllDay']
     end
   end
 

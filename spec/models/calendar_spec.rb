@@ -18,15 +18,16 @@ describe "Calendar", type: :model do
   end
 
   describe "#move_event" do
+    let(:is_all_day) { true }
     it "delegates to remote_account" do
       start_at = double('start_at')
       end_at = double('end_at')
 
       expect(calendar.remote_account)
         .to receive(:move_event)
-        .with(calendar.external_id, event, start_at, end_at)
+        .with(calendar.external_id, event, start_at, end_at, is_all_day, calendar.time_zone)
 
-      calendar.move_event(event, start_at, end_at)
+      calendar.move_event(event, start_at, end_at, is_all_day)
     end
   end
 end

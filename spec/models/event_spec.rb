@@ -498,7 +498,9 @@ describe "Event", type: :model do
             event.source_event.calendar.external_id,
             event.source_event.external_id,
             event.start_at,
-            event.end_at
+            event.end_at,
+            event.is_all_day,
+            event.calendar.time_zone
           )
         subject
       end
@@ -535,7 +537,9 @@ describe "Event", type: :model do
             event.shadow_event.calendar.external_id,
             event.shadow_event.external_id,
             event.start_at,
-            event.end_at
+            event.end_at,
+            event.is_all_day,
+            event.calendar.time_zone
           )
         subject
       end

@@ -16,7 +16,7 @@ class Calendar < ActiveRecord::Base
     remote_account.request_events(external_id)
   end
 
-  def move_event(event_id, start_at, end_at)
-    remote_account.move_event(external_id, event_id, start_at, end_at)
+  def move_event(event_id, start_at, end_at, is_all_day)
+    remote_account.move_event(external_id, event_id, start_at, end_at, is_all_day, time_zone)
   end
 end

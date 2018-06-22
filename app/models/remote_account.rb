@@ -40,8 +40,8 @@ class RemoteAccount < ActiveRecord::Base
     )
   end
 
-  def move_event(calendar_id, event_id, start_at, end_at)
-    self.class.calendar_helper.move_event(access_token, calendar_id, event_id, start_at, end_at)
+  def move_event(calendar_id, event_id, start_at, end_at, is_all_day, in_time_zone)
+    self.class.calendar_helper.move_event(access_token, calendar_id, event_id, start_at, end_at, is_all_day, in_time_zone)
   end
 
   private
