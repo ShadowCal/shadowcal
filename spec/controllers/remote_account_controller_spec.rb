@@ -19,11 +19,11 @@ RSpec.describe RemoteAccountController, type: :controller do
 
         still_exists = RemoteAccount.find_by_id account_id
         expect(still_exists).to be_nil
-      }.to avoid_changing{Event.count}
-        .and avoid_changing{SyncPair.count}
-        .and change{Calendar.count}.by(1)
-        .and change{RemoteAccount.count}.by(1)
-        .and change{User.count}.by(1)
+      }.to avoid_changing{ Event.count }
+        .and avoid_changing{ SyncPair.count }
+        .and(change{ Calendar.count }.by(1))
+        .and(change{ RemoteAccount.count }.by(1))
+        .and(change{ User.count }.by(1))
     end
 
     it "only deletes an account owned by the user" do

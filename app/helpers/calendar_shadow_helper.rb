@@ -127,7 +127,9 @@ module CalendarShadowHelper
       event.calendar_id = source_event.corresponding_calendar.id
       event.is_attending = source_event.is_attending
       event.is_blocking = source_event.is_blocking
-      #event.is_all_day = source_event.is_all_day
+
+      # Don't mark shadows as all_day. All_day has implications, and shadows should blindly be blocks of time.
+      # event.is_all_day = source_event.is_all_day
     }.tap { |event|
       verb = event.new_record? ? "Created" : "Found"
 

@@ -252,13 +252,13 @@ def build_tests_outside_work_hours
     end
 
     context "all day today" do
-      let(:event) { create :event, :all_day,name: "friday: all day today",  calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+      let(:event) { create :event, :all_day, name: "friday: all day today", calendar: calendar, start_at: start_of_day, end_at: end_of_day }
 
       it { is_expected.to be false }
     end
 
     context "all day tomorrow" do
-      let(:event) { create :event, :all_day, name: "friday: all day tomorrow",  calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+      let(:event) { create :event, :all_day, name: "friday: all day tomorrow", calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
 
       it { is_expected.to be true }
     end
@@ -368,7 +368,6 @@ describe "Event", type: :model do
         it { is_expected.to be_truthy }
       end
 
-
       context "when the event is syncing, attended, and persisted, but not blocking" do
         let(:event_to_test) { create :syncable_event, :is_attending, is_blocking: false, calendar: pair.from_calendar }
 
@@ -411,7 +410,6 @@ describe "Event", type: :model do
         expect(CalendarShadowHelper).to receive(:destroy_shadow_of_event)
           .with(event_to_test)
       }
-
     end
 
     context "doesn't destroy the shadow" do

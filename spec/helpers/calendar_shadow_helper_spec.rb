@@ -139,9 +139,14 @@ describe CalendarShadowHelper do
                               ActiveSupport::TimeZone.new(to_calendar.time_zone).utc_offset
 
               expect(hash.start)
-                .to match({
+                .to match(
                   date_time: (start_at.in_time_zone(to_calendar.time_zone) - actual_offset.seconds).iso8601,
-                })
+                )
+
+              expect(hash.end)
+                .to match(
+                  date_time: ((end_at - 1.second).in_time_zone(to_calendar.time_zone) - actual_offset.seconds).iso8601,
+                )
             end
 
           subject
@@ -153,7 +158,6 @@ describe CalendarShadowHelper do
         let(:from_account) { create :google_account }
       end
     end
-
 
     context "with two calendars that are not synced" do
       before(:each) { pair.delete }

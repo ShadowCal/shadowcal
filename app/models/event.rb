@@ -172,7 +172,6 @@ class Event < ActiveRecord::Base
           shadow_event.external_id
         )
 
-
         transaction do
           Event
             .where(id: shadow_event.id)
