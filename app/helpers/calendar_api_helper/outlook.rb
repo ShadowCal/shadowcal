@@ -46,9 +46,14 @@ module CalendarApiHelper::Outlook
       EVENT_FIELDS
     )
 
+    time_zone = Calendar.joins(:remote_account)
+                        .where('remote_accounts.email = ? AND calendars.external_id=?', my_email, calendar_id)
+                        .pluck(:time_zone)
+                        .first
+
     # Return each google api calendar as an ActiveRecord Calendar model
     events = resp['value'].map do |item|
-      upsert_service_event_item(my_email, item)
+      upsert_service_event_item(my_email, item, time_zone)
     end
 
     # upsert_service_event_item sometimes returns nils, when an event doesn't
@@ -70,8 +75,6 @@ module CalendarApiHelper::Outlook
       calendar_id,
       EVENT_FIELDS
     )
-
-    puts resp.inspect
 
     resp['value'].each { |event| puts event.inspect; delete_event(access_token, event['Id']) }
   end
@@ -153,7 +156,7 @@ module CalendarApiHelper::Outlook
     end
   end
 
-  def upsert_service_event_item(_my_email, item)
+  def upsert_service_event_item(_my_email, item, time_zone)
     return if item['IsCancelled']
 
     Event.where(
@@ -168,7 +171,21 @@ module CalendarApiHelper::Outlook
       event.source_event_id = extract_source_event_id_from_description(item['Body']['Content'])
       event.is_attending = ['Organizer', 'TentativelyAccepted', 'Accepted'].include?(item['ResponseStatus']['Response'])
       event.is_blocking = ['free', 'tentative', 'unknown'].exclude?(item['ShowAs'])
-      event.is_all_day = item['IsAllDay']
+
+      if item['IsAllDay']
+        event.is_all_day = true
+
+        # Outlook tells as all day events start and end at 00:00:00 UTC,
+        # regardless of the timezone of the calendar, but we want our UTC
+        # timestamps on each event to be acurate so we manually shift all-day
+        # events' times based on the offset
+        event.start_at = ZoneHelper.from_zoneless_timestamp_and_zone_to_utc(item['Start']['DateTime'], time_zone)
+        event.end_at = ZoneHelper.from_zoneless_timestamp_and_zone_to_utc(item['End']['DateTime'], time_zone)
+
+        # Outlook returns end_at for all-day events as 00:00:00 the next day.
+        # We want 23:59:59 at the end of the day of the event
+        event.end_at -= 1.second
+      end
     end
   end
 

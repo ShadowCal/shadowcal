@@ -102,7 +102,6 @@ module CalendarShadowHelper
 
     Event.transaction do
       Event.where(id: shadows).update_all(calendar_id: to_calendar.id)
-
       to_calendar.push_events(shadows)
     end
   end
@@ -128,7 +127,7 @@ module CalendarShadowHelper
       event.calendar_id = source_event.corresponding_calendar.id
       event.is_attending = source_event.is_attending
       event.is_blocking = source_event.is_blocking
-      event.is_all_day = source_event.is_all_day
+      #event.is_all_day = source_event.is_all_day
     }.tap { |event|
       verb = event.new_record? ? "Created" : "Found"
 

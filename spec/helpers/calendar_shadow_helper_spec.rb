@@ -46,6 +46,115 @@ describe CalendarShadowHelper do
   describe "#cast_from_to" do
     subject { CalendarShadowHelper.cast_from_to(from_calendar, to_calendar) }
 
+    describe "all day event between services" do
+      let(:from_calendar) { create :calendar, remote_account: from_account, time_zone: 'America/Halifax' }
+      let(:to_calendar) { create :calendar, remote_account: to_account, time_zone: 'America/Los_Angeles' }
+      let!(:pair) { create :sync_pair, from_calendar: from_calendar, to_calendar: to_calendar, user: from_account.user }
+
+      let(:google_service) { double('google_service') }
+      let(:google_batch) { double('google_batch') }
+      let(:outlook_client) { double('outlook_client') }
+
+      let(:today) { Date.today }
+      let(:start_at) { today + ((3 - today.wday) % 7).days }
+      let(:end_at) { start_at + 24.hours }
+
+      before(:each) {
+        allow(CalendarApiHelper::Outlook)
+          .to receive(:client)
+          .and_return(outlook_client)
+
+        allow(CalendarApiHelper::Google)
+          .to receive(:build_service)
+          .and_return(google_service)
+
+        allow(google_service)
+          .to receive(:batch)
+          .and_yield(google_batch)
+      }
+
+      context "from outlook to google" do
+        let(:from_account) { create :outlook_account }
+        let(:to_account) { create :google_account }
+
+        let(:raw_outlook_calendar_view_response) {
+          {
+            "@odata.context" => "https:\/\/outlook.office365.com\/api\/v2.0\/$metadata#Me\/Calendars('AQMkADAwATMwMAItZDJlYy1mZWRmLTAwAi0wMAoARgAAA3tf3VWLTbtKr31QnkQPjAsHAHgeJ1juCepKqGww5D6w8McAAAIBBgAAAHgeJ1juCepKqGww5D6w8McAAAAqJvy2AAAA')\/CalendarView(Id,Subject,Body,Start,End,IsAllDay,IsCancelled,ShowAs,ResponseStatus)",
+            "value" => [
+              {
+                "@odata.id" => "https:\/\/outlook.office365.com\/api\/v2.0\/Users('00030000-d2ec-fedf-0000-000000000000@84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa')\/Events('AQMkADAwATMwMAItZDJlYy1mZWRmLTAwAi0wMAoARgAAA3tf3VWLTbtKr31QnkQPjAsHAHgeJ1juCepKqGww5D6w8McAAAIBDQAAAHgeJ1juCepKqGww5D6w8McAAAA-XbFzAAAA')",
+                "@odata.etag" => "W\/\\\"eB4nWO4J6kqobDDkPrDwxwAAQOIWwg==\\\"",
+                "Id" => "AQMkADAwATMwMAItZDJlYy1mZWRmLTAwAi0wMAoARgAAA3tf3VWLTbtKr31QnkQPjAsHAHgeJ1juCepKqGww5D6w8McAAAIBDQAAAHgeJ1juCepKqGww5D6w8McAAAA-XbFzAAAA",
+                "Subject" => "Allday yes",
+                "IsAllDay" => true,
+                "IsCancelled" => false,
+                "ShowAs" => "Free",
+                "ResponseStatus" => {
+                  "Response" => "Organizer",
+                  "Time" => "0001-01-01T00:00:00Z"
+                },
+                "Body" => {
+                  "ContentType" => "HTML",
+                  "Content" => ""
+                },
+                "Start" => {
+                  "DateTime" => "#{start_at.strftime('%Y-%m-%d')}T00:00:00.0000000",
+                  "TimeZone" => "UTC"
+                },
+                "End" => {
+                  "DateTime" => "#{end_at.strftime('%Y-%m-%d')}T00:00:00.0000000",
+                  "TimeZone" => "UTC"
+                }
+              }
+            ]
+          }
+        }
+
+        it "interprets the correct times and pushes a non-all-day event" do
+          allow(outlook_client)
+            .to receive(:get_calendar_view)
+            .with(
+              from_account.access_token,
+              within(1.second).of(Time.now),
+              within(1.second).of(1.month.from_now),
+              from_calendar.external_id,
+              anything
+            )
+            .and_return(raw_outlook_calendar_view_response)
+
+          allow(google_service)
+            .to receive(:list_events)
+            .with(
+              to_calendar.external_id,
+              hash_including(:time_max, :time_min, :single_events, :max_results, :order_by)
+            )
+            .and_return({ items: [] }.to_ostruct)
+
+          expect(google_batch)
+            .to receive(:insert_event) do |cal_id, hash|
+              expect(cal_id)
+                .to eq to_calendar.external_id
+
+              actual_offset = ActiveSupport::TimeZone.new(from_calendar.time_zone).utc_offset -
+                              ActiveSupport::TimeZone.new(to_calendar.time_zone).utc_offset
+
+              expect(hash.start)
+                .to match({
+                  date_time: (start_at.in_time_zone(to_calendar.time_zone) - actual_offset.seconds).iso8601,
+                })
+            end
+
+          subject
+        end
+      end
+
+      context "from google to outlook" do
+        let(:to_account) { create :outlook_account }
+        let(:from_account) { create :google_account }
+      end
+    end
+
+
     context "with two calendars that are not synced" do
       before(:each) { pair.delete }
 
@@ -153,31 +262,31 @@ describe CalendarShadowHelper do
         it { is_expected.to be_nil }
       end
 
-      describe "it sets is_all_day" do
-        before(:each) {
-          expect(TestCalendarApiHelper)
-            .to receive(:push_events)
-            .with(
-              event.corresponding_calendar.access_token,
-              event.corresponding_calendar.external_id,
-              array_including(
-                have_attributes(
-                  is_all_day: is_all_day
-                )
-              )
-            )
-        }
+      # describe "it sets is_all_day" do
+      #   before(:each) {
+      #     expect(TestCalendarApiHelper)
+      #       .to receive(:push_events)
+      #       .with(
+      #         event.corresponding_calendar.access_token,
+      #         event.corresponding_calendar.external_id,
+      #         array_including(
+      #           have_attributes(
+      #             is_all_day: is_all_day
+      #           )
+      #         )
+      #       )
+      #   }
 
-        context "when source_event.is_all_day" do
-          let(:is_all_day) { true }
-          it { is_expected.to be_nil }
-        end
+      #   context "when source_event.is_all_day" do
+      #     let(:is_all_day) { true }
+      #     it { is_expected.to be_nil }
+      #   end
 
-        context "when NOT source_event.is_all_day" do
-          let(:is_all_day) { false }
-          it { is_expected.to be_nil }
-        end
-      end
+      #   context "when NOT source_event.is_all_day" do
+      #     let(:is_all_day) { false }
+      #     it { is_expected.to be_nil }
+      #   end
+      # end
 
       context "with a local shadow with no external_id" do
         before(:each) {

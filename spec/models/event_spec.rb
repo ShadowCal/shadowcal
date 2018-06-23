@@ -4,7 +4,7 @@ require "rails_helper"
 
 def build_tests_outside_work_hours
   let(:calendar) { create :calendar, time_zone: time_zone }
-  let(:original_utc) { ActiveSupport::TimeZone.new(time_zone).parse('00:00:01').utc }
+  let(:original_utc) { ActiveSupport::TimeZone.new(time_zone).parse('00:00:00').utc }
   let(:saturday) { original_utc - original_utc.wday.days - 1.day }
   let(:sunday) { original_utc - original_utc.wday.days }
   let(:tuesday) { original_utc - original_utc.wday.days + 2.days }
@@ -66,13 +66,13 @@ def build_tests_outside_work_hours
     end
 
     context "all day today" do
-      let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+      let(:event) { create :event, :all_day, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
 
       it { is_expected.to be false }
     end
 
     context "all day tomorrow" do
-      let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+      let(:event) { create :event, :all_day, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
 
       it { is_expected.to be false }
     end
@@ -124,13 +124,13 @@ def build_tests_outside_work_hours
     end
 
     context "all day today" do
-      let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+      let(:event) { create :event, :all_day, name: "saturday: all day today", calendar: calendar, start_at: start_of_day, end_at: end_of_day }
 
       it { is_expected.to be true }
     end
 
     context "all day tomorrow" do
-      let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+      let(:event) { create :event, :all_day, name: "saturday: all day tomorrow", calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
 
       it { is_expected.to be true }
     end
@@ -188,13 +188,13 @@ def build_tests_outside_work_hours
     end
 
     context "all day today" do
-      let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+      let(:event) { create :event, :all_day, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
 
       it { is_expected.to be true }
     end
 
     context "all day tomorrow" do
-      let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+      let(:event) { create :event, :all_day, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
 
       it { is_expected.to be false }
     end
@@ -252,13 +252,13 @@ def build_tests_outside_work_hours
     end
 
     context "all day today" do
-      let(:event) { create :event, calendar: calendar, start_at: start_of_day, end_at: end_of_day }
+      let(:event) { create :event, :all_day,name: "friday: all day today",  calendar: calendar, start_at: start_of_day, end_at: end_of_day }
 
       it { is_expected.to be false }
     end
 
     context "all day tomorrow" do
-      let(:event) { create :event, calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
+      let(:event) { create :event, :all_day, name: "friday: all day tomorrow",  calendar: calendar, start_at: tomorrow_start_of_day, end_at: tomorrow_end_of_day }
 
       it { is_expected.to be true }
     end

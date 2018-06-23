@@ -56,6 +56,9 @@ class Event < ActiveRecord::Base
     local_start_at = start_at.in_time_zone(calendar.time_zone)
     local_end_at = end_at.in_time_zone(calendar.time_zone)
 
+    log "local_start_at: #{local_start_at.inspect}"
+    log "local_end_at: #{local_end_at.inspect}"
+
     start_hour = local_start_at.hour
     end_hour = local_end_at.hour
     same_day = local_end_at - local_start_at < 1.day
@@ -72,13 +75,23 @@ class Event < ActiveRecord::Base
                   (local_end_at.friday? && end_hour >= 19) ||
                   (local_end_at.monday? && end_hour < 8)
 
+    log "Start and end on weekend?"
+
     return true if start_weekend && end_weekend && (end_day - start_day < 2.day)
+
+    log "Start and end before workday?"
 
     return true if start_hour < 8 && end_hour < 8 && same_day
 
+    log "Start and end after workday?"
+
     return true if start_hour >= 19 && end_hour >= 19 && same_day
 
+    log "End after and start before workday?"
+
     return true if start_hour >= 19 && end_hour < 8 && (end_day - start_day == 1.day)
+
+    log "Nope, its during work hours!"
 
     false
   end

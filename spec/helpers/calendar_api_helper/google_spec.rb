@@ -344,14 +344,6 @@ describe CalendarApiHelper::Google do
 
     context "when event exists in db" do
       it "finds an existing event by external_id" do
-        # puts "ITEM ID WAS ORIGINALLY", item.id
-        # existing_event.update_attributes external_id: 'abc123'
-        # item[:id] = existing_event.external_id
-
-        # puts "LOOKING FOR EVENT", existing_event.inspect
-        # puts "BASED ON ITEM", item.inspect
-        # puts "WITH ITEM.ID", item.id.inspect
-
         expect(
           subject
         ).to eq existing_event

@@ -17,12 +17,12 @@ describe CalendarApiHelper::Outlook do
 
   # Account data
   let(:access_token) { Faker::Internet.unique.password(10, 20) }
-  let(:account) { create :remote_account, access_token: access_token }
   let(:email) { generate(:email) }
+  let(:account) { create :remote_account, access_token: access_token, email: email }
 
   # Calendar data
   let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
-  let(:calendar) { create :calendar, remote_account: account }
+  let(:calendar) { create :calendar, remote_account: account, external_id: calendar_id }
 
   # Event data
   let(:start_at) { 5.minutes.ago.to_datetime }
@@ -134,7 +134,7 @@ describe CalendarApiHelper::Outlook do
 
       CalendarApiHelper::Outlook.push_events(access_token, calendar_id, events)
 
-      expect(CalendarApiHelper::Outlook.send(:upsert_service_event_item, '', outlook_formatted_event))
+      expect(CalendarApiHelper::Outlook.send(:upsert_service_event_item, '', outlook_formatted_event, nil))
         .to have_attributes(source_event_id: event.source_event_id)
     end
   end
@@ -281,12 +281,12 @@ describe CalendarApiHelper::Outlook do
 
       expect(CalendarApiHelper::Outlook)
         .to receive(:upsert_service_event_item)
-        .with(email, outlook_event_with_id_and_america_timezone)
+        .with(email, outlook_event_with_id_and_america_timezone, calendar.time_zone)
         .and_return(event)
 
       expect(CalendarApiHelper::Outlook)
         .to receive(:upsert_service_event_item)
-        .with(email, outlook_event_shown_as_free)
+        .with(email, outlook_event_shown_as_free, calendar.time_zone)
         .and_return(nil)
     }
 
@@ -405,7 +405,8 @@ describe CalendarApiHelper::Outlook do
         .send(
           :upsert_service_event_item,
           existing_event.remote_account.email,
-          outlook_event_with_id_and_response
+          outlook_event_with_id_and_response,
+          existing_event.calendar.time_zone
         )
     }
 

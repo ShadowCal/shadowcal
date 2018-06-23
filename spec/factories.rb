@@ -114,9 +114,11 @@ FactoryBot.define do
     end
 
     factory :google_account, class: GoogleAccount do
+      type 'GoogleAccount'
     end
 
     factory :outlook_account, class: OutlookAccount do
+      type 'OutlookAccount'
     end
   end
 
