@@ -3,7 +3,6 @@ Multiday events?
 Events from Personal > Test cal don't propogate
 Don't dupe syncPairs
 update rollbar-gem
-Refactor shadow job to ensure models initialize and refresh token
 Outlook thinks events I've made but is free is actually blocking
 
 Delete events
