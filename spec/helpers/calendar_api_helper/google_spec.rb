@@ -156,7 +156,7 @@ describe CalendarApiHelper::Google do
       }
 
       context "when event is all day" do
-        let(:events) { [build(:event, :all_day, calendar: calendar)] }
+        let(:events) { [create(:event, :all_day, :is_shadow, calendar: calendar)] }
 
         before(:each) {
           expect(batch)
@@ -180,7 +180,7 @@ describe CalendarApiHelper::Google do
       end
 
       context "when event is not all day" do
-        let(:events) { [build(:event, calendar: calendar)] }
+        let(:events) { [create(:event, :is_shadow, calendar: calendar)] }
 
         before(:each) {
           expect(batch)

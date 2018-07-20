@@ -61,7 +61,7 @@ class Event < ActiveRecord::Base
 
     start_hour = local_start_at.hour
     end_hour = local_end_at.hour
-    same_day = local_end_at - local_start_at < 1.day
+    same_day = local_end_at - local_start_at < 1.day - 1.second
     start_day = local_start_at.beginning_of_day
     end_day = local_end_at.beginning_of_day
 

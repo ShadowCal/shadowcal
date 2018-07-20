@@ -150,7 +150,7 @@ module CalendarApiHelper::Google
         time_zone: date.time_zone.name,
       }
     else
-      { date_time: date.iso8601 }
+      { date_time: date.utc.iso8601 }
     end
   end
 

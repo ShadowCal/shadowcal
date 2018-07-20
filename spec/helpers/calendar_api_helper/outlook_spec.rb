@@ -21,8 +21,9 @@ describe CalendarApiHelper::Outlook do
   let(:account) { create :remote_account, access_token: access_token, email: email }
 
   # Calendar data
+  let(:time_zone) { 'Asia/Kolkata' }
   let(:calendar_id) { Faker::Internet.unique.password(10, 20) }
-  let(:calendar) { create :calendar, remote_account: account, external_id: calendar_id }
+  let(:calendar) { create :calendar, remote_account: account, external_id: calendar_id, time_zone: time_zone }
 
   # Event data
   let(:start_at) { 5.minutes.ago.to_datetime }
@@ -237,24 +238,26 @@ describe CalendarApiHelper::Outlook do
 
     let(:name) { Faker::Lorem.sentence }
 
-    let(:item) {
-      {
-        CanEdit: can_edit,
-        Id: calendar_id,
-        Name: name,
-      }.to_ostruct
-    }
-
-    context "writeable calendar" do
-      let(:can_edit) { true }
-
-      it {
-        is_expected.to have_attributes(
-          time_zone: nil,
-          name: name,
-          external_id: calendar_id,
-        )
+    describe "can edit" do
+      let(:item) {
+        {
+          CanEdit: can_edit,
+          Id: calendar_id,
+          Name: name,
+        }.to_ostruct
       }
+
+      context "caledar is writeable" do
+        let(:can_edit) { true }
+
+        it {
+          is_expected.to have_attributes(
+            time_zone: nil,
+            name: name,
+            external_id: calendar_id,
+          )
+        }
+      end
     end
 
     # context "read-only calendar" do
@@ -494,20 +497,40 @@ describe CalendarApiHelper::Outlook do
       end
 
       describe "is_all_day" do
+        # All day events are returned with 00:00:00 times
+        let(:start_at) { Time.now.beginning_of_day.utc }
+        let(:end_at) { start_at + 1.day }
+
         context "when item.IsAllDay" do
           let(:is_all_day) { true }
+
           it {
             is_expected.to have_attributes(
               is_all_day: is_all_day
+            )
+          }
+
+          it {
+            is_expected.to have_attributes(
+              start_at: start_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds,
+              end_at: end_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds - 1.second,
             )
           }
         end
 
         context "when NOT item.IsAllDay" do
           let(:is_all_day) { false }
+
           it {
             is_expected.to have_attributes(
               is_all_day: is_all_day
+            )
+          }
+
+          it {
+            is_expected.to have_attributes(
+              start_at: start_at,
+              end_at: end_at,
             )
           }
         end
