@@ -4,6 +4,7 @@
   "scripts": {
     "postdeploy": "bundle exec rake db:schema:load db:seed"
   },
+  "stack": "container",
   "env": {
     "RACK_ENV": "development",
     "RAILS_ENV": "development",

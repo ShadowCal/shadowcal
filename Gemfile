@@ -1,20 +1,17 @@
 # frozen_string_literal: true
 
-ruby "2.3.5"
+ruby "2.5.1"
 
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "4.2.10"
 
-# Use sqlite3 as the database for Active Record
 group :development do
   gem "rb-readline"
-  gem "sqlite3"
 end
-group :production do
-  gem "pg", '~>0.20.0'
-end
+
+gem "pg", '~>0.20.0'
 
 gem "rails_12factor", group: :production
 
@@ -40,7 +37,7 @@ gem "turbolinks"
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem "jbuilder", "~> 1.2"
-gem "json", "1.8.3"
+gem "json", "~> 2.1"
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
