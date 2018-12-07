@@ -1,20 +1,31 @@
-postgres:
-  image: postgres:9.5
-  environment:
-    POSTGRES_USER: shadowcal
-    POSTGRES_PASSWORD: yourpassword
-  ports:
-    - '5432:5432'
-  volumes:
-    - shadowcal-postgres:/var/lib/postgresql/data
+version: '3'
 
-shadowcal:
-  build: .
-  links:
-    - postgres
-  volumes:
-    - .:/shadowcal
-  ports:
-    - '8000:8000'
-  env_file:
-    - .shadowcal.env
+volumes:
+  app:
+
+services:
+  postgres:
+    image: postgres:9.5
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+      - ".:${APP_PATH}"
+
+  app:
+    build: 
+      context: .
+      args:
+        - 'PORT=$PORT'
+        - 'RACK_ENV=$RACK_ENV'
+        - 'APP_PATH=$APP_PATH'
+    links:
+      - postgres
+    volumes:
+      - ".:${APP_PATH}"
+    ports:
+      - "${PORT}:${PORT}"
+    env_file: .env

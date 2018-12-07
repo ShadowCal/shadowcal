@@ -7,8 +7,14 @@ default: &default
   host: postgres
   port: 5432
 
+production:
+  <<: *default
+  database: shadowcal_production
+
 development:
+  <<: *default
   database: shadowcal_development
 
 test:
+  <<: *default
   database: shadowcal_test

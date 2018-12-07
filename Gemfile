@@ -44,27 +44,21 @@ group :doc do
   gem "sdoc", require: false
 end
 
-group :test do
-  gem "mocha"
+group :development, :test do
+  gem "better_errors"
+  gem 'guard-rspec', require: false
 end
 
-group :development, :test do
+group :test do
   gem "factory_bot_rails", "~> 4.0"
-
+  gem "mocha"
   gem "capybara"
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "rspec-rails"
-
-  gem "better_errors"
-  gem "binding_of_caller"
-  gem "faker"
-
   gem "rspec_junit_formatter"
-
+  gem "faker"
   gem "webmock"
-
-  gem 'guard-rspec', require: false
 end
 
 # Use ActiveModel has_secure_password
@@ -85,14 +79,15 @@ gem "devise"
 gem "omniauth"
 gem "omniauth-google-oauth2"
 gem "omniauth-microsoft-office365"
-gem "ruby_outlook", github: 'jfeldstein/ruby_outlook', branch: :master
+gem "ruby_outlook", path: 'vendor/cache/ruby_outlook-cc1dc0c0e73c'
 
 gem "execjs"
 gem "haml-rails"
 gem "haml_coffee_assets"
 
-gem "bootstrap", "~> 4.0.0.beta2"
+gem "bootstrap", "~> 4.1.2"
 gem "sprockets-rails", ">= 2.3.2"
+gem 'sprockets', '~> 3.7.2'
 
 gem "make_resourceful"
 
@@ -104,8 +99,8 @@ gem "oj"
 gem "rabl"
 
 # Paperclip with the aws sdk
-gem "aws-sdk"
-gem "paperclip", "~> 3.0"
+gem 'aws-sdk-s3', '~> 1'
+gem "paperclip", "~> 5.2.0"
 
 gem "backbone-rails"
 gem "chosen-rails"
