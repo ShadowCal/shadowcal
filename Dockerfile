@@ -31,9 +31,8 @@ RUN bundle install --without=test
 RUN bundle package --all
 
 COPY . .
-# VOLUME ["$APP_PATH/public"]
+VOLUME ["$APP_PATH/public"]
 
 ENTRYPOINT ["bundle", "exec"]
 
 RUN bundle exec rake RAILS_ENV=$RACK_ENV DATABASE_URL=postgresql://user:pass@127.0.0.1/dbname SECRET_TOKEN=f098CY897WS4FT9J8A0VW378AIOCUWRSYFWBO39N8Y assets:precompile
-#CMD bundle exec rails server -p $PORT -e $RACK_ENV
