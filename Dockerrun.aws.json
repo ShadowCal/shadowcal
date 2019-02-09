@@ -80,7 +80,7 @@
                 }
             ],
             "name": "app",
-            "image": "850702378733.dkr.ecr.us-east-1.amazonaws.com/shadowcal:latest",
+            "image": "850702378733.dkr.ecr.us-east-1.amazonaws.com/850702378733.dkr.ecr.us-east-1.amazonaws.com/shadowcal:latest",
             "memory": 128,
             "portMappings": [
                 {
