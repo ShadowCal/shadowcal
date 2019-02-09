@@ -24,8 +24,8 @@ ARG RAILS_PATH
 
 # App
 RUN mkdir -p $RAILS_PATH
-COPY ./Gemfile $RAILS_PATH
-COPY ./vendor $RAILS_PATH/vendor
+COPY ./rails/Gemfile $RAILS_PATH
+COPY ./rails/vendor $RAILS_PATH/vendor
 WORKDIR $RAILS_PATH
 RUN bundle install --without=test
 RUN bundle package --all
