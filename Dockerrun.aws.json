@@ -1,0 +1,136 @@
+{
+    "containerDefinitions": [
+        {
+            "command": [
+                "bash",
+                "-c",
+                "rm -f tmp/pids/server.pid && bundle exec rails server -p 8000 -e development -b 0.0.0.0"
+            ],
+            "environment": [
+                {
+                    "name": "APP_PATH",
+                    "value": "/app"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "value": ""
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "value": ""
+                },
+                {
+                    "name": "GOOGLE_CLIENT_ID",
+                    "value": ""
+                },
+                {
+                    "name": "GOOGLE_CLIENT_SECRET",
+                    "value": ""
+                },
+                {
+                    "name": "LANG",
+                    "value": "en_US.UTF-8"
+                },
+                {
+                    "name": "OUTLOOK_APP_ID",
+                    "value": ""
+                },
+                {
+                    "name": "OUTLOOK_SECRET",
+                    "value": ""
+                },
+                {
+                    "name": "PORT",
+                    "value": "8000"
+                },
+                {
+                    "name": "POSTGRES_PASSWORD",
+                    "value": "yourpasswordhere"
+                },
+                {
+                    "name": "POSTGRES_USER",
+                    "value": "shadowcal"
+                },
+                {
+                    "name": "RACK_ENV",
+                    "value": "development"
+                },
+                {
+                    "name": "RAILS_ENV",
+                    "value": "development"
+                },
+                {
+                    "name": "ROLLBAR_ACCESS_TOKEN",
+                    "value": ""
+                },
+                {
+                    "name": "S3_BUCKET_NAME",
+                    "value": ""
+                }
+            ],
+            "essential": true,
+            "links": [
+                "postgres"
+            ],
+            "mountPoints": [
+                {
+                    "containerPath": "/app",
+                    "sourceVolume": "UsersJordanCodeShadowcal"
+                }
+            ],
+            "name": "app",
+            "portMappings": [
+                {
+                    "containerPort": 8000,
+                    "hostPort": 8000
+                }
+            ]
+        },
+        {
+            "environment": [
+                {
+                    "name": "POSTGRES_PASSWORD",
+                    "value": "yourpasswordhere"
+                },
+                {
+                    "name": "POSTGRES_USER",
+                    "value": "shadowcal"
+                }
+            ],
+            "essential": true,
+            "image": "postgres:9.5",
+            "mountPoints": [
+                {
+                    "containerPath": "/var/lib/postgresql/data",
+                    "sourceVolume": "UsersJordanCodeShadowcalTmpDb"
+                },
+                {
+                    "containerPath": "/app",
+                    "sourceVolume": "UsersJordanCodeShadowcal"
+                }
+            ],
+            "name": "postgres",
+            "portMappings": [
+                {
+                    "containerPort": 5432,
+                    "hostPort": 5432
+                }
+            ]
+        }
+    ],
+    "family": "",
+    "volumes": [
+        {
+            "host": {
+                "sourcePath": "/Users/jordan/Code/shadowcal"
+            },
+            "name": "UsersJordanCodeShadowcal"
+        },
+        {
+            "host": {
+                "sourcePath": "/Users/jordan/Code/shadowcal/tmp/db"
+            },
+            "name": "UsersJordanCodeShadowcalTmpDb"
+        }
+    ]
+}
