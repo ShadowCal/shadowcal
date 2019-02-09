@@ -77,6 +77,10 @@
                 {
                     "containerPath": "/rails",
                     "sourceVolume": "rails"
+                },
+                {
+                  "sourceVolume": "awseb-logs-rails",
+                  "containerPath": "/var/app/current/rails/logs"
                 }
             ],
             "name": "rails",
