@@ -20,3 +20,8 @@ config/initializers/secret_token.rb
 .env
 .DS_Store
 test_results
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
