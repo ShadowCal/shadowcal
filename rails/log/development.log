@@ -1,0 +1,1048 @@
+
+
+Started GET "/" for 172.18.0.1 at 2018-12-07 20:55:35 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Error processing the item: Net::OpenTimeout, Net::OpenTimeout. Item: {"access_token"=>"", "data"=>{:timestamp=>1544216135, :environment=>"development", :level=>"error", :language=>"ruby", :framework=>"Rails: 4.2.10", :server=>{:host=>"da600aed5334", :root=>"/app", :pid=>10}, :notifier=>{:name=>"rollbar-gem", :version=>"2.18.0"}, :body=>{:trace=>{:frames=>[{:filename=>"/usr/local/lib/ruby/2.5.0/webrick/server.rb", :lineno=>307, :method=>"block in start_thread"}, {:filename=>"/usr/local/lib/ruby/2.5.0/webrick/httpserver.rb", :lineno=>96, :method=>"run"}, {:filename=>"/usr/local/lib/ruby/2.5.0/webrick/httpserver.rb", :lineno=>140, :method=>"service"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/handler/webrick.rb", :lineno=>88, :method=>"service"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/content_length.rb", :lineno=>15, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/lock.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/application.rb", :lineno=>165, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/engine.rb", :lineno=>518, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/sendfile.rb", :lineno=>113, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/static.rb", :lineno=>120, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/lock.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/cache/strategy/local_cache_middleware.rb", :lineno=>28, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/runtime.rb", :lineno=>18, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/methodoverride.rb", :lineno=>22, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/request_id.rb", :lineno=>21, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/quiet_assets-1.1.0/lib/quiet_assets.rb", :lineno=>27, :method=>"call_with_quiet_assets"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>20, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>68, :method=>"tagged"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>26, :method=>"tagged"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>68, :method=>"block in tagged"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>20, :method=>"block in call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>38, :method=>"call_app"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/show_exceptions.rb", :lineno=>30, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/show_exceptions.rb", :lineno=>22, :method=>"call_with_rollbar"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/debug_exceptions.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/rollbar.rb", :lineno=>22, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar.rb", :lineno=>146, :method=>"scoped"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/rollbar.rb", :lineno=>24, :method=>"block in call"}, {:filename=>"/usr/local/bundle/gems/better_errors-2.5.0/lib/better_errors/middleware.rb", :lineno=>59, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/remote_ip.rb", :lineno=>78, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/reloader.rb", :lineno=>73, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/callbacks.rb", :lineno=>27, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/callbacks.rb", :lineno=>81, :method=>"run_callbacks"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/callbacks.rb", :lineno=>778, :method=>"_run_call_callbacks"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/callbacks.rb", :lineno=>88, :method=>"__run_callbacks__"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/callbacks.rb", :lineno=>29, :method=>"block in call"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/migration.rb", :lineno=>370, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/migration.rb", :lineno=>383, :method=>"connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_handling.rb", :lineno=>87, :method=>"connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_handling.rb", :lineno=>113, :method=>"retrieve_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>571, :method=>"retrieve_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>262, :method=>"connection"}, {:filename=>"/usr/local/lib/ruby/2.5.0/monitor.rb", :lineno=>226, :method=>"mon_synchronize"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>263, :method=>"block in connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>348, :method=>"checkout"}, {:filename=>"/usr/local/lib/ruby/2.5.0/monitor.rb", :lineno=>226, :method=>"mon_synchronize"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>349, :method=>"block in checkout"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>422, :method=>"acquire_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>448, :method=>"checkout_new_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>438, :method=>"new_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>44, :method=>"postgresql_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>44, :method=>"new"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>242, :method=>"initialize"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>651, :method=>"connect"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>651, :method=>"new"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>651, :method=>"initialize"}], :exception=>{:class=>"PG::ConnectionBad", :message=>"fe_sendauth: no password supplied\n"}, :extra=>{}}}, :uuid=>"96677de6-74a8-4a68-8f96-23a9ed30496c", :request=>{:url=>"http://0.0.0.0:8000/", :params=>{:controller=>"user", :action=>"dashboard"}, :GET=>{}, :POST=>{}, :body=>"{}", :user_ip=>"172.18.0.1", :headers=>{"Host"=>"0.0.0.0:8000", "Connection"=>"keep-alive", "Cache-Control"=>"max-age=0", "Upgrade-Insecure-Requests"=>"1", "User-Agent"=>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36", "Accept"=>"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8", "Accept-Encoding"=>"gzip, deflate", "Accept-Language"=>"en-US,en;q=0.9", "Version"=>"HTTP/1.1"}, :cookies=>{}, :session=>{}, :method=>"GET", :request_id=>"b18f0894-c20b-413b-b832-a36e58a557dd"}, :person=>{}, :context=>"user#dashboard"}}
+[Rollbar] Reporting internal error encountered while sending data to Rollbar.
+[Rollbar] Sending item
+[Rollbar] Error processing the item: Net::OpenTimeout, Net::OpenTimeout. Item: {"access_token"=>"", "data"=>{:timestamp=>1544216146, :environment=>"development", :level=>"error", :language=>"ruby", :framework=>"Rails: 4.2.10", :server=>{:host=>"da600aed5334", :root=>"/app", :pid=>10}, :notifier=>{:name=>"rollbar-gem", :version=>"2.18.0"}, :body=>{:trace_chain=>[{:frames=>[{:filename=>"/usr/local/lib/ruby/2.5.0/webrick/server.rb", :lineno=>307, :method=>"block in start_thread"}, {:filename=>"/usr/local/lib/ruby/2.5.0/webrick/httpserver.rb", :lineno=>96, :method=>"run"}, {:filename=>"/usr/local/lib/ruby/2.5.0/webrick/httpserver.rb", :lineno=>140, :method=>"service"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/handler/webrick.rb", :lineno=>88, :method=>"service"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/content_length.rb", :lineno=>15, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/lock.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/application.rb", :lineno=>165, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/engine.rb", :lineno=>518, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/sendfile.rb", :lineno=>113, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/static.rb", :lineno=>120, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/lock.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/cache/strategy/local_cache_middleware.rb", :lineno=>28, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/runtime.rb", :lineno=>18, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/methodoverride.rb", :lineno=>22, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/request_id.rb", :lineno=>21, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/quiet_assets-1.1.0/lib/quiet_assets.rb", :lineno=>27, :method=>"call_with_quiet_assets"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>20, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>68, :method=>"tagged"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>26, :method=>"tagged"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>68, :method=>"block in tagged"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>20, :method=>"block in call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>38, :method=>"call_app"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/show_exceptions.rb", :lineno=>30, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/show_exceptions.rb", :lineno=>22, :method=>"call_with_rollbar"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/debug_exceptions.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/rollbar.rb", :lineno=>22, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar.rb", :lineno=>146, :method=>"scoped"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/rollbar.rb", :lineno=>23, :method=>"block in call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/rollbar.rb", :lineno=>32, :method=>"rescue in block in call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/exception_reporter.rb", :lineno=>7, :method=>"report_exception_to_rollbar"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/notifier.rb", :lineno=>149, :method=>"log"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/notifier.rb", :lineno=>396, :method=>"report"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/notifier.rb", :lineno=>663, :method=>"schedule_item"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/notifier.rb", :lineno=>197, :method=>"process_item"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/notifier.rb", :lineno=>497, :method=>"send_item"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/notifier.rb", :lineno=>519, :method=>"do_post"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/notifier.rb", :lineno=>563, :method=>"handle_net_retries"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/notifier.rb", :lineno=>519, :method=>"block in do_post"}, {:filename=>"/usr/local/lib/ruby/2.5.0/net/http.rb", :lineno=>1455, :method=>"request"}, {:filename=>"/usr/local/lib/ruby/2.5.0/net/http.rb", :lineno=>909, :method=>"start"}, {:filename=>"/usr/local/lib/ruby/2.5.0/net/http.rb", :lineno=>920, :method=>"do_start"}, {:filename=>"/usr/local/lib/ruby/2.5.0/net/http.rb", :lineno=>981, :method=>"connect"}, {:filename=>"/usr/local/lib/ruby/2.5.0/net/protocol.rb", :lineno=>41, :method=>"ssl_socket_connect"}], :exception=>{:class=>"Net::OpenTimeout", :message=>"Net::OpenTimeout"}, :extra=>{:internal=>true}}, {:frames=>[{:filename=>"/usr/local/lib/ruby/2.5.0/webrick/server.rb", :lineno=>307, :method=>"block in start_thread"}, {:filename=>"/usr/local/lib/ruby/2.5.0/webrick/httpserver.rb", :lineno=>96, :method=>"run"}, {:filename=>"/usr/local/lib/ruby/2.5.0/webrick/httpserver.rb", :lineno=>140, :method=>"service"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/handler/webrick.rb", :lineno=>88, :method=>"service"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/content_length.rb", :lineno=>15, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/lock.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/application.rb", :lineno=>165, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/engine.rb", :lineno=>518, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/sendfile.rb", :lineno=>113, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/static.rb", :lineno=>120, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/lock.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/cache/strategy/local_cache_middleware.rb", :lineno=>28, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/runtime.rb", :lineno=>18, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rack-1.6.11/lib/rack/methodoverride.rb", :lineno=>22, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/request_id.rb", :lineno=>21, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/quiet_assets-1.1.0/lib/quiet_assets.rb", :lineno=>27, :method=>"call_with_quiet_assets"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>20, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>68, :method=>"tagged"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>26, :method=>"tagged"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/tagged_logging.rb", :lineno=>68, :method=>"block in tagged"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>20, :method=>"block in call"}, {:filename=>"/usr/local/bundle/gems/railties-4.2.10/lib/rails/rack/logger.rb", :lineno=>38, :method=>"call_app"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/show_exceptions.rb", :lineno=>30, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/show_exceptions.rb", :lineno=>22, :method=>"call_with_rollbar"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/debug_exceptions.rb", :lineno=>17, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/rollbar.rb", :lineno=>22, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar.rb", :lineno=>146, :method=>"scoped"}, {:filename=>"/usr/local/bundle/gems/rollbar-2.18.0/lib/rollbar/middleware/rails/rollbar.rb", :lineno=>24, :method=>"block in call"}, {:filename=>"/usr/local/bundle/gems/better_errors-2.5.0/lib/better_errors/middleware.rb", :lineno=>59, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/remote_ip.rb", :lineno=>78, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/reloader.rb", :lineno=>73, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/callbacks.rb", :lineno=>27, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/callbacks.rb", :lineno=>81, :method=>"run_callbacks"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/callbacks.rb", :lineno=>778, :method=>"_run_call_callbacks"}, {:filename=>"/usr/local/bundle/gems/activesupport-4.2.10/lib/active_support/callbacks.rb", :lineno=>88, :method=>"__run_callbacks__"}, {:filename=>"/usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/callbacks.rb", :lineno=>29, :method=>"block in call"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/migration.rb", :lineno=>370, :method=>"call"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/migration.rb", :lineno=>383, :method=>"connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_handling.rb", :lineno=>87, :method=>"connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_handling.rb", :lineno=>113, :method=>"retrieve_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>571, :method=>"retrieve_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>262, :method=>"connection"}, {:filename=>"/usr/local/lib/ruby/2.5.0/monitor.rb", :lineno=>226, :method=>"mon_synchronize"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>263, :method=>"block in connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>348, :method=>"checkout"}, {:filename=>"/usr/local/lib/ruby/2.5.0/monitor.rb", :lineno=>226, :method=>"mon_synchronize"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>349, :method=>"block in checkout"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>422, :method=>"acquire_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>448, :method=>"checkout_new_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/abstract/connection_pool.rb", :lineno=>438, :method=>"new_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>44, :method=>"postgresql_connection"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>44, :method=>"new"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>242, :method=>"initialize"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>651, :method=>"connect"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>651, :method=>"new"}, {:filename=>"/usr/local/bundle/gems/activerecord-4.2.10/lib/active_record/connection_adapters/postgresql_adapter.rb", :lineno=>651, :method=>"initialize"}], :exception=>{:class=>"PG::ConnectionBad", :message=>"fe_sendauth: no password supplied\n"}}]}, :uuid=>"9e07d794-66e2-431d-a70e-ef4b42649de1", :request=>{:url=>"http://0.0.0.0:8000/", :params=>{:controller=>"user", :action=>"dashboard"}, :GET=>{}, :POST=>{}, :body=>"{}", :user_ip=>"172.18.0.1", :headers=>{"Host"=>"0.0.0.0:8000", "Connection"=>"keep-alive", "Cache-Control"=>"max-age=0", "Upgrade-Insecure-Requests"=>"1", "User-Agent"=>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36", "Accept"=>"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8", "Accept-Encoding"=>"gzip, deflate", "Accept-Language"=>"en-US,en;q=0.9", "Version"=>"HTTP/1.1"}, :cookies=>{}, :session=>{}, :method=>"GET", :request_id=>"b18f0894-c20b-413b-b832-a36e58a557dd"}, :person=>{}, :context=>"user#dashboard"}}
+[Rollbar] Sending failsafe response due to Net::OpenTimeout in /usr/local/lib/ruby/2.5.0/net/protocol.rb:41:in `ssl_socket_connect': error in process_item
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Error processing the item: Net::OpenTimeout, Net::OpenTimeout. Item: {"access_token"=>"", "data"=>{:level=>"error", :environment=>"development", :body=>{:message=>{:body=>"Failsafe from rollbar-gem. Net::OpenTimeout in /usr/local/lib/ruby/2.5.0/net/protocol.rb:41:in `ssl_socket_connect': error in process_item"}}, :notifier=>{:name=>"rollbar-gem", :version=>"2.18.0"}, :custom=>{:orig_uuid=>nil, :orig_host=>nil}, :internal=>true, :failsafe=>true}}
+[Rollbar] Error sending failsafe : Net::OpenTimeout
+[Rollbar] Item: #<Rollbar::Item:0x000055a850595760>
+
+PG::ConnectionBad (fe_sendauth: no password supplied
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (1.9ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.2ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.7ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (27.9ms)
+
+
+Started GET "/" for 172.18.0.1 at 2018-12-07 20:59:43 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=ace64130-6089-478e-9321-8bad26d5c0a0 (only available if report was successful)
+
+PG::ConnectionBad (FATAL:  password authentication failed for user "${POSTGRES_USER:postgres}"
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (2.0ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.2ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.6ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (19.9ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:13:22 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=343c78d6-efba-40b8-b32f-04fb8292eb4e (only available if report was successful)
+
+PG::ConnectionBad (FATAL:  password authentication failed for user "${POSTGRES_USER:postgres}"
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (1.8ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.4ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.6ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (24.2ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:16:43 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=397b77d3-cee7-4333-8676-16680f7482f0 (only available if report was successful)
+
+PG::ConnectionBad (FATAL:  password authentication failed for user "${POSTGRES_USER:postgres} "
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (2.1ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.2ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.7ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (24.0ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:17:35 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=58ffb376-4526-47ee-ae80-7616ab221251 (only available if report was successful)
+
+PG::ConnectionBad (FATAL:  password authentication failed for user "${POSTGRES_USER:postgres}"
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (2.2ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.2ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.8ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (21.1ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:18:53 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=1b06c03b-c963-4027-bd18-2859bed1c054 (only available if report was successful)
+
+PG::ConnectionBad (FATAL:  password authentication failed for user "${POSTGRES_USER:postgres}"
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (2.0ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.4ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.6ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (18.6ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:19:24 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=2f37d134-8b0d-4446-9ac1-0da4a1088ec0 (only available if report was successful)
+
+PG::ConnectionBad (FATAL:  password authentication failed for user "$POSTGRES_USER"
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (1.9ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.4ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.8ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (28.2ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:20:09 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=b48816ec-3328-4329-9935-5c86d2a36d17 (only available if report was successful)
+
+PG::ConnectionBad (fe_sendauth: no password supplied
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (1.9ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.4ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.7ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (19.9ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:20:31 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=824e8a95-0995-4a3d-a8aa-0b38725d6876 (only available if report was successful)
+
+PG::ConnectionBad (fe_sendauth: no password supplied
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (1.9ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.4ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.6ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (17.3ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:20:45 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=3a4cc2a7-1927-4d2e-99c6-46c88b7e5242 (only available if report was successful)
+
+PG::ConnectionBad (FATAL:  the database system is shutting down
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (1.8ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.2ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.6ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (16.7ms)
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:21:01 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=750c78c2-8994-475e-9bf3-968a2c5693a3 (only available if report was successful)
+
+ActiveRecord::NoDatabaseError (FATAL:  database "shadowcal_development" does not exist
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:661:in `rescue in connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:650:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (1.9ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.3ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.6ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (23.8ms)
+  [1m[36m (47.0ms)[0m  [1mCREATE TABLE "active_admin_comments" ("id" serial primary key, "namespace" character varying(255), "body" text, "resource_id" character varying(255) NOT NULL, "resource_type" character varying(255) NOT NULL, "author_id" integer, "author_type" character varying(255), "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (5.4ms)[0m  CREATE  INDEX  "index_active_admin_comments_on_author_type_and_author_id" ON "active_admin_comments"  ("author_type", "author_id")
+  [1m[36m (4.4ms)[0m  [1mCREATE  INDEX  "index_active_admin_comments_on_namespace" ON "active_admin_comments"  ("namespace")[0m
+  [1m[35m (6.2ms)[0m  CREATE  INDEX  "index_active_admin_comments_on_resource_type_and_resource_id" ON "active_admin_comments"  ("resource_type", "resource_id")
+  [1m[36m (15.8ms)[0m  [1mCREATE TABLE "admin_users" ("id" serial primary key, "email" character varying(255) DEFAULT '' NOT NULL, "encrypted_password" character varying(255) DEFAULT '' NOT NULL, "reset_password_token" character varying(255), "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" character varying(255), "last_sign_in_ip" character varying(255), "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (4.6ms)[0m  CREATE UNIQUE INDEX  "index_admin_users_on_email" ON "admin_users"  ("email")
+  [1m[36m (6.6ms)[0m  [1mCREATE UNIQUE INDEX  "index_admin_users_on_reset_password_token" ON "admin_users"  ("reset_password_token")[0m
+  [1m[35m (17.0ms)[0m  CREATE TABLE "calendars" ("id" serial primary key, "remote_account_id" integer, "external_id" character varying(255), "name" character varying(255), "created_at" timestamp, "updated_at" timestamp, "time_zone" character varying) 
+  [1m[36m (6.2ms)[0m  [1mCREATE  INDEX  "index_calendars_on_remote_account_id" ON "calendars"  ("remote_account_id")[0m
+  [1m[35m (16.6ms)[0m  CREATE TABLE "delayed_jobs" ("id" serial primary key, "priority" integer DEFAULT 0 NOT NULL, "attempts" integer DEFAULT 0 NOT NULL, "handler" text NOT NULL, "last_error" text, "run_at" timestamp, "locked_at" timestamp, "failed_at" timestamp, "locked_by" character varying(255), "queue" character varying(255), "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (6.3ms)[0m  [1mCREATE  INDEX  "delayed_jobs_priority" ON "delayed_jobs"  ("priority", "run_at")[0m
+  [1m[35m (18.8ms)[0m  CREATE TABLE "events" ("id" serial primary key, "calendar_id" integer, "name" character varying, "start_at" timestamp, "end_at" timestamp, "external_id" character varying, "source_event_id" integer, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "is_attending" boolean, "is_blocking" boolean, "is_all_day" boolean) 
+  [1m[36m (4.4ms)[0m  [1mCREATE  INDEX  "index_events_on_calendar_id" ON "events"  ("calendar_id")[0m
+  [1m[35m (5.8ms)[0m  CREATE UNIQUE INDEX  "index_events_on_external_id_and_calendar_id" ON "events"  ("external_id", "calendar_id")
+  [1m[36m (4.2ms)[0m  [1mCREATE  INDEX  "index_events_on_source_event_id" ON "events"  ("source_event_id")[0m
+  [1m[35m (19.5ms)[0m  CREATE TABLE "remote_accounts" ("id" serial primary key, "user_id" integer, "access_token" character varying(255), "token_secret" character varying(255), "email" character varying(255), "created_at" timestamp, "updated_at" timestamp, "refresh_token" character varying, "token_expires_at" timestamp, "type" character varying) 
+  [1m[36m (6.5ms)[0m  [1mCREATE  INDEX  "index_remote_accounts_on_user_id" ON "remote_accounts"  ("user_id")[0m
+  [1m[35m (13.8ms)[0m  CREATE TABLE "sync_pairs" ("id" serial primary key, "user_id" integer, "created_at" timestamp, "updated_at" timestamp, "from_calendar_id" integer, "to_calendar_id" integer, "last_synced_at" timestamp) 
+  [1m[36m (6.3ms)[0m  [1mCREATE  INDEX  "index_sync_pairs_on_user_id" ON "sync_pairs"  ("user_id")[0m
+  [1m[35m (24.4ms)[0m  CREATE TABLE "users" ("id" serial primary key, "email" character varying(255) DEFAULT '' NOT NULL, "encrypted_password" character varying(255) DEFAULT '' NOT NULL, "reset_password_token" character varying(255), "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" character varying(255), "last_sign_in_ip" character varying(255), "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (7.9ms)[0m  [1mCREATE UNIQUE INDEX  "index_users_on_email" ON "users"  ("email")[0m
+  [1m[35m (6.5ms)[0m  CREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users"  ("reset_password_token")
+  [1m[36m (10.5ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL) [0m
+  [1m[35m (11.0ms)[0m  CREATE UNIQUE INDEX  "unique_schema_migrations" ON "schema_migrations"  ("version")
+  [1m[36m (3.0ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35m (3.2ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20180621011259')
+  [1m[36m (0.5ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20171019011303')[0m
+  [1m[35m (0.4ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20140127021550')
+  [1m[36m (0.5ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20171023015104')[0m
+  [1m[35m (0.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20160805063030')
+  [1m[36m (0.5ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20171021223921')[0m
+  [1m[35m (0.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20180606033217')
+  [1m[36m (0.4ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20180609190021')[0m
+  [1m[35m (0.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20171105031044')
+  [1m[36m (0.5ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20171122204153')[0m
+  [1m[35m (0.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20171105025500')
+  [1m[36m (0.6ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20150202190708')[0m
+  [1m[35m (0.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20171020230400')
+  [1m[36m (0.6ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20140127021552')[0m
+  [1m[35m (0.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20171017031616')
+  [1m[36m (0.4ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20171017031112')[0m
+  [1m[35m (0.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20140106210906')
+  [1m[36m (0.5ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20180514034130')[0m
+  [1m[35m (0.4ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20140222202727')
+  [1m[36m (0.5ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20160806181344')[0m
+  [1m[35mActiveRecord::SchemaMigration Load (4.0ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36m (23.6ms)[0m  [1mDROP TABLE "active_admin_comments" CASCADE[0m
+  [1m[35m (25.9ms)[0m  CREATE TABLE "active_admin_comments" ("id" serial primary key, "namespace" character varying(255), "body" text, "resource_id" character varying(255) NOT NULL, "resource_type" character varying(255) NOT NULL, "author_id" integer, "author_type" character varying(255), "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (4.1ms)[0m  [1mCREATE  INDEX  "index_active_admin_comments_on_author_type_and_author_id" ON "active_admin_comments"  ("author_type", "author_id")[0m
+  [1m[35m (5.0ms)[0m  CREATE  INDEX  "index_active_admin_comments_on_namespace" ON "active_admin_comments"  ("namespace")
+  [1m[36m (5.9ms)[0m  [1mCREATE  INDEX  "index_active_admin_comments_on_resource_type_and_resource_id" ON "active_admin_comments"  ("resource_type", "resource_id")[0m
+  [1m[35m (17.5ms)[0m  DROP TABLE "admin_users" CASCADE
+  [1m[36m (20.0ms)[0m  [1mCREATE TABLE "admin_users" ("id" serial primary key, "email" character varying(255) DEFAULT '' NOT NULL, "encrypted_password" character varying(255) DEFAULT '' NOT NULL, "reset_password_token" character varying(255), "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" character varying(255), "last_sign_in_ip" character varying(255), "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (5.4ms)[0m  CREATE UNIQUE INDEX  "index_admin_users_on_email" ON "admin_users"  ("email")
+  [1m[36m (7.4ms)[0m  [1mCREATE UNIQUE INDEX  "index_admin_users_on_reset_password_token" ON "admin_users"  ("reset_password_token")[0m
+  [1m[35m (19.7ms)[0m  DROP TABLE "calendars" CASCADE
+  [1m[36m (23.4ms)[0m  [1mCREATE TABLE "calendars" ("id" serial primary key, "remote_account_id" integer, "external_id" character varying(255), "name" character varying(255), "created_at" timestamp, "updated_at" timestamp, "time_zone" character varying) [0m
+  [1m[35m (5.5ms)[0m  CREATE  INDEX  "index_calendars_on_remote_account_id" ON "calendars"  ("remote_account_id")
+  [1m[36m (14.5ms)[0m  [1mDROP TABLE "delayed_jobs" CASCADE[0m
+  [1m[35m (19.0ms)[0m  CREATE TABLE "delayed_jobs" ("id" serial primary key, "priority" integer DEFAULT 0 NOT NULL, "attempts" integer DEFAULT 0 NOT NULL, "handler" text NOT NULL, "last_error" text, "run_at" timestamp, "locked_at" timestamp, "failed_at" timestamp, "locked_by" character varying(255), "queue" character varying(255), "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (5.1ms)[0m  [1mCREATE  INDEX  "delayed_jobs_priority" ON "delayed_jobs"  ("priority", "run_at")[0m
+  [1m[35m (21.6ms)[0m  DROP TABLE "events" CASCADE
+  [1m[36m (19.9ms)[0m  [1mCREATE TABLE "events" ("id" serial primary key, "calendar_id" integer, "name" character varying, "start_at" timestamp, "end_at" timestamp, "external_id" character varying, "source_event_id" integer, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "is_attending" boolean, "is_blocking" boolean, "is_all_day" boolean) [0m
+  [1m[35m (5.0ms)[0m  CREATE  INDEX  "index_events_on_calendar_id" ON "events"  ("calendar_id")
+  [1m[36m (5.4ms)[0m  [1mCREATE UNIQUE INDEX  "index_events_on_external_id_and_calendar_id" ON "events"  ("external_id", "calendar_id")[0m
+  [1m[35m (5.3ms)[0m  CREATE  INDEX  "index_events_on_source_event_id" ON "events"  ("source_event_id")
+  [1m[36m (16.3ms)[0m  [1mDROP TABLE "remote_accounts" CASCADE[0m
+  [1m[35m (20.3ms)[0m  CREATE TABLE "remote_accounts" ("id" serial primary key, "user_id" integer, "access_token" character varying(255), "token_secret" character varying(255), "email" character varying(255), "created_at" timestamp, "updated_at" timestamp, "refresh_token" character varying, "token_expires_at" timestamp, "type" character varying) 
+  [1m[36m (6.2ms)[0m  [1mCREATE  INDEX  "index_remote_accounts_on_user_id" ON "remote_accounts"  ("user_id")[0m
+  [1m[35m (10.6ms)[0m  DROP TABLE "sync_pairs" CASCADE
+  [1m[36m (10.5ms)[0m  [1mCREATE TABLE "sync_pairs" ("id" serial primary key, "user_id" integer, "created_at" timestamp, "updated_at" timestamp, "from_calendar_id" integer, "to_calendar_id" integer, "last_synced_at" timestamp) [0m
+  [1m[35m (6.0ms)[0m  CREATE  INDEX  "index_sync_pairs_on_user_id" ON "sync_pairs"  ("user_id")
+  [1m[36m (16.9ms)[0m  [1mDROP TABLE "users" CASCADE[0m
+  [1m[35m (18.6ms)[0m  CREATE TABLE "users" ("id" serial primary key, "email" character varying(255) DEFAULT '' NOT NULL, "encrypted_password" character varying(255) DEFAULT '' NOT NULL, "reset_password_token" character varying(255), "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" character varying(255), "last_sign_in_ip" character varying(255), "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (5.6ms)[0m  [1mCREATE UNIQUE INDEX  "index_users_on_email" ON "users"  ("email")[0m
+  [1m[35m (5.3ms)[0m  CREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users"  ("reset_password_token")
+  [1m[36m (2.5ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35mActiveRecord::SchemaMigration Load (2.5ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+
+
+Started GET "/" for 172.24.0.1 at 2018-12-07 21:23:24 +0000
+  [1m[36mActiveRecord::SchemaMigration Load (1.9ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by UserController#dashboard as HTML
+Completed 401 Unauthorized in 31ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for 172.24.0.1 at 2018-12-07 21:23:24 +0000
+Processing by Devise::SessionsController#new as HTML
+  Rendered devise/sessions/new.html.haml within layouts/application (14.4ms)
+Completed 200 OK in 5584ms (Views: 5554.8ms | ActiveRecord: 18.8ms)
+
+
+Started GET "/users/sign_in" for 172.24.0.1 at 2018-12-07 21:27:59 +0000
+  [1m[36mActiveRecord::SchemaMigration Load (2.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by Devise::SessionsController#new as HTML
+  Rendered devise/sessions/new.html.haml within layouts/application (21.5ms)
+Completed 200 OK in 1028ms (Views: 975.8ms | ActiveRecord: 21.9ms)
+
+
+Started GET "/" for 172.24.0.1 at 2019-02-09 06:58:09 +0000
+[Rollbar] Scheduling item
+[Rollbar] Sending item
+[Rollbar] Got unexpected status code from Rollbar api: 400
+[Rollbar] Response: {
+  "err": 1,
+  "message": "access token required"
+}
+[Rollbar] Details: https://rollbar.com/instance/uuid?uuid=f05b51e2-e31a-43fd-9eff-19e446609fe2 (only available if report was successful)
+
+PG::ConnectionBad (FATAL:  the database system is starting up
+):
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+  activerecord (4.2.10) lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+  /usr/local/lib/ruby/2.5.0/monitor.rb:226:in `mon_synchronize'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+  activerecord (4.2.10) lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+  activerecord (4.2.10) lib/active_record/connection_handling.rb:87:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:383:in `connection'
+  activerecord (4.2.10) lib/active_record/migration.rb:370:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:88:in `__run_callbacks__'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:778:in `_run_call_callbacks'
+  activesupport (4.2.10) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.10) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  better_errors (2.5.0) lib/better_errors/middleware.rb:59:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:24:in `block in call'
+  rollbar (2.18.0) lib/rollbar.rb:146:in `scoped'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/rollbar.rb:22:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  rollbar (2.18.0) lib/rollbar/middleware/rails/show_exceptions.rb:22:in `call_with_rollbar'
+  actionpack (4.2.10) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.10) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.10) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.10) lib/rails/rack/logger.rb:20:in `call'
+  quiet_assets (1.1.0) lib/quiet_assets.rb:27:in `call_with_quiet_assets'
+  actionpack (4.2.10) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.11) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.11) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.10) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.10) lib/action_dispatch/middleware/static.rb:120:in `call'
+  rack (1.6.11) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.10) lib/rails/engine.rb:518:in `call'
+  railties (4.2.10) lib/rails/application.rb:165:in `call'
+  rack (1.6.11) lib/rack/lock.rb:17:in `call'
+  rack (1.6.11) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.11) lib/rack/handler/webrick.rb:88:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:140:in `service'
+  /usr/local/lib/ruby/2.5.0/webrick/httpserver.rb:96:in `run'
+  /usr/local/lib/ruby/2.5.0/webrick/server.rb:307:in `block in start_thread'
+
+
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_source.erb (4.1ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.8ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.5ms)
+  Rendered /usr/local/bundle/gems/actionpack-4.2.10/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (36.2ms)
+
+
+Started GET "/" for 172.24.0.1 at 2019-02-09 06:58:11 +0000
+  [1m[36mActiveRecord::SchemaMigration Load (5.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by UserController#dashboard as HTML
+Completed 401 Unauthorized in 34ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for 172.24.0.1 at 2019-02-09 06:58:11 +0000
+Processing by Devise::SessionsController#new as HTML
+  Rendered devise/sessions/new.html.haml within layouts/application (16.0ms)
+Completed 200 OK in 1643ms (Views: 1602.4ms | ActiveRecord: 23.7ms)
+
+
+Started GET "/" for 172.24.0.1 at 2019-02-09 18:27:06 +0000
+  [1m[36mActiveRecord::SchemaMigration Load (6.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by UserController#dashboard as HTML
+Completed 401 Unauthorized in 44ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for 172.24.0.1 at 2019-02-09 18:27:06 +0000
+Processing by Devise::SessionsController#new as HTML
+  Rendered devise/sessions/new.html.haml within layouts/application (23.2ms)
+Completed 200 OK in 1266ms (Views: 1223.3ms | ActiveRecord: 31.4ms)
+
+
+Started GET "/" for 172.24.0.1 at 2019-02-09 18:33:19 +0000
+  [1m[36mActiveRecord::SchemaMigration Load (4.0ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by UserController#dashboard as HTML
+Completed 401 Unauthorized in 30ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for 172.24.0.1 at 2019-02-09 18:33:19 +0000
+Processing by Devise::SessionsController#new as HTML
+  Rendered devise/sessions/new.html.haml within layouts/application (14.8ms)
+Completed 200 OK in 958ms (Views: 964.9ms | ActiveRecord: 19.2ms)
