@@ -20,18 +20,18 @@ RUN apt-get update && apt-get install -qq -y \
 # CONFIG
 ARG PORT
 ARG RACK_ENV
-ARG APP_PATH
+ARG RAILS_PATH
 
 # App
-RUN mkdir -p $APP_PATH
-COPY ./Gemfile $APP_PATH
-COPY ./vendor $APP_PATH/vendor
-WORKDIR $APP_PATH
+RUN mkdir -p $RAILS_PATH
+COPY ./Gemfile $RAILS_PATH
+COPY ./vendor $RAILS_PATH/vendor
+WORKDIR $RAILS_PATH
 RUN bundle install --without=test
 RUN bundle package --all
 
 COPY . .
-VOLUME ["$APP_PATH/public"]
+VOLUME ["$RAILS_PATH/public"]
 
 EXPOSE 80
 

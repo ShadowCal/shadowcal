@@ -9,8 +9,8 @@
             ],
             "environment": [
                 {
-                    "name": "APP_PATH",
-                    "value": "/app"
+                    "name": "RAILS_PATH",
+                    "value": "/rails"
                 },
                 {
                     "name": "AWS_ACCESS_KEY_ID",
@@ -75,11 +75,11 @@
             ],
             "mountPoints": [
                 {
-                    "containerPath": "/app",
-                    "sourceVolume": "UsersJordanCodeShadowcal"
+                    "containerPath": "/rails",
+                    "sourceVolume": "rails"
                 }
             ],
-            "name": "app",
+            "name": "rails",
             "image": "850702378733.dkr.ecr.us-east-1.amazonaws.com/850702378733.dkr.ecr.us-east-1.amazonaws.com/shadowcal:latest",
             "memory": 128,
             "portMappings": [
@@ -106,11 +106,11 @@
             "mountPoints": [
                 {
                     "containerPath": "/var/lib/postgresql/data",
-                    "sourceVolume": "UsersJordanCodeShadowcalTmpDb"
+                    "sourceVolume": "postgres"
                 },
                 {
-                    "containerPath": "/app",
-                    "sourceVolume": "UsersJordanCodeShadowcal"
+                    "containerPath": "/rails",
+                    "sourceVolume": "rails"
                 }
             ],
             "name": "postgres",
@@ -126,15 +126,15 @@
     "volumes": [
         {
             "host": {
-                "sourcePath": "/Users/jordan/Code/shadowcal"
+                "sourcePath": "/var/app/current/rails"
             },
-            "name": "UsersJordanCodeShadowcal"
+            "name": "rails"
         },
         {
             "host": {
-                "sourcePath": "/Users/jordan/Code/shadowcal/tmp/db"
+                "sourcePath": "/var/app/current/postgres"
             },
-            "name": "UsersJordanCodeShadowcalTmpDb"
+            "name": "postgres"
         }
     ]
 }

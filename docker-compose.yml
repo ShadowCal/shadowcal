@@ -13,7 +13,7 @@ services:
       - '5432:5432'
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
-      - ".:${APP_PATH}"
+      - ".:${RAILS_PATH}"
 
   app:
     build: 
@@ -21,11 +21,11 @@ services:
       args:
         - 'PORT=80'
         - 'RACK_ENV=$RACK_ENV'
-        - 'APP_PATH=$APP_PATH'
+        - 'RAILS_PATH=$RAILS_PATH'
     links:
       - postgres
     volumes:
-      - ".:${APP_PATH}"
+      - ".:${RAILS_PATH}"
     ports:
       - "80:80"
     env_file: .env
