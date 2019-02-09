@@ -80,6 +80,7 @@
                 }
             ],
             "name": "app",
+            "image": "850702378733.dkr.ecr.us-east-1.amazonaws.com/shadowcal:latest",
             "portMappings": [
                 {
                     "containerPort": 8000,
