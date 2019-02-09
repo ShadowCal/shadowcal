@@ -42,7 +42,7 @@
                 },
                 {
                     "name": "PORT",
-                    "value": "8000"
+                    "value": "80"
                 },
                 {
                     "name": "POSTGRES_PASSWORD",
@@ -84,8 +84,8 @@
             "memory": 128,
             "portMappings": [
                 {
-                    "containerPort": 8000,
-                    "hostPort": 8000
+                    "containerPort": 80,
+                    "hostPort": 80
                 }
             ]
         },

@@ -33,6 +33,8 @@ RUN bundle package --all
 COPY . .
 VOLUME ["$APP_PATH/public"]
 
+EXPOSE 80
+
 ENTRYPOINT ["bundle", "exec"]
 
 RUN bundle exec rake RAILS_ENV=$RACK_ENV DATABASE_URL=postgresql://user:pass@127.0.0.1/dbname SECRET_TOKEN=f098CY897WS4FT9J8A0VW378AIOCUWRSYFWBO39N8Y assets:precompile

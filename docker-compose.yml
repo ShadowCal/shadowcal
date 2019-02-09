@@ -19,7 +19,7 @@ services:
     build: 
       context: .
       args:
-        - 'PORT=$PORT'
+        - 'PORT=80'
         - 'RACK_ENV=$RACK_ENV'
         - 'APP_PATH=$APP_PATH'
     links:
@@ -27,6 +27,6 @@ services:
     volumes:
       - ".:${APP_PATH}"
     ports:
-      - "${PORT}:${PORT}"
+      - "80:80"
     env_file: .env
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -p $PORT -e $RACK_ENV -b 0.0.0.0"
