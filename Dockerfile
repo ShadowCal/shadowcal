@@ -24,13 +24,11 @@ ARG RAILS_PATH
 
 # App
 RUN mkdir -p $RAILS_PATH
-COPY ./rails/Gemfile $RAILS_PATH
-COPY ./rails/vendor $RAILS_PATH/vendor
+COPY ./rails $RAILS_PATH
 WORKDIR $RAILS_PATH
 RUN bundle install --without=test
 RUN bundle package --all
 
-COPY . .
 VOLUME ["$RAILS_PATH/public"]
 
 EXPOSE 80
