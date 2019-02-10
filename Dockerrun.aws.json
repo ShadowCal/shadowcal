@@ -18,11 +18,31 @@
                 },
                 {
                     "name": "RACK_ENV",
-                    "value": "development"
+                    "value": "production"
                 },
                 {
                     "name": "RAILS_ENV",
-                    "value": "development"
+                    "value": "production"
+                },
+                {
+                    "name": "RDS_HOSTNAME",
+                    "value": "shadowcal-production-postgres.c7lltzqgyqwm.us-east-1.rds.amazonaws.com"
+                },
+                {
+                    "name": "RDS_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "RDS_USERNAME",
+                    "value": "shadowcal"
+                },
+                {
+                    "name": "RDS_PASSWORD",
+                    "value": "yourpasswordhere"
+                },
+                {
+                    "name": "RDS_DB_NAME",
+                    "value": "shadowcal-production-postgres"
                 }
             ],
             "essential": true,
