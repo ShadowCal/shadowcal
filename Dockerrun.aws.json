@@ -13,44 +13,8 @@
                     "value": "/rails"
                 },
                 {
-                    "name": "AWS_ACCESS_KEY_ID",
-                    "value": ""
-                },
-                {
-                    "name": "AWS_SECRET_ACCESS_KEY",
-                    "value": ""
-                },
-                {
-                    "name": "GOOGLE_CLIENT_ID",
-                    "value": ""
-                },
-                {
-                    "name": "GOOGLE_CLIENT_SECRET",
-                    "value": ""
-                },
-                {
                     "name": "LANG",
                     "value": "en_US.UTF-8"
-                },
-                {
-                    "name": "OUTLOOK_APP_ID",
-                    "value": ""
-                },
-                {
-                    "name": "OUTLOOK_SECRET",
-                    "value": ""
-                },
-                {
-                    "name": "PORT",
-                    "value": "80"
-                },
-                {
-                    "name": "POSTGRES_PASSWORD",
-                    "value": "yourpasswordhere"
-                },
-                {
-                    "name": "POSTGRES_USER",
-                    "value": "shadowcal"
                 },
                 {
                     "name": "RACK_ENV",
@@ -59,14 +23,6 @@
                 {
                     "name": "RAILS_ENV",
                     "value": "development"
-                },
-                {
-                    "name": "ROLLBAR_ACCESS_TOKEN",
-                    "value": ""
-                },
-                {
-                    "name": "S3_BUCKET_NAME",
-                    "value": ""
                 }
             ],
             "essential": true,
