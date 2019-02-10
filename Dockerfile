@@ -24,7 +24,10 @@ ARG RAILS_PATH
 
 # App
 RUN mkdir -p $RAILS_PATH
-COPY ./rails $RAILS_PATH
+
+# This will cause committing any changes to the rails app to rebundle all the gems. Can't figure out how to only copy over Gemfile, build, and copy ruby_outlook before the rest of `/rails`
+COPY ./rails $RAILS_PATH 
+
 WORKDIR $RAILS_PATH
 RUN bundle install --without=test
 RUN bundle package --all
