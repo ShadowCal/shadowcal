@@ -32,8 +32,6 @@ WORKDIR $RAILS_PATH
 RUN bundle install --without=test
 RUN bundle package --all
 
-VOLUME ["$RAILS_PATH/public"]
-
 EXPOSE 80
 
 ENTRYPOINT ["bundle", "exec"]
