@@ -94,7 +94,7 @@ gem "execjs"
 gem "haml-rails"
 gem "haml_coffee_assets"
 
-gem "bootstrap", "~> 4.0.0.beta2"
+gem "bootstrap", ">= 4.1.2"
 gem "sprockets", ">= 3.7.2"
 gem "sprockets-rails"
 
