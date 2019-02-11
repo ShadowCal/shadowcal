@@ -95,7 +95,8 @@ gem "haml-rails"
 gem "haml_coffee_assets"
 
 gem "bootstrap", "~> 4.0.0.beta2"
-gem "sprockets-rails", ">= 2.3.2"
+gem "sprockets", ">= 3.7.2"
+gem "sprockets-rails"
 
 gem "make_resourceful"
 
@@ -108,7 +109,6 @@ gem "rabl"
 
 # Paperclip with the aws sdk
 gem "aws-sdk"
-gem "paperclip", "~> 3.0"
 
 gem "backbone-rails"
 gem "chosen-rails"
