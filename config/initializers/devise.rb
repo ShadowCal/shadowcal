@@ -231,7 +231,7 @@ Devise.setup do |config|
   # up on your models and hooks.
   config.omniauth :google_oauth2, ENV["GOOGLE_CLIENT_ID"], ENV["GOOGLE_CLIENT_SECRET"],
                   scope:  "email, profile, plus.me, calendar",
-                  prompt: "select_account",
+                  prompt: "consent",
                   access_type: "offline"
 
   config.omniauth :microsoft_office365, ENV['OUTLOOK_APP_ID'], ENV['OUTLOOK_SECRET'],
