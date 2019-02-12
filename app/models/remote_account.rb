@@ -24,8 +24,8 @@ class RemoteAccount < ActiveRecord::Base
     self.class.calendar_helper.request_calendars(access_token)
   end
 
-  def request_events(calendar_id)
-    self.class.calendar_helper.request_events(access_token, email, calendar_id)
+  def request_events(calendar_id, calendar_zone)
+    self.class.calendar_helper.request_events(access_token, email, calendar_id, calendar_zone)
   end
 
   def push_events(calendar_id, events)

@@ -55,7 +55,7 @@ describe CalendarShadowHelper do
       let(:google_batch) { double('google_batch') }
       let(:outlook_client) { double('outlook_client') }
 
-      let(:now) { Time.now.beginning_of_day }
+      let(:now) { Time.zone.now.beginning_of_day }
       let(:start_at) { (now + ((3 - now.wday) % 7).days).beginning_of_day }
       let(:end_at) { (start_at + 24.hours) }
 
@@ -125,7 +125,7 @@ describe CalendarShadowHelper do
               .to receive(:get_calendar_view)
               .with(
                 from_account.access_token,
-                within(1.second).of(Time.now),
+                within(1.second).of(Time.zone.now),
                 within(1.second).of(1.month.from_now),
                 from_calendar.external_id,
                 anything
@@ -161,6 +161,66 @@ describe CalendarShadowHelper do
           end
 
           it { subject }
+        end
+      end
+
+      context "from google to google" do 
+        let(:to_account) { create :google_account }
+        let(:from_account) { create :google_account }
+
+        let(:raw_google_calendar_view_response) {
+          {
+            start: {
+              date: start_at.to_date.strftime('%Y-%m-%d'),
+              time_zone: 'America/Los_Angeles',
+            },
+            attendees: [],
+            end: {
+              date: (start_at.to_date + 1.day).strftime('%Y-%m-%d'),
+              time_zone: 'America/Los_Angeles',
+            },
+            creator: {
+              self: true,
+            },
+            summary: Faker::Lorem.sentence,
+            description: "",
+            transparency: 'Opaque',
+          }.to_ostruct
+        }
+
+        let(:google_response) { double('google_response') }
+
+        it "interprets the correct times and pushes a non-all-day event" do
+          allow(google_response)
+            .to receive(:items)
+            .and_return([raw_google_calendar_view_response])
+
+          allow(google_service)
+            .to receive(:list_events)
+            .with(
+              from_calendar.external_id,
+              hash_including(:time_max, :time_min, :single_events, :max_results, :order_by)
+            )
+            .and_return(google_response)
+
+          allow(google_service)
+            .to receive(:list_events)
+            .with(
+              to_calendar.external_id,
+              hash_including(:time_max, :time_min, :single_events, :max_results, :order_by)
+            )
+            .and_return({ items: [] }.to_ostruct)
+
+          expect(google_batch)
+            .to receive(:insert_event) do |cal_id, hash|
+              expect(cal_id)
+                .to eq to_calendar.external_id
+
+              puts "WHAT TIME ZONE AM I PUSHING TO GOOGLE?", hash.inspect
+              # calendar api helpers should handle dropping all-day and adjustment of timing!
+            end
+
+          subject
         end
       end
 
@@ -207,7 +267,7 @@ describe CalendarShadowHelper do
             .to receive(:get_calendar_view)
             .with(
               to_account.access_token,
-              within(1.second).of(Time.now),
+              within(1.second).of(Time.zone.now),
               within(1.second).of(1.month.from_now),
               to_calendar.external_id,
               anything

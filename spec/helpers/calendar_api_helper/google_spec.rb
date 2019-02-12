@@ -10,11 +10,11 @@ describe CalendarApiHelper::Google do
   let(:google_formatted_event) {
     {
       start: {
-        date_time: Time.now
+        date_time: Time.zone.now
       },
       attendees: [],
       end: {
-        date_time: Time.now + 1.day
+        date_time: Time.zone.now + 1.day
       },
       summary: Faker::Lorem.sentence,
       description: "",
@@ -26,10 +26,10 @@ describe CalendarApiHelper::Google do
       .to_h
       .merge(
         start: {
-          date_time: Time.now
+          date_time: Time.zone.now
         },
         end: {
-          date_time: Time.now + 1.day
+          date_time: Time.zone.now + 1.day
         },
       )
       .to_ostruct
@@ -39,10 +39,10 @@ describe CalendarApiHelper::Google do
       .to_h
       .merge(
         start: {
-          date: Date.today
+          date: Time.zone.today
         },
         end: {
-          date: Date.today + 1.day
+          date: Time.zone.today + 1.day
         },
       )
       .to_ostruct
@@ -85,7 +85,7 @@ describe CalendarApiHelper::Google do
         .to receive(:description)
         .and_return("lorem ipsum \n\n\n\n\nSourceEvent##{shadow.source_event_id}")
 
-      expect(CalendarApiHelper::Google.send(:upsert_service_event_item, '', item))
+      expect(CalendarApiHelper::Google.send(:upsert_service_event_item, '', Time.zone.name, item))
         .to have_attributes(source_event_id: shadow.source_event_id)
     end
   end
@@ -93,7 +93,7 @@ describe CalendarApiHelper::Google do
   describe "#request_events" do
     let(:email) { generate(:email) }
 
-    subject { CalendarApiHelper::Google.request_events(access_token, email, calendar_id) }
+    subject { CalendarApiHelper::Google.request_events(access_token, email, calendar_id, Time.zone.name) }
 
     before(:each) {
       allow(CalendarApiHelper::Google)
@@ -106,7 +106,7 @@ describe CalendarApiHelper::Google do
 
       allow(CalendarApiHelper::Google)
         .to receive(:upsert_service_event_item)
-        .with(email, item)
+        .with(email, Time.zone.name, item)
         .and_return([nil])
     }
 
@@ -205,7 +205,7 @@ describe CalendarApiHelper::Google do
 
   describe "#move_event" do
     let(:in_time_zone) { Time.zone.name }
-    let(:new_start_at) { (Time.now + 2.days).in_time_zone(in_time_zone) }
+    let(:new_start_at) { (Time.zone.now + 2.days).in_time_zone(in_time_zone) }
     let(:new_end_at) { new_start_at + 2.hours }
     let(:event_id) { Faker::Internet.password(10, 20) }
 
@@ -272,11 +272,13 @@ describe CalendarApiHelper::Google do
         .send(
           :upsert_service_event_item,
           existing_event.remote_account.email,
+          existing_event.calendar.time_zone,
           item
         )
     }
 
-    let!(:existing_event) { create :event, external_id: Faker::Internet.password(10, 20) }
+    let(:calendar) { create :calendar, time_zone: TimeZoneHelpers.random_timezone.name }
+    let!(:existing_event) { create :event, calendar: calendar, external_id: Faker::Internet.password(10, 20) }
 
     before(:each) {
       allow(item).to receive(:id).and_return(existing_event.external_id)
@@ -286,7 +288,7 @@ describe CalendarApiHelper::Google do
       expect(subject).to be_a Event
     end
 
-    context "with an un-previously-seen event" do
+    context "with a never-before-seen event" do
       before(:each) do
         existing_event.destroy
       end
@@ -313,17 +315,30 @@ describe CalendarApiHelper::Google do
       end
     end
 
-    describe "is_all_day" do
-      context "when item is not day" do
-        let(:item) { google_formatted_event_with_date_times }
+    # This block runs multiple times (once per utc offset). Each time:
+    # * the server sets itself to a random timezone in that offset (random server time)
+    # * the event being tested is drawn from a calendar in a random timezone (random user time)
+    across_time_zones(step: 30.minutes) do 
+      describe "is_all_day" do
+        context "when item is not all day" do
+          let(:item) { google_formatted_event_with_date_times }
 
-        it { is_expected.to have_attributes is_all_day: false }
-      end
+          it { is_expected.to have_attributes is_all_day: false }
+        end
 
-      context "when item is all day" do
-        let(:item) { google_formatted_event_with_dates }
+        context "when item is all day" do
+          let(:item) { google_formatted_event_with_dates }
 
-        it { is_expected.to have_attributes is_all_day: true }
+          it { is_expected.to have_attributes is_all_day: true }
+
+          it "will start and end at midnight in their timezone" do 
+            event = subject
+            calendar_zone = ActiveSupport::TimeZone.new(event.calendar.time_zone)
+            expect(event.start_at.in_time_zone(calendar_zone).hour).to eq(0)
+            expect(event.end_at.in_time_zone(calendar_zone).hour).to eq(0)
+            expect(event.start_at + 1.day).to be_within(1.second).of event.end_at
+          end
+        end
       end
     end
 
@@ -351,51 +366,51 @@ describe CalendarApiHelper::Google do
 
       context "with start.date.date" do
         it "updates start_at" do
-          item.start.date = Date.today.strftime('%Y-%m-%d')
+          item.start.date = Time.zone.today.strftime('%Y-%m-%d')
           item.start.date_time = nil
           item.start.time_zone = 'America/Los_Angeles'
 
           expect(
             subject
               .start_at
-              .to_s
-          ).to eq ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.now.beginning_of_day).to_s
+          ).to be_within(1.second) 
+              .of(ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.zone.now.beginning_of_day))
         end
 
         it "updates end_at" do
-          item.end.date = Date.today.strftime('%Y-%m-%d')
+          item.end.date = Time.zone.today.strftime('%Y-%m-%d')
           item.end.date_time = nil
           item.end.time_zone = 'America/Los_Angeles'
 
           expect(
             subject
               .end_at
-              .to_s
-          ).to eq ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.now.beginning_of_day).to_s
+          ).to be_within(1.second)
+              .of(ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.zone.now.beginning_of_day))
         end
       end
 
       context "with start.date.date_time" do
         it "updates start_at" do
           item.start.date = nil
-          item.start.date_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
+          item.start.date_time = Time.zone.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
           item.start.time_zone = nil
 
           expect(
             subject
               .start_at
-          ).to be_within(1.second).of(Time.now)
+          ).to be_within(1.second).of(Time.zone.now)
         end
 
         it "updates end_at" do
           item.end.date = nil
-          item.end.date_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
+          item.end.date_time = Time.zone.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
           item.end.time_zone = nil
 
           expect(
             subject
               .end_at
-          ).to be_within(1.second).of(Time.now)
+          ).to be_within(1.second).of(Time.zone.now)
         end
       end
 

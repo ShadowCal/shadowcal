@@ -268,14 +268,14 @@ describe CalendarApiHelper::Outlook do
   end
 
   describe "#request_events" do
-    subject { CalendarApiHelper::Outlook.request_events(access_token, email, calendar_id) }
+    subject { CalendarApiHelper::Outlook.request_events(access_token, email, calendar_id, random_timezone) }
 
     before(:each) {
       expect(client)
         .to receive(:get_calendar_view)
         .with(
           access_token,
-          within(10.second).of(Time.now),
+          within(10.second).of(Time.zone.now),
           within(10.second).of(1.month.from_now),
           calendar_id,
           event_fields
@@ -498,7 +498,7 @@ describe CalendarApiHelper::Outlook do
 
       describe "is_all_day" do
         # All day events are returned with 00:00:00 times
-        let(:start_at) { Time.now.beginning_of_day.utc }
+        let(:start_at) { Time.zone.now.beginning_of_day.utc }
         let(:end_at) { start_at + 1.day }
 
         context "when item.IsAllDay" do

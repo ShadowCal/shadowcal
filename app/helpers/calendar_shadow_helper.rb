@@ -129,6 +129,7 @@ module CalendarShadowHelper
       event.is_blocking = source_event.is_blocking
 
       # Don't mark shadows as all_day. All_day has implications, and shadows should blindly be blocks of time.
+      # BUT maybe we should, and the all-day significance should be parsed out in the remote account helper
       # event.is_all_day = source_event.is_all_day
     }.tap { |event|
       verb = event.new_record? ? "Created" : "Found"

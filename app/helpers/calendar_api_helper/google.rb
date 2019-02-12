@@ -31,12 +31,12 @@ module CalendarApiHelper::Google
 
   # TODO: use updated_min parameter or sync_token
   # http://www.rubydoc.info/github/google/google-api-ruby-client/Google/Apis/CalendarV3/CalendarService#list_events-instance_method
-  def request_events(access_token, my_email, calendar_id)
+  def request_events(access_token, my_email, calendar_id, calendar_zone)
     service = build_service(access_token)
 
     # Return each google api calendar as an ActiveRecord Calendar model
     events = get_calendar_events(service, calendar_id).map do |item|
-      upsert_service_event_item(my_email, item)
+      upsert_service_event_item(my_email, calendar_zone, item)
     end
 
     # upsert_service_event_item sometimes returns nils, when an event doesn't
@@ -107,7 +107,7 @@ module CalendarApiHelper::Google
     end
   end
 
-  def upsert_service_event_item(my_email, item)
+  def upsert_service_event_item(my_email, my_zone, item)
     return if item.status == "cancelled"
 
     Event.where(
@@ -121,8 +121,8 @@ module CalendarApiHelper::Google
 
       item_start_date = service_date_to_active_support_date_time(item.start)
       item_end_date = service_date_to_active_support_date_time(item.end)
-      event.start_at = item_start_date
-      event.end_at = item_end_date
+      event.start_at = item_start_date.in_time_zone(my_zone)
+      event.end_at = item_end_date.in_time_zone(my_zone)
 
       event.is_attending = item&.creator&.self
       event.is_attending ||= (item.attendees || []).find{ |a| a.email == my_email }.try(:response_status).try(:==, 'accepted')
@@ -150,7 +150,7 @@ module CalendarApiHelper::Google
         time_zone: date.time_zone.name,
       }
     else
-      { date_time: date.utc.iso8601 }
+      { date_time: date.iso8601 }
     end
   end
 
@@ -202,7 +202,7 @@ module CalendarApiHelper::Google
       .list_events(
         id,
         time_max: 1.month.from_now.iso8601,
-        time_min: Time.now.iso8601,
+        time_min: Time.zone.now.iso8601,
         single_events: true,
         max_results: 500,
         order_by: 'startTime'

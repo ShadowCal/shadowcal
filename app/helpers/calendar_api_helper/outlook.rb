@@ -37,10 +37,10 @@ module CalendarApiHelper::Outlook
     end
   end
 
-  def request_events(access_token, my_email, calendar_id)
+  def request_events(access_token, my_email, calendar_id, _my_zone)
     resp = client.get_calendar_view(
       access_token,
-      Time.now.utc,
+      Time.zone.now.utc,
       1.month.from_now.utc,
       calendar_id,
       EVENT_FIELDS
@@ -70,7 +70,7 @@ module CalendarApiHelper::Outlook
   def clear(access_token, calendar_id)
     resp = client.get_calendar_view(
       access_token,
-      Time.now.utc,
+      Time.zone.now.utc,
       1.month.from_now.utc,
       calendar_id,
       EVENT_FIELDS
