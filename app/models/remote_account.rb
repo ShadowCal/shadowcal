@@ -12,7 +12,7 @@ class RemoteAccount < ActiveRecord::Base
     where(
       "token_expires_at IS NOT NULL AND " \
       "refresh_token IS NOT NULL AND " \
-      "token_expires_at < ?", 20.minutes.from_now
+      "token_expires_at < ?", 24.hours.from_now
     )
   }
 
