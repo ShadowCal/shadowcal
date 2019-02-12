@@ -268,7 +268,7 @@ describe CalendarApiHelper::Outlook do
   end
 
   describe "#request_events" do
-    subject { CalendarApiHelper::Outlook.request_events(access_token, email, calendar_id, random_timezone) }
+    subject { CalendarApiHelper::Outlook.request_events(access_token, email, calendar_id, TimeZoneHelpers.random_timezone.name) }
 
     before(:each) {
       expect(client)
