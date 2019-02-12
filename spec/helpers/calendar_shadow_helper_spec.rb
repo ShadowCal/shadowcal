@@ -215,9 +215,6 @@ describe CalendarShadowHelper do
             .to receive(:insert_event) do |cal_id, hash|
               expect(cal_id)
                 .to eq to_calendar.external_id
-
-              puts "WHAT TIME ZONE AM I PUSHING TO GOOGLE?", hash.inspect
-              # calendar api helpers should handle dropping all-day and adjustment of timing!
             end
 
           subject
