@@ -1,4 +1,5 @@
-# spec/support/timezone.rb
+# frozen_string_literal: true
+
 module TimeZoneHelpers
   extend ActiveSupport::Concern
 
@@ -13,20 +14,19 @@ module TimeZoneHelpers
     puts "Current rand time zone: #{Time.zone}. Repro: Time.zone = #{Time.zone.name.inspect}"
   end
 
-
   module ClassMethods
     def context_with_time_zone(zone, &block)
-      context ", in the time zone #{zone.to_s}," do
+      context ", in the time zone #{zone}," do
         before { @prev_time_zone = Time.zone; Time.zone = zone }
         after { Time.zone = @prev_time_zone }
-        self.instance_eval(&block)
+        instance_eval(&block)
       end
     end
 
-    def across_time_zones(options, &block)
-      options.assert_valid_keys(:step)
+    def across_time_zones(options = {}, &block)
+      options[:step] ||= 55 * 60
       step_seconds = options.fetch(:step)
-      offsets = ActiveSupport::TimeZone.all.group_by(&:utc_offset).sort_by {|off, zones| off }
+      offsets = ActiveSupport::TimeZone.all.group_by(&:utc_offset).sort_by { |off, _zones| off }
       last_offset = -10.days # far enough in the past
       offsets.each do |(current_offset, zones)|
         if (current_offset - last_offset) >= step_seconds
@@ -35,7 +35,6 @@ module TimeZoneHelpers
         end
       end
     end
-
   end
 end
 

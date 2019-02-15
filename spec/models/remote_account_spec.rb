@@ -19,6 +19,50 @@ describe "RemoteAccount", type: :model do
     end
   end
 
+  describe "SyncingError" do
+    it "saves attributes to instance variables" do
+      e = RemoteAccount::SyncingError.new("test message", valid_instance)
+      expect(e.instance_variable_get('@remote_account_data'))
+        .to include(
+          id: valid_instance.id,
+          type: valid_instance.type,
+        )
+
+      expect(e.instance_variable_get('@remote_account_data'))
+        .not_to include(:email, :access_token, :token_secret, :refresh_token)
+
+      expect(e.message)
+        .to eq("test message")
+    end
+  end
+
+  describe "ensure_refresh_token!" do
+    let(:account) { create :remote_account }
+
+    context "when saved without refresh token" do
+      before(:each) {
+        expect(Rollbar)
+          .to receive(:error)
+          .with RemoteAccount::SavedWithoutRefreshToken.new(account)
+      }
+
+      subject { account.update_attributes refresh_token: nil }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when saved with refresh token" do
+      before(:each) {
+        expect(Rollbar)
+          .not_to receive(:error)
+      }
+
+      subject { account.update_attributes refresh_token: 'not nil' }
+
+      it { is_expected.to be_truthy }
+    end
+  end
+
   describe "after_initialize" do
     it "refreshes automatically if stale" do
       expired_instance # Create so we can find it, later
@@ -53,7 +97,9 @@ describe "RemoteAccount", type: :model do
     context "when expired" do
       let(:account) { FactoryBot.create :remote_account, :expired }
 
-      it { is_expected.to eq true }
+      across_time_zones do
+        it { is_expected.to eq true }
+      end
 
       context "when refresh token is blank" do
         before(:each) {

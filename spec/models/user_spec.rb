@@ -57,6 +57,11 @@ describe "User", type: :model do
         it "leaves expires_at nil" do
           access_token.credentials.expires_at = nil
           access_token.credentials.refresh_token = nil
+
+          allow(Rollbar)
+            .to receive(:error)
+            .with RemoteAccount::SavedWithoutRefreshToken
+
           user.add_or_update_remote_account(access_token, nil)
           user.remote_accounts.reload
           expect(user.remote_accounts.last.token_expires_at).to be_nil

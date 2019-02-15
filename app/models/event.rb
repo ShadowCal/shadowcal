@@ -56,6 +56,7 @@ class Event < ActiveRecord::Base
     local_start_at = start_at.in_time_zone(calendar.time_zone)
     local_end_at = end_at.in_time_zone(calendar.time_zone)
 
+    log "Calendar time_zone: #{calendar.time_zone}"
     log "local_start_at: #{local_start_at.inspect}"
     log "local_end_at: #{local_end_at.inspect}"
 

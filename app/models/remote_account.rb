@@ -16,6 +16,23 @@ class RemoteAccount < ActiveRecord::Base
     )
   }
 
+  after_save :ensure_refresh_token!, unless: :skip_callbacks
+
+  class SyncingError < StandardError
+    def initialize(msg, remote_account)
+      pii_keys = %I{email access_token token_secret refresh_token}
+      clean_keys = RemoteAccount.column_names.map(&:to_sym) - pii_keys
+      @remote_account_data = remote_account.attributes.symbolize_keys.slice(*clean_keys)
+      super(msg)
+    end
+  end
+
+  class SavedWithoutRefreshToken < SyncingError
+    def initialize(remote_account)
+      super("RemoteAccount should always have a refresh token, or we'll run into sync issues in the future", remote_account)
+    end
+  end
+
   def self.calendar_helper
     raise NotImplementedError, "class#calendar_helper must be implemented by a subclass"
   end
@@ -61,6 +78,11 @@ class RemoteAccount < ActiveRecord::Base
 
   def should_refresh_token?
     return false if skip_callbacks
-    token_expires_at < Time.current unless token_expires_at.nil? || refresh_token.blank?
+
+    token_expires_at < Time.zone.now unless token_expires_at.nil? || refresh_token.blank?
+  end
+
+  def ensure_refresh_token!
+    Rollbar.error(SavedWithoutRefreshToken.new(self)) if refresh_token.blank?
   end
 end

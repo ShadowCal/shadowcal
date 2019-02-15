@@ -111,11 +111,11 @@ module CalendarApiHelper::Outlook
           'Content' => build_description_with_embedded_source_event_id(event.source_event_id),
         },
         'Start' => {
-          'DateTime' => event.start_at.strftime('%Y-%m-%dT%H:%M:%S'),
+          'DateTime' => event.start_at.utc.strftime('%Y-%m-%dT%H:%M:%S'),
           'TimeZone' => 'Etc/GMT',
         },
         'End' => {
-          'DateTime' => event.end_at.strftime('%Y-%m-%dT%H:%M:%S'),
+          'DateTime' => event.end_at.utc.strftime('%Y-%m-%dT%H:%M:%S'),
           'TimeZone' => 'Etc/GMT',
         },
         'Subject' => event.name,

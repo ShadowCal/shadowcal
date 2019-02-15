@@ -16,31 +16,33 @@ describe CalendarShadowHelper do
   let(:event_not_attending) { create :syncable_event, name: "not attending", calendar: from_calendar, is_attending: false }
   let(:event_already_pushed) { create :syncable_event, :has_shadow, name: "already_pushed", calendar: from_calendar }
   let(:event_on_destination_calendar) { create :syncable_event, name: "on destination calendar", calendar: to_calendar }
-  let(:event_on_weekend) { create :syncable_event, :weekend, name: "weekend", calendar: from_calendar }
+  let(:event_on_weekend) { create :syncable_event, :weekend, :work_hours, name: "weekend", calendar: from_calendar }
   let(:event_after_work_hours) { create :syncable_event, :after_work_hours, name: "after hours", calendar: from_calendar }
   let(:event_not_blocking) { create :syncable_event, is_blocking: false, calendar: from_calendar }
 
   describe "#events_needing_shadows" do
     subject { CalendarShadowHelper.send(:events_needing_shadows, from_calendar) }
 
-    before(:each) do
-      event_not_attending
-      event_already_pushed
-      event_on_destination_calendar
-      event_on_weekend
-      event_after_work_hours
-      event_not_blocking
-      event_will_be_synced
+    across_time_zones do
+      before(:each) do
+        event_not_attending
+        event_already_pushed
+        event_on_destination_calendar
+        event_on_weekend
+        event_after_work_hours
+        event_not_blocking
+        event_will_be_synced
+      end
+
+      it { is_expected.not_to include(event_not_attending) }
+      it { is_expected.not_to include(event_already_pushed) }
+      it { is_expected.not_to include(event_on_destination_calendar) }
+      it { is_expected.not_to include(event_on_weekend) }
+      it { is_expected.not_to include(event_after_work_hours) }
+      it { is_expected.not_to include(event_not_blocking) }
+
+      it { is_expected.to include(event_will_be_synced) }
     end
-
-    it { is_expected.not_to include(event_not_attending) }
-    it { is_expected.not_to include(event_already_pushed) }
-    it { is_expected.not_to include(event_on_destination_calendar) }
-    it { is_expected.not_to include(event_on_weekend) }
-    it { is_expected.not_to include(event_after_work_hours) }
-    it { is_expected.not_to include(event_not_blocking) }
-
-    it { is_expected.to include(event_will_be_synced) }
   end
 
   describe "#cast_from_to" do
@@ -164,7 +166,7 @@ describe CalendarShadowHelper do
         end
       end
 
-      context "from google to google" do 
+      context "from google to google" do
         let(:to_account) { create :google_account }
         let(:from_account) { create :google_account }
 
@@ -212,7 +214,7 @@ describe CalendarShadowHelper do
             .and_return({ items: [] }.to_ostruct)
 
           expect(google_batch)
-            .to receive(:insert_event) do |cal_id, hash|
+            .to receive(:insert_event) do |cal_id, _hash|
               expect(cal_id)
                 .to eq to_calendar.external_id
             end

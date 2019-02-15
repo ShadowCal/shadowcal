@@ -4,11 +4,11 @@ require "rails_helper"
 
 def build_tests_outside_work_hours
   let(:calendar) { create :calendar, time_zone: time_zone }
-  let(:original_utc) { ActiveSupport::TimeZone.new(time_zone).parse('00:00:00').utc }
-  let(:saturday) { original_utc - original_utc.wday.days - 1.day }
-  let(:sunday) { original_utc - original_utc.wday.days }
-  let(:tuesday) { original_utc - original_utc.wday.days + 2.days }
-  let(:friday) { original_utc - original_utc.wday.days - 2.day }
+  let(:midnight) { ActiveSupport::TimeZone.new(time_zone).parse('00:00:00') }
+  let(:saturday) { midnight - midnight.wday.days - 1.day }
+  let(:sunday) { midnight - midnight.wday.days }
+  let(:tuesday) { midnight - midnight.wday.days + 2.days }
+  let(:friday) { midnight - midnight.wday.days - 2.day }
   # let(:start_of_day) defined in contexts, below
   let(:end_of_day) { start_of_day + 23.hours + 59.minutes }
   let(:before_8_am) { start_of_day + 7.hours + 59.minutes }
@@ -272,25 +272,33 @@ describe "Event", type: :model do
   let(:source_event) { create :syncable_event, :is_attending, :is_blocking, calendar_id: pair.from_calendar_id }
   let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
 
-  describe "#outside_work_hours" do
-    subject { event.outside_work_hours }
+  across_time_zones(step: 3.18.hours) do
+    describe "#outside_work_hours" do
+      subject { event.outside_work_hours }
 
-    context "Time Zone: Pacific" do
-      let(:time_zone) { 'America/Los_Angeles' }
+      context "when calendar time is Pacific" do
+        let(:time_zone) { 'America/Los_Angeles' }
 
-      build_tests_outside_work_hours
-    end
+        build_tests_outside_work_hours
+      end
 
-    context "Time Zone: Eastern" do
-      let(:time_zone) { 'America/New_York' }
+      context "when calendar time is Eastern" do
+        let(:time_zone) { 'America/New_York' }
 
-      build_tests_outside_work_hours
-    end
+        build_tests_outside_work_hours
+      end
 
-    context "Time Zone: UTC" do
-      let(:time_zone) { 'UTC' }
+      context "when calendar time is UTC" do
+        let(:time_zone) { 'UTC' }
 
-      build_tests_outside_work_hours
+        build_tests_outside_work_hours
+      end
+
+      context "when calendar time is Saskatchewan" do
+        let(:time_zone) { 'Saskatchewan' }
+
+        build_tests_outside_work_hours
+      end
     end
   end
 
@@ -498,7 +506,7 @@ describe "Event", type: :model do
             event.start_at,
             event.end_at,
             event.is_all_day,
-            event.calendar.time_zone
+            event.source_event.calendar.time_zone
           )
         subject
       end
@@ -537,7 +545,7 @@ describe "Event", type: :model do
             event.start_at,
             event.end_at,
             event.is_all_day,
-            event.calendar.time_zone
+            event.shadow_event.calendar.time_zone
           )
         subject
       end

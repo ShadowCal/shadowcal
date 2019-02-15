@@ -1,13 +1,10 @@
-Make sure oauth refresh works (don't think it does)
+
+Guess which is the primary calendar (Name= email or "Personal")
 
 All Day Events from Outlook to Google shift by one day
 Multiday events?
 
 Events from Personal > Test cal don't propogate
-
-Don't dupe syncPairs
-
-update rollbar-gem
 
 Outlook thinks event is blocking but it's not
 
@@ -15,8 +12,10 @@ Delete events
 
 Account-level option to include transparent events
 
+Account-level option for work hours
+
 Be able to move / delete shadows
 
-Calendars may only be sync'd once
+Calendars may only be sync'd from once
 
 

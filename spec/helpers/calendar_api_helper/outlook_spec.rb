@@ -52,8 +52,8 @@ describe CalendarApiHelper::Outlook do
 
   let(:events) { [event] }
 
-  let(:start_at_str) { start_at.strftime('%Y-%m-%dT%H:%M:%S') }
-  let(:end_at_str) { end_at.strftime('%Y-%m-%dT%H:%M:%S') }
+  let(:start_at_str) { start_at.in_time_zone(outlook_formatted_timezone).strftime('%Y-%m-%dT%H:%M:%S') }
+  let(:end_at_str) { end_at.in_time_zone(outlook_formatted_timezone).strftime('%Y-%m-%dT%H:%M:%S') }
   let(:is_cancelled) { false }
   let(:is_all_day) { false }
   let(:response) { 'None' }
@@ -61,6 +61,8 @@ describe CalendarApiHelper::Outlook do
   let(:outlook_event_show_as) {
     event.is_attending ? 'busy' : 'free'
   }
+
+  let(:outlook_formatted_timezone) { 'Etc/GMT' }
 
   let(:outlook_formatted_event) {
     {
@@ -70,11 +72,11 @@ describe CalendarApiHelper::Outlook do
       },
       'Start' => {
         'DateTime' => start_at_str,
-        'TimeZone' => 'Etc/GMT',
+        'TimeZone' => outlook_formatted_timezone,
       },
       'End' => {
         'DateTime' => end_at_str,
-        'TimeZone' => 'Etc/GMT',
+        'TimeZone' => outlook_formatted_timezone,
       },
       'Subject' => event.name,
       'Sensitivity' => 'normal',
@@ -168,11 +170,11 @@ describe CalendarApiHelper::Outlook do
           hash_including(
             'Start' => {
               'DateTime' => new_start_at.strftime('%Y-%m-%dT%H:%M:%S'),
-              'TimeZone' => 'Etc/GMT',
+              'TimeZone' => outlook_formatted_timezone,
             },
             'End' => {
               'DateTime' => new_end_at.strftime('%Y-%m-%dT%H:%M:%S'),
-              'TimeZone' => 'Etc/GMT',
+              'TimeZone' => outlook_formatted_timezone,
             },
           ),
           event_external_id
@@ -479,60 +481,62 @@ describe CalendarApiHelper::Outlook do
         ).to eq existing_event
       end
 
-      describe "start_at and end_at" do
-        before(:each) {
-          expect(event.start_at)
-            .not_to eq existing_event.start_at
+      across_time_zones do
+        describe "start_at and end_at" do
+          before(:each) {
+            expect(event.start_at)
+              .not_to eq existing_event.start_at
 
-          expect(event.end_at)
-            .not_to eq existing_event.end_at
-        }
-
-        it {
-          is_expected.to have_attributes(
-            start_at: within(1.second).of(start_at),
-            end_at: within(1.second).of(end_at)
-          )
-        }
-      end
-
-      describe "is_all_day" do
-        # All day events are returned with 00:00:00 times
-        let(:start_at) { Time.zone.now.beginning_of_day.utc }
-        let(:end_at) { start_at + 1.day }
-
-        context "when item.IsAllDay" do
-          let(:is_all_day) { true }
-
-          it {
-            is_expected.to have_attributes(
-              is_all_day: is_all_day
-            )
+            expect(event.end_at)
+              .not_to eq existing_event.end_at
           }
 
           it {
             is_expected.to have_attributes(
-              start_at: start_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds,
-              end_at: end_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds - 1.second,
+              start_at: within(1.second).of(start_at),
+              end_at: within(1.second).of(end_at)
             )
           }
         end
 
-        context "when NOT item.IsAllDay" do
-          let(:is_all_day) { false }
+        describe "is_all_day" do
+          # All day events are returned with 00:00:00 times
+          let(:start_at) { Time.zone.now.beginning_of_day.utc }
+          let(:end_at) { start_at + 1.day }
 
-          it {
-            is_expected.to have_attributes(
-              is_all_day: is_all_day
-            )
-          }
+          context "when item.IsAllDay" do
+            let(:is_all_day) { true }
 
-          it {
-            is_expected.to have_attributes(
-              start_at: start_at,
-              end_at: end_at,
-            )
-          }
+            it {
+              is_expected.to have_attributes(
+                is_all_day: is_all_day
+              )
+            }
+
+            it {
+              is_expected.to have_attributes(
+                start_at: start_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds,
+                end_at: end_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds - 1.second,
+              )
+            }
+          end
+
+          context "when NOT item.IsAllDay" do
+            let(:is_all_day) { false }
+
+            it {
+              is_expected.to have_attributes(
+                is_all_day: is_all_day
+              )
+            }
+
+            it {
+              is_expected.to have_attributes(
+                start_at: start_at,
+                end_at: end_at,
+              )
+            }
+          end
         end
       end
 

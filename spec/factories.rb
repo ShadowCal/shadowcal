@@ -90,6 +90,15 @@ FactoryBot.define do
         event.start_at += (1 + (6 - event.start_at.wday % 7)).days
         event.end_at = event.start_at + duration
       end
+
+      # Nudge away from starting or ending on monday / friday which can happen when we apply big UTC offsets
+      after(:create) do |event|
+        event.start_at -= (event.start_at.hour + 1).hours if event.start_at.wday == 1
+        event.start_at += (24 - event.start_at.hour + 1).hours if event.start_at.wday == 5
+        event.end_at -= (event.start_at.hour + 1).hours if event.end_at.wday == 1
+        event.end_at += (24 - event.start_at.hour + 1).hours if event.end_at.wday == 5
+        event.save
+      end
     end
   end
 
@@ -130,7 +139,7 @@ FactoryBot.define do
     name { generate(:calendar_id) }
     external_id { Faker::Internet.password(10, 20) }
     remote_account { build :remote_account, user: user }
-    time_zone 'America/Los_Angeles'
+    time_zone { TimeZoneHelpers.random_timezone.name }
   end
 
   factory :user do
