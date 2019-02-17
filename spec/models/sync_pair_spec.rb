@@ -5,6 +5,32 @@ require "rails_helper"
 describe "SyncPair", type: :model do
   let(:sync_pair) { FactoryBot.create :sync_pair }
 
+  describe "#one_way_syncing" do
+    let(:other_pair) { FactoryBot.create :sync_pair, user: sync_pair.user }
+
+    it "won't allow a calendar to be synced from if already being synced to" do
+      new_calendar = FactoryBot.create :calendar, user: sync_pair.user
+      sync_pair.from_calendar = other_pair.to_calendar
+
+      expect(sync_pair.save)
+        .to be_falsy
+
+      expect(sync_pair.errors)
+        .to include(:from_calendar_id)
+    end
+
+    it "won't allow a calendar to be synced to if already being synced from" do
+      new_calendar = FactoryBot.create :calendar, user: sync_pair.user
+      sync_pair.to_calendar = other_pair.from_calendar
+
+      expect(sync_pair.save)
+        .to be_falsy
+
+      expect(sync_pair.errors)
+        .to include(:to_calendar_id)
+    end
+  end
+
   describe "#ownership" do
     let(:other_users_calendar) { FactoryBot.create :calendar }
 

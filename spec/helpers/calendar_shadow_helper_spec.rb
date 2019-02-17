@@ -5,7 +5,8 @@ require "rails_helper"
 describe CalendarShadowHelper do
   let(:is_all_day) { false }
 
-  let(:pair) { create :sync_pair }
+  let(:user) { create :user }
+  let(:pair) { create :sync_pair, user: user }
   let(:source_event) { create :event, is_all_day: is_all_day, calendar_id: pair.from_calendar_id }
   let(:shadow_event) { create :event, :is_shadow, calendar_id: pair.to_calendar_id, source_event_id: source_event.id }
 
@@ -85,8 +86,8 @@ describe CalendarShadowHelper do
       }
 
       context "from outlook to google" do
-        let(:from_account) { create :outlook_account }
-        let(:to_account) { create :google_account }
+        let(:from_account) { create :outlook_account, user: user }
+        let(:to_account) { create :google_account, user: user }
 
         let(:raw_outlook_calendar_view_response) {
           {
@@ -167,8 +168,8 @@ describe CalendarShadowHelper do
       end
 
       context "from google to google" do
-        let(:to_account) { create :google_account }
-        let(:from_account) { create :google_account }
+        let(:to_account) { create :google_account, user: user }
+        let(:from_account) { create :google_account, user: user }
 
         let(:raw_google_calendar_view_response) {
           {
@@ -224,8 +225,8 @@ describe CalendarShadowHelper do
       end
 
       context "from google to outlook" do
-        let(:to_account) { create :outlook_account }
-        let(:from_account) { create :google_account }
+        let(:to_account) { create :outlook_account, user: user }
+        let(:from_account) { create :google_account, user: user }
 
         let(:raw_google_calendar_view_response) {
           {
