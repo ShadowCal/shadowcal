@@ -11,6 +11,7 @@ class SyncPair < ActiveRecord::Base
 
   validate :ownership
   validate :one_way_syncing
+  validate :no_syncing_to_from_same
 
   after_create :perform_sync, unless: :skip_callbacks
 
@@ -31,12 +32,18 @@ class SyncPair < ActiveRecord::Base
     end
 
     def one_way_syncing
-      if from_calendar_id and user.sync_pairs.where('to_calendar_id = ?', from_calendar_id).count > 0
+      if from_calendar_id and user.sync_pairs.where('to_calendar_id = ? AND id <> ?', from_calendar_id, id).count > 0
         errors[:from_calendar_id] << 'cannot sync from a calendar already being synced to'
       end
 
-      if to_calendar_id and user.sync_pairs.where('from_calendar_id = ?', to_calendar_id).count > 0
+      if to_calendar_id and user.sync_pairs.where('from_calendar_id = ? AND id <> ?', to_calendar_id, id).count > 0
         errors[:to_calendar_id] << 'cannot sync to a calendar already being synced from'
+      end
+    end
+
+    def no_syncing_to_from_same
+      if from_calendar_id == to_calendar_id and !from_calendar_id.blank?
+        errors[:base] << 'cannot sync calendar to itself'
       end
     end
 end

@@ -5,6 +5,16 @@ require "rails_helper"
 describe "SyncPair", type: :model do
   let(:sync_pair) { FactoryBot.create :sync_pair }
 
+  describe "#no_syncing_to_from_same" do
+    it "won't allow user to sync to and from same calendar" do
+      expect(sync_pair.update_attributes to_calendar_id: sync_pair.from_calendar_id)
+        .to be_falsy
+
+      expect(sync_pair.errors)
+        .to include(:base)
+    end
+  end
+
   describe "#one_way_syncing" do
     let(:other_pair) { FactoryBot.create :sync_pair, user: sync_pair.user }
 
@@ -28,6 +38,11 @@ describe "SyncPair", type: :model do
 
       expect(sync_pair.errors)
         .to include(:to_calendar_id)
+    end
+
+    it "will allow the record to save" do
+      expect(sync_pair.update_attributes last_synced_at: Time.zone.now)
+        .to be_truthy
     end
   end
 
