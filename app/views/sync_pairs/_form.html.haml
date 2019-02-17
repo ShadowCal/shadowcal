@@ -1,12 +1,18 @@
-= form_for SyncPair.new do |f|
+= form_for @sync_pair do |f|
+  - if @sync_pair.errors.any?
+    %ul.alert.alert-danger
+      - @sync_pair.errors.full_messages.each do |message| 
+        %li= message
+
   %h3 Let's cast a shadow:
   %p Events on your personal calendar will block time on your work calendar without sharing details of those events with your coworkers.
 
   .form-group
     = f.label :from_calendar_id, 'From'
-    = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_remote_account), { prompt: "[Choose your private, personal calendar]" }, { class: 'form-control', required: true }
+    = f.select :from_calendar_id, grouped_options_for_select(@calendars_by_remote_account, @sync_pair.from_calendar_id), { prompt: "[Choose your private, personal calendar]" }, { class: 'form-control', required: true }
 
   .form-group
     = f.label :to_calendar_id, 'Onto'
-    = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_remote_account), { prompt: "[Choose your shared, work calendar]" }, { class: 'form-control', required: true }
+    = f.select :to_calendar_id, grouped_options_for_select(@calendars_by_remote_account, @sync_pair.to_calendar_id), { prompt: "[Choose your shared, work calendar]" }, { class: 'form-control', required: true }
+
   %button.btn.btn-primary{:type => "submit"} Block Time Privately

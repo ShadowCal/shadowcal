@@ -7,6 +7,7 @@ class SyncPair < ActiveRecord::Base
   belongs_to :from_calendar, class_name: "Calendar", foreign_key: "from_calendar_id"
 
   validates :to_calendar, :from_calendar, presence: true
+  validates_uniqueness_of :from_calendar
 
   after_create :perform_sync, unless: :skip_callbacks
 

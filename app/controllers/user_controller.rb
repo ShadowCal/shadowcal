@@ -4,6 +4,7 @@ class UserController < ApplicationController
   before_action :authenticate_user!
 
   def dashboard
+    @sync_pair = SyncPair.new
     @remote_accounts = current_user.remote_accounts
     @calendars_by_remote_account = CalendarAccountHelper.from_accounts_by_key(@remote_accounts)
 

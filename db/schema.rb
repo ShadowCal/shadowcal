@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180621011259) do
+ActiveRecord::Schema.define(version: 20190216185747) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace",     limit: 255
@@ -114,6 +114,7 @@ ActiveRecord::Schema.define(version: 20180621011259) do
     t.datetime "last_synced_at"
   end
 
+  add_index "sync_pairs", ["from_calendar_id"], name: "index_sync_pairs_on_from_calendar_id", unique: true
   add_index "sync_pairs", ["user_id"], name: "index_sync_pairs_on_user_id"
 
   create_table "users", force: :cascade do |t|
