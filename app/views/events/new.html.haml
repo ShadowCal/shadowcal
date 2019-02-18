@@ -1,0 +1,58 @@
+= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+= stylesheet_link_tag "calendar"
+
+#calendar
+
+:coffeescript
+  $(document).ready ->
+    $('#calendar').fullCalendar
+      minTime: '08:45:00'
+      maxTime: '18:15:00'
+      selectConstraint: 'businessHours'
+      businessHours:
+        dow: [1, 2, 3, 4, 5]
+        start: '9:00'
+        end: '18:00'
+      snapDuration: '00:30:00'
+      timezone: false
+      editable: false
+      selectable: true
+      selectHelper: true
+      selectOverlap: false
+      nextDayThreshold: '05:00:00'
+      slotDuration: '00:15:00'
+      locale: null
+      buttonText:
+        prev: 'Back'
+        next: 'Next Week'
+        today: 'Today'
+      defaultView: 'agendaWeek'
+      allDaySlot: false
+      height: 'auto'
+      contentHeight: 'auto'
+      header:
+        left: ''
+        center: 'title'
+        right: 'today prev,next'
+      validRange: (nowDate) ->
+        { start: nowDate }
+      selectAllow: (selectInfo) ->
+        duration = moment.duration(selectInfo.end.diff(selectInfo.start))
+        duration.asMinutes() == 30
+      navLinks: false
+      select: (start, end) ->
+        title = prompt('Event Title:')
+        eventData = undefined
+        if title
+          eventData =
+            title: title
+            start: start
+            end: end
+          $('#calendar').fullCalendar 'renderEvent', eventData, true
+          # stick? = true
+        $('#calendar').fullCalendar 'unselect'
+        return
+      events: []
+    return
+
+= javascript_include_tag "calendar"

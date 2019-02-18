@@ -1,3 +1,3 @@
 # frozen_string_literal: true
 
-Rails.application.config.assets.precompile += %w[header_includes.js]
+Rails.application.config.assets.precompile += %w[header_includes.js calendar.js calendar.css]
