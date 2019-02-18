@@ -23,6 +23,14 @@ class User < ActiveRecord::Base
     remote_accounts.all? { |acc| acc.calendars.any? }
   end
 
+  # is like user.sync_pairs.build but provides default values for to and from
+  # calendars, based on the user's remote accounts
+  def default_sync_pair
+    default_calendars = remote_accounts.first(2).map{ |a| a.default_calendar&.id }.compact
+
+    SyncPair.new from_calendar_id: default_calendars.shift, to_calendar_id: default_calendars.shift
+  end
+
   def add_or_update_remote_account(access_token, type)
     data = access_token.info
 
@@ -36,10 +44,10 @@ class User < ActiveRecord::Base
     remote_accounts .where(email: data["email"], type: type)
                     .first_or_initialize
                     .update_attributes!(
-                      access_token:     access_token.credentials.token,
-                      token_secret:     access_token.credentials.secret,
+                      access_token: access_token.credentials.token,
+                      token_secret: access_token.credentials.secret,
                       token_expires_at: token_expires_at,
-                      refresh_token:    refresh_token
+                      refresh_token: refresh_token
                     )
   end
 

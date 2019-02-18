@@ -9,13 +9,13 @@ class SyncPairsController < ApplicationController
     if @sync_pair.save
       redirect_to :dashboard
     else
-      self.new
+      new
       render action: :new
     end
   end
 
   def new
-    @sync_pair ||= SyncPair.new params.permit(:sync_pair)
+    @sync_pair ||= current_user.default_sync_pair
     @remote_accounts = current_user.remote_accounts
     @calendars_by_remote_account = CalendarAccountHelper.from_accounts_by_key(@remote_accounts)
   end

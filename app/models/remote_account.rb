@@ -37,6 +37,10 @@ class RemoteAccount < ActiveRecord::Base
     raise NotImplementedError, "class#calendar_helper must be implemented by a subclass"
   end
 
+  def default_calendar
+    calendars.where('calendars.name IN (?)', ['Personal']).first || calendars.where('calendars.name = ?', email).first
+  end
+
   def request_calendars
     self.class.calendar_helper.request_calendars(access_token)
   end

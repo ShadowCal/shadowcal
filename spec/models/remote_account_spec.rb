@@ -19,6 +19,40 @@ describe "RemoteAccount", type: :model do
     end
   end
 
+  describe "#default_calendar" do
+    subject { account.default_calendar }
+
+    context "without any calendars" do
+      it { is_expected.to be_nil }
+    end
+
+    context "with a calendar" do
+      let!(:random_calendar) { create :calendar, remote_account: account }
+
+      it { is_expected.to be_nil }
+
+      context "that should be default" do
+        let!(:default_calendar) { create :calendar, remote_account: account, name: calendar_name }
+
+        context "named Personal" do
+          let(:calendar_name) { 'Personal' }
+          it { is_expected.to eq(default_calendar) }
+        end
+
+        context "with a calendar named [email]" do
+          let(:calendar_name) { account.email }
+          it { is_expected.to eq(default_calendar) }
+        end
+
+        context "with a calendar named Personal and named [email]" do
+          let(:calendar_name) { account.email }
+          let!(:personal_calendar) { create :calendar, remote_account: account, name: "Personal" }
+          it { is_expected.to eq(personal_calendar) }
+        end
+      end
+    end
+  end
+
   describe "SyncingError" do
     it "saves attributes to instance variables" do
       e = RemoteAccount::SyncingError.new("test message", valid_instance)
