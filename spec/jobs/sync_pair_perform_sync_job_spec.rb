@@ -49,7 +49,7 @@ describe SyncPairPerformSyncJob do
       it {
         is_expected.to include(
           sync_pair_id: sync_pair_id,
-          sync_pair: nil,
+          sync_pair:    nil,
         )
       }
     end
@@ -57,14 +57,14 @@ describe SyncPairPerformSyncJob do
     context "with valid sync_pair_id" do
       it {
         is_expected.to include(
-          sync_pair_id: sync_pair_id,
-          sync_pair: include(
+          sync_pair_id:  sync_pair_id,
+          sync_pair:     include(
             'id' => sync_pair_id,
           ),
           from_calendar: include(
             'id' => pair.from_calendar.id,
           ),
-          to_calendar: include(
+          to_calendar:   include(
             'id' => pair.to_calendar.id,
           ),
         )

@@ -21,29 +21,20 @@ class SyncPair < ActiveRecord::Base
   end
 
   private
-    def ownership
-      return if user_id.blank?
-      unless user_id == from_calendar.user.id or from_calendar_id.nil?
-        errors[:from_calendar_id] << 'must be a calendar you own'
-      end
-      unless user_id == to_calendar.user.id or to_calendar_id.nil?
-        errors[:to_calendar_id] << 'must be a calendar you own'
-      end
-    end
 
-    def one_way_syncing
-      if from_calendar_id and user.sync_pairs.where('to_calendar_id = ? AND id <> ?', from_calendar_id, id).count > 0
-        errors[:from_calendar_id] << 'cannot sync from a calendar already being synced to'
-      end
+  def ownership
+    return if user_id.blank?
 
-      if to_calendar_id and user.sync_pairs.where('from_calendar_id = ? AND id <> ?', to_calendar_id, id).count > 0
-        errors[:to_calendar_id] << 'cannot sync to a calendar already being synced from'
-      end
-    end
+    errors[:from_calendar_id] << 'must be a calendar you own' unless user_id == from_calendar.user.id || from_calendar_id.nil?
+    errors[:to_calendar_id] << 'must be a calendar you own' unless user_id == to_calendar.user.id || to_calendar_id.nil?
+  end
 
-    def no_syncing_to_from_same
-      if from_calendar_id == to_calendar_id and !from_calendar_id.blank?
-        errors[:base] << 'cannot sync calendar to itself'
-      end
-    end
+  def one_way_syncing
+    errors[:from_calendar_id] << 'cannot sync from a calendar already being synced to' if from_calendar_id && user.sync_pairs.where('to_calendar_id = ? AND id <> ?', from_calendar_id, id).count.positive?
+    errors[:to_calendar_id] << 'cannot sync to a calendar already being synced from' if to_calendar_id && user.sync_pairs.where('from_calendar_id = ? AND id <> ?', to_calendar_id, id).count.positive?
+  end
+
+  def no_syncing_to_from_same
+    errors[:base] << 'cannot sync calendar to itself' if from_calendar_id == to_calendar_id && !from_calendar_id.blank?
+  end
 end

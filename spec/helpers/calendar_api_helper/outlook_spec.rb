@@ -35,9 +35,9 @@ describe CalendarApiHelper::Outlook do
   let(:event) {
     build(
       :event,
-      calendar: calendar,
-      start_at: start_at,
-      end_at: end_at,
+      calendar:     calendar,
+      start_at:     start_at,
+      end_at:       end_at,
       is_attending: is_attending
     )
   }
@@ -46,7 +46,7 @@ describe CalendarApiHelper::Outlook do
     create(
       :event,
       external_id: event_external_id,
-      calendar: calendar
+      calendar:    calendar
     )
   }
 
@@ -66,26 +66,26 @@ describe CalendarApiHelper::Outlook do
 
   let(:outlook_formatted_event) {
     {
-      'Body' => {
+      'Body'           => {
         'ContentType' => 'Text',
-        'Content' => event_description,
+        'Content'     => event_description,
       },
-      'Start' => {
+      'Start'          => {
         'DateTime' => start_at_str,
         'TimeZone' => outlook_formatted_timezone,
       },
-      'End' => {
+      'End'            => {
         'DateTime' => end_at_str,
         'TimeZone' => outlook_formatted_timezone,
       },
-      'Subject' => event.name,
-      'Sensitivity' => 'normal',
-      'ShowAs' => outlook_event_show_as,
-      'IsCancelled' => is_cancelled,
+      'Subject'        => event.name,
+      'Sensitivity'    => 'normal',
+      'ShowAs'         => outlook_event_show_as,
+      'IsCancelled'    => is_cancelled,
       'ResponseStatus' => {
         'Response' => response,
       },
-      'IsAllDay' => is_all_day,
+      'IsAllDay'       => is_all_day,
     }
   }
   let(:outlook_event_with_america_timezone) {
@@ -115,7 +115,7 @@ describe CalendarApiHelper::Outlook do
   let(:raw_outlook_calendar_view_response) {
     {
       "@odata.context" => "https://outlook.office.com/api/v2.0/me/calendars/{calendar_id}/events",
-      "value" => [
+      "value"          => [
         outlook_event_with_id_and_america_timezone,
         outlook_event_shown_as_free,
       ]
@@ -172,7 +172,7 @@ describe CalendarApiHelper::Outlook do
               'DateTime' => new_start_at.strftime('%Y-%m-%dT%H:%M:%S'),
               'TimeZone' => outlook_formatted_timezone,
             },
-            'End' => {
+            'End'   => {
               'DateTime' => new_end_at.strftime('%Y-%m-%dT%H:%M:%S'),
               'TimeZone' => outlook_formatted_timezone,
             },
@@ -189,16 +189,16 @@ describe CalendarApiHelper::Outlook do
 
     let(:outlook_formatted_calendar) {
       {
-        "@odata.id" => "https://outlook.office.com/api/v2.0/Users('ddfcd489-628b-40d7-b48b-57002df800e5@1717622f-1d94-4d0c-9d74-709fad664b77')/Calendars('AAMkAGI2TGuLAAA=')",
-        "Id" => calendar_id,
-        "Name" => "Calendar Name",
-        "Color" => "Auto",
-        "ChangeKey" => "nfZyf7VcrEKLNoU37KWlkQAAA0x0+w==",
-        "CanShare" => true,
+        "@odata.id"           => "https://outlook.office.com/api/v2.0/Users('ddfcd489-628b-40d7-b48b-57002df800e5@1717622f-1d94-4d0c-9d74-709fad664b77')/Calendars('AAMkAGI2TGuLAAA=')",
+        "Id"                  => calendar_id,
+        "Name"                => "Calendar Name",
+        "Color"               => "Auto",
+        "ChangeKey"           => "nfZyf7VcrEKLNoU37KWlkQAAA0x0+w==",
+        "CanShare"            => true,
         "CanViewPrivateItems" => true,
-        "CanEdit" => true,
-        "Owner" => {
-          "Name" => "Fanny Downs",
+        "CanEdit"             => true,
+        "Owner"               => {
+          "Name"    => "Fanny Downs",
           "Address" => "fannyd@adatum.onmicrosoft.com"
         }
       }.to_h
@@ -207,7 +207,7 @@ describe CalendarApiHelper::Outlook do
     let(:raw_outlook_calendar_response) {
       {
         "@odata.context" => "https://outlook.office.com/api/v2.0/$metadata#Me/Calendars",
-        "value" => [
+        "value"          => [
           outlook_formatted_calendar,
           outlook_formatted_calendar,
         ],
@@ -229,7 +229,7 @@ describe CalendarApiHelper::Outlook do
       is_expected.to include(
         have_attributes(
           external_id: calendar_id,
-          name: 'Calendar Name',
+          name:        'Calendar Name',
         )
       )
     }
@@ -244,8 +244,8 @@ describe CalendarApiHelper::Outlook do
       let(:item) {
         {
           CanEdit: can_edit,
-          Id: calendar_id,
-          Name: name,
+          Id:      calendar_id,
+          Name:    name,
         }.to_ostruct
       }
 
@@ -254,8 +254,8 @@ describe CalendarApiHelper::Outlook do
 
         it {
           is_expected.to have_attributes(
-            time_zone: nil,
-            name: name,
+            time_zone:   nil,
+            name:        name,
             external_id: calendar_id,
           )
         }
@@ -313,9 +313,9 @@ describe CalendarApiHelper::Outlook do
         create(
           :event,
           :is_shadow,
-          calendar: calendar,
-          start_at: start_at,
-          end_at: end_at,
+          calendar:     calendar,
+          start_at:     start_at,
+          end_at:       end_at,
           is_attending: is_attending
         )
       }
@@ -338,7 +338,7 @@ describe CalendarApiHelper::Outlook do
         is_expected
           .to contain_exactly(
             have_attributes(
-              persisted?: true,
+              persisted?:  true,
               external_id: event_external_id
             )
           )
@@ -459,7 +459,7 @@ describe CalendarApiHelper::Outlook do
       it {
         is_expected.to have_attributes(
           new_record?: true,
-          persisted?: false
+          persisted?:  false
         )
       }
 
@@ -494,7 +494,7 @@ describe CalendarApiHelper::Outlook do
           it {
             is_expected.to have_attributes(
               start_at: within(1.second).of(start_at),
-              end_at: within(1.second).of(end_at)
+              end_at:   within(1.second).of(end_at)
             )
           }
         end
@@ -516,7 +516,7 @@ describe CalendarApiHelper::Outlook do
             it {
               is_expected.to have_attributes(
                 start_at: start_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds,
-                end_at: end_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds - 1.second,
+                end_at:   end_at - ActiveSupport::TimeZone.new(existing_event.calendar.time_zone).utc_offset.seconds - 1.second,
               )
             }
           end
@@ -533,7 +533,7 @@ describe CalendarApiHelper::Outlook do
             it {
               is_expected.to have_attributes(
                 start_at: start_at,
-                end_at: end_at,
+                end_at:   end_at,
               )
             }
           end

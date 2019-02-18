@@ -146,7 +146,7 @@ module CalendarApiHelper::Google
   def datetime_to_service_date(date, is_all_day)
     if is_all_day
       {
-        date: date.strftime('%Y-%m-%d'),
+        date:      date.strftime('%Y-%m-%d'),
         time_zone: date.time_zone.name,
       }
     else
@@ -172,7 +172,7 @@ module CalendarApiHelper::Google
         event.start_at.in_time_zone(in_time_zone),
         event.is_all_day
       ),
-      end: datetime_to_service_date(
+      end:   datetime_to_service_date(
         event.end_at.in_time_zone(in_time_zone),
         event.is_all_day
       ),
@@ -201,11 +201,11 @@ module CalendarApiHelper::Google
     service
       .list_events(
         id,
-        time_max: 1.month.from_now.iso8601,
-        time_min: Time.zone.now.iso8601,
+        time_max:      1.month.from_now.iso8601,
+        time_min:      Time.zone.now.iso8601,
         single_events: true,
-        max_results: 500,
-        order_by: 'startTime'
+        max_results:   500,
+        order_by:      'startTime'
       )
       .items
   end

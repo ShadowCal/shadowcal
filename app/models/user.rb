@@ -44,10 +44,10 @@ class User < ActiveRecord::Base
     remote_accounts .where(email: data["email"], type: type)
                     .first_or_initialize
                     .update_attributes!(
-                      access_token: access_token.credentials.token,
-                      token_secret: access_token.credentials.secret,
+                      access_token:     access_token.credentials.token,
+                      token_secret:     access_token.credentials.secret,
                       token_expires_at: token_expires_at,
-                      refresh_token: refresh_token
+                      refresh_token:    refresh_token
                     )
   end
 

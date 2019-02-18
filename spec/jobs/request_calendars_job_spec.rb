@@ -56,7 +56,7 @@ describe SyncPairPerformSyncJob do
       it {
         is_expected.to include(
           remote_account_id: remote_account_id,
-          remote_account: nil,
+          remote_account:    nil,
         )
       }
     end
@@ -65,10 +65,10 @@ describe SyncPairPerformSyncJob do
       it {
         is_expected.to include(
           remote_account_id: remote_account_id,
-          remote_account: include(
+          remote_account:    include(
             'id' => remote_account_id,
           ),
-          user: include(
+          user:              include(
             'id' => account.user.id,
           ),
         )

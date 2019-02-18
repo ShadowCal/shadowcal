@@ -9,15 +9,15 @@ describe CalendarApiHelper::Google do
   let(:transparency) { 'transparent' }
   let(:google_formatted_event) {
     {
-      start: {
+      start:        {
         date_time: Time.zone.now
       },
-      attendees: [],
-      end: {
+      attendees:    [],
+      end:          {
         date_time: Time.zone.now + 1.day
       },
-      summary: Faker::Lorem.sentence,
-      description: "",
+      summary:      Faker::Lorem.sentence,
+      description:  "",
       transparency: transparency,
     }.to_ostruct
   }
@@ -28,7 +28,7 @@ describe CalendarApiHelper::Google do
         start: {
           date_time: Time.zone.now
         },
-        end: {
+        end:   {
           date_time: Time.zone.now + 1.day
         },
       )
@@ -41,7 +41,7 @@ describe CalendarApiHelper::Google do
         start: {
           date: Time.zone.today
         },
-        end: {
+        end:   {
           date: Time.zone.today + 1.day
         },
       )
@@ -118,7 +118,7 @@ describe CalendarApiHelper::Google do
 
     let(:item) {
       {
-        summary: Faker::Lorem.sentence,
+        summary:   Faker::Lorem.sentence,
         time_zone: 'Europe/Zurich',
       }.to_ostruct
     }
@@ -165,11 +165,11 @@ describe CalendarApiHelper::Google do
               calendar_id,
               have_attributes(
                 start: hash_including(
-                  date: match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/),
+                  date:      match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/),
                   time_zone: calendar.time_zone,
                 ),
-                end: hash_including(
-                  date: match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/),
+                end:   hash_including(
+                  date:      match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/),
                   time_zone: calendar.time_zone,
                 ),
               )
@@ -191,7 +191,7 @@ describe CalendarApiHelper::Google do
                 start: hash_including(
                   date_time: match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T/),
                 ),
-                end: hash_including(
+                end:   hash_including(
                   date_time: match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T/),
                 ),
               )
@@ -228,11 +228,11 @@ describe CalendarApiHelper::Google do
             event_id,
             have_attributes(
               start: {
-                date: new_start_at.strftime('%Y-%m-%d'),
+                date:      new_start_at.strftime('%Y-%m-%d'),
                 time_zone: in_time_zone,
               },
-              end: {
-                date: new_end_at.strftime('%Y-%m-%d'),
+              end:   {
+                date:      new_end_at.strftime('%Y-%m-%d'),
                 time_zone: in_time_zone,
               }
             )
@@ -255,7 +255,7 @@ describe CalendarApiHelper::Google do
               start: {
                 date_time: new_start_at.iso8601,
               },
-              end: {
+              end:   {
                 date_time: new_end_at.iso8601,
               }
             )
@@ -318,7 +318,7 @@ describe CalendarApiHelper::Google do
     # This block runs multiple times (once per utc offset). Each time:
     # * the server sets itself to a random timezone in that offset (random server time)
     # * the event being tested is drawn from a calendar in a random timezone (random user time)
-    across_time_zones(step: 30.minutes) do 
+    across_time_zones(step: 30.minutes) do
       describe "is_all_day" do
         context "when item is not all day" do
           let(:item) { google_formatted_event_with_date_times }
@@ -331,7 +331,7 @@ describe CalendarApiHelper::Google do
 
           it { is_expected.to have_attributes is_all_day: true }
 
-          it "will start and end at midnight in their timezone" do 
+          it "will start and end at midnight in their timezone" do
             event = subject
             calendar_zone = ActiveSupport::TimeZone.new(event.calendar.time_zone)
             expect(event.start_at.in_time_zone(calendar_zone).hour).to eq(0)
@@ -345,9 +345,9 @@ describe CalendarApiHelper::Google do
     context "with cancelled event" do
       let(:item) {
         {
-          etag: "3040935482068000",
-          id: "arc0vggjo2h1hqk7btopa8thd4",
-          kind: "calendar#event",
+          etag:   "3040935482068000",
+          id:     "arc0vggjo2h1hqk7btopa8thd4",
+          kind:   "calendar#event",
           status: "cancelled"
         }.to_ostruct
       }
@@ -373,8 +373,8 @@ describe CalendarApiHelper::Google do
           expect(
             subject
               .start_at
-          ).to be_within(1.second) 
-              .of(ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.zone.now.beginning_of_day))
+          ).to be_within(1.second)
+            .of(ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.zone.now.beginning_of_day))
         end
 
         it "updates end_at" do
@@ -386,7 +386,7 @@ describe CalendarApiHelper::Google do
             subject
               .end_at
           ).to be_within(1.second)
-              .of(ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.zone.now.beginning_of_day))
+            .of(ActiveSupport::TimeZone.new('America/Los_Angeles').local_to_utc(Time.zone.now.beginning_of_day))
         end
       end
 
@@ -435,11 +435,11 @@ describe CalendarApiHelper::Google do
 
             item.attendees = [
               {
-                email: existing_event.remote_account.email,
+                email:           existing_event.remote_account.email,
                 response_status: 'accepted',
               }.to_ostruct,
               {
-                email: 'someone@else.com',
+                email:           'someone@else.com',
                 response_status: 'tentative',
               }.to_ostruct
             ]
@@ -461,11 +461,11 @@ describe CalendarApiHelper::Google do
 
             item.attendees = [
               {
-                email: existing_event.remote_account.email,
+                email:           existing_event.remote_account.email,
                 response_status: 'needsAction',
               }.to_ostruct,
               {
-                email: 'someone@else.com',
+                email:           'someone@else.com',
                 response_status: 'accepted',
               }.to_ostruct
             ]
@@ -481,11 +481,11 @@ describe CalendarApiHelper::Google do
 
             item.attendees = [
               {
-                email: existing_event.remote_account.email,
+                email:           existing_event.remote_account.email,
                 response_status: 'declined',
               }.to_ostruct,
               {
-                email: 'someone@else.com',
+                email:           'someone@else.com',
                 response_status: 'accepted',
               }.to_ostruct
             ]
@@ -501,11 +501,11 @@ describe CalendarApiHelper::Google do
 
             item.attendees = [
               {
-                email: existing_event.remote_account.email,
+                email:           existing_event.remote_account.email,
                 response_status: 'tentative',
               }.to_ostruct,
               {
-                email: 'someone@else.com',
+                email:           'someone@else.com',
                 response_status: 'accepted',
               }.to_ostruct
             ]

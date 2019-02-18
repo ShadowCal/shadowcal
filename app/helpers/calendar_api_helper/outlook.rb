@@ -91,7 +91,7 @@ module CalendarApiHelper::Outlook
           'DateTime' => start_at.strftime('%Y-%m-%dT%H:%M:%S'),
           'TimeZone' => 'Etc/GMT',
         },
-        'End' => {
+        'End'   => {
           'DateTime' => end_at.strftime('%Y-%m-%dT%H:%M:%S'),
           'TimeZone' => 'Etc/GMT',
         },
@@ -106,26 +106,26 @@ module CalendarApiHelper::Outlook
     resp = client.create_event(
       access_token,
       {
-        'Body' => {
+        'Body'           => {
           'ContentType' => 'Text',
-          'Content' => build_description_with_embedded_source_event_id(event.source_event_id),
+          'Content'     => build_description_with_embedded_source_event_id(event.source_event_id),
         },
-        'Start' => {
+        'Start'          => {
           'DateTime' => event.start_at.utc.strftime('%Y-%m-%dT%H:%M:%S'),
           'TimeZone' => 'Etc/GMT',
         },
-        'End' => {
+        'End'            => {
           'DateTime' => event.end_at.utc.strftime('%Y-%m-%dT%H:%M:%S'),
           'TimeZone' => 'Etc/GMT',
         },
-        'Subject' => event.name,
-        'Sensitivity' => 'normal',
-        'ShowAs' => event.is_attending ? 'busy' : 'free',
-        'IsCancelled' => false,
+        'Subject'        => event.name,
+        'Sensitivity'    => 'normal',
+        'ShowAs'         => event.is_attending ? 'busy' : 'free',
+        'IsCancelled'    => false,
         'ResponseStatus' => {
           'Response' => 'Organizer',
         },
-        'IsAllDay' => event.is_all_day
+        'IsAllDay'       => event.is_all_day
       },
       calendar_id
     )

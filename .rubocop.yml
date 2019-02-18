@@ -20,6 +20,10 @@ Style/Alias:
   Enabled: false
   StyleGuide: http://relaxed.ruby.style/#stylealias
 
+Layout/AlignHash:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+
 Style/AsciiComments:
   Enabled: false
   StyleGuide: http://relaxed.ruby.style/#styleasciicomments

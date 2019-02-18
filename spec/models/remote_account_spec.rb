@@ -58,7 +58,7 @@ describe "RemoteAccount", type: :model do
       e = RemoteAccount::SyncingError.new("test message", valid_instance)
       expect(e.instance_variable_get('@remote_account_data'))
         .to include(
-          id: valid_instance.id,
+          id:   valid_instance.id,
           type: valid_instance.type,
         )
 

@@ -17,7 +17,7 @@ describe 'Check that the files we have changed have correct syntax' do
       puts
 
       @files.tr!("\n", ' ')
-      result = system "bundle exec rubocop --force-exclusion --config .rubocop.yml --fail-level warn #{@files}"
+      result = system "bundle exec rubocop --auto-correct --force-exclusion --config .rubocop.yml --fail-level warn #{@files}"
       puts
       puts
       expect(result).to be(true)

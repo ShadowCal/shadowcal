@@ -14,21 +14,21 @@ class RequestCalendarsJob < Struct.new(:remote_account_id)
   def error_details
     account = begin
       RemoteAccount.find(remote_account_id)
-    rescue ActiveRecord::RecordNotFound
-      nil
+              rescue ActiveRecord::RecordNotFound
+                nil
     end
 
     if account.nil?
       {
         remote_account_id: remote_account_id,
-        remote_account: nil,
+        remote_account:    nil,
       }
     else
       {
         remote_account_id: remote_account_id,
-        remote_account: account.as_json,
-        user: account.user.try(:as_json),
-        calendars: account.calendars.as_json,
+        remote_account:    account.as_json,
+        user:              account.user.try(:as_json),
+        calendars:         account.calendars.as_json,
       }
     end
   end

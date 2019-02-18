@@ -92,28 +92,28 @@ describe CalendarShadowHelper do
         let(:raw_outlook_calendar_view_response) {
           {
             "@odata.context" => "https:\/\/outlook.office365.com\/api\/v2.0\/$metadata#Me\/Calendars('AQMkADAwATMwMAItZDJlYy1mZWRmLTAwAi0wMAoARgAAA3tf3VWLTbtKr31QnkQPjAsHAHgeJ1juCepKqGww5D6w8McAAAIBBgAAAHgeJ1juCepKqGww5D6w8McAAAAqJvy2AAAA')\/CalendarView(Id,Subject,Body,Start,End,IsAllDay,IsCancelled,ShowAs,ResponseStatus)",
-            "value" => [
+            "value"          => [
               {
-                "@odata.id" => "https:\/\/outlook.office365.com\/api\/v2.0\/Users('00030000-d2ec-fedf-0000-000000000000@84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa')\/Events('AQMkADAwATMwMAItZDJlYy1mZWRmLTAwAi0wMAoARgAAA3tf3VWLTbtKr31QnkQPjAsHAHgeJ1juCepKqGww5D6w8McAAAIBDQAAAHgeJ1juCepKqGww5D6w8McAAAA-XbFzAAAA')",
-                "@odata.etag" => "W\/\\\"eB4nWO4J6kqobDDkPrDwxwAAQOIWwg==\\\"",
-                "Id" => "AQMkADAwATMwMAItZDJlYy1mZWRmLTAwAi0wMAoARgAAA3tf3VWLTbtKr31QnkQPjAsHAHgeJ1juCepKqGww5D6w8McAAAIBDQAAAHgeJ1juCepKqGww5D6w8McAAAA-XbFzAAAA",
-                "Subject" => "Allday yes",
-                "IsAllDay" => true,
-                "IsCancelled" => false,
-                "ShowAs" => "Free",
+                "@odata.id"      => "https:\/\/outlook.office365.com\/api\/v2.0\/Users('00030000-d2ec-fedf-0000-000000000000@84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa')\/Events('AQMkADAwATMwMAItZDJlYy1mZWRmLTAwAi0wMAoARgAAA3tf3VWLTbtKr31QnkQPjAsHAHgeJ1juCepKqGww5D6w8McAAAIBDQAAAHgeJ1juCepKqGww5D6w8McAAAA-XbFzAAAA')",
+                "@odata.etag"    => "W\/\\\"eB4nWO4J6kqobDDkPrDwxwAAQOIWwg==\\\"",
+                "Id"             => "AQMkADAwATMwMAItZDJlYy1mZWRmLTAwAi0wMAoARgAAA3tf3VWLTbtKr31QnkQPjAsHAHgeJ1juCepKqGww5D6w8McAAAIBDQAAAHgeJ1juCepKqGww5D6w8McAAAA-XbFzAAAA",
+                "Subject"        => "Allday yes",
+                "IsAllDay"       => true,
+                "IsCancelled"    => false,
+                "ShowAs"         => "Free",
                 "ResponseStatus" => {
                   "Response" => "Organizer",
-                  "Time" => "0001-01-01T00:00:00Z"
+                  "Time"     => "0001-01-01T00:00:00Z"
                 },
-                "Body" => {
+                "Body"           => {
                   "ContentType" => "HTML",
-                  "Content" => ""
+                  "Content"     => ""
                 },
-                "Start" => {
+                "Start"          => {
                   "DateTime" => "#{start_at.strftime('%Y-%m-%d')}T00:00:00.0000000",
                   "TimeZone" => "UTC"
                 },
-                "End" => {
+                "End"            => {
                   "DateTime" => "#{end_at.strftime('%Y-%m-%d')}T00:00:00.0000000",
                   "TimeZone" => "UTC"
                 }
@@ -173,20 +173,20 @@ describe CalendarShadowHelper do
 
         let(:raw_google_calendar_view_response) {
           {
-            start: {
-              date: start_at.to_date.strftime('%Y-%m-%d'),
+            start:        {
+              date:      start_at.to_date.strftime('%Y-%m-%d'),
               time_zone: 'America/Los_Angeles',
             },
-            attendees: [],
-            end: {
-              date: (start_at.to_date + 1.day).strftime('%Y-%m-%d'),
+            attendees:    [],
+            end:          {
+              date:      (start_at.to_date + 1.day).strftime('%Y-%m-%d'),
               time_zone: 'America/Los_Angeles',
             },
-            creator: {
+            creator:      {
               self: true,
             },
-            summary: Faker::Lorem.sentence,
-            description: "",
+            summary:      Faker::Lorem.sentence,
+            description:  "",
             transparency: 'Opaque',
           }.to_ostruct
         }
@@ -230,20 +230,20 @@ describe CalendarShadowHelper do
 
         let(:raw_google_calendar_view_response) {
           {
-            start: {
-              date: start_at.to_date.strftime('%Y-%m-%d'),
+            start:        {
+              date:      start_at.to_date.strftime('%Y-%m-%d'),
               time_zone: 'America/Los_Angeles',
             },
-            attendees: [],
-            end: {
-              date: (start_at.to_date + 1.day).strftime('%Y-%m-%d'),
+            attendees:    [],
+            end:          {
+              date:      (start_at.to_date + 1.day).strftime('%Y-%m-%d'),
               time_zone: 'America/Los_Angeles',
             },
-            creator: {
+            creator:      {
               self: true,
             },
-            summary: Faker::Lorem.sentence,
-            description: "",
+            summary:      Faker::Lorem.sentence,
+            description:  "",
             transparency: 'Opaque',
           }.to_ostruct
         }
