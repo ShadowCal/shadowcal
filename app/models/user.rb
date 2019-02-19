@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_many :sync_pairs, dependent: :destroy
   has_many :calendars, through: :remote_accounts
   has_many :events, through: :calendars
+  belongs_to :scheduling_calendar, class_name: 'Calendar'
 
   def self.find_or_create_from_omniauth(access_token)
     data = access_token.info

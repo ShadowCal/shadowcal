@@ -8,7 +8,7 @@ ShadowCal::Application.routes.draw do
   match "sync_pair/new" => "sync_pairs#new", :via => [:get], :as => :new_sync_pair
   match "remote_account/:id" => "remote_account#delete", :via => [:delete], :as => :delete_remote_account
   match "user" => "user#delete", :via => [:delete], :as => :user_delete
-  match "schedule" => "events#new", via: [:get], as: :schedule_event
+  match "schedule/:user_id" => "events#new", via: [:get], as: :schedule_event
 
   root to: "user#dashboard", as: :dashboard
 end

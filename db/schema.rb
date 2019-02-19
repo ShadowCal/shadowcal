@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190217193843) do
+ActiveRecord::Schema.define(version: 20190218080737) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace",     limit: 255
@@ -134,9 +134,11 @@ ActiveRecord::Schema.define(version: 20190217193843) do
     t.time     "work_hour_end_at",                   default: '2000-01-01 20:30:00'
     t.time     "work_hours_start_at"
     t.time     "work_hours_end_at"
+    t.integer  "scheduling_calendar_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["scheduling_calendar_id"], name: "index_users_on_scheduling_calendar_id"
 
 end
