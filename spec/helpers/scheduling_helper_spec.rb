@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe CalendarViewHelper do
+describe SchedulingHelper do
   describe "#timeslots" do
     def test_timeslots(block)
 

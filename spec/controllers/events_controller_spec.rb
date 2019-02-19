@@ -20,6 +20,9 @@ RSpec.describe EventsController, type: :controller do
     expect(assigns(:time_zone)).to eq(calendar.time_zone)
   end
 
-
+  it "sets the first day to today" do
+    get :new, user_id: user.id
+    expect(assigns(:first_day)).to be within(1.second).of(Time.zone.now)
+  end
 
 end

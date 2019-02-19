@@ -1,10 +1,8 @@
 = javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
 
 #calendar
-  .timeslot-labels
-    - timeslots(start_at: @work_day_start, end_at: @work_day_end, interval: @interval) do |t|
-      .timeslot= t.in_time_zone(@time_zone).strftime('%l:%M%p')
   - 7.times do |d|
-    .day-of-week
-      - (11*60/15).times do |t|
-        .timeslot
+    .calendar-column.day-of-week
+      .column-header= (@first_day + d.days).strftime('%a, %b %e')
+      - timeslots(start_at: @work_day_start, end_at: @work_day_end, interval: @interval) do |t|
+        .timeslot.available= t.in_time_zone(@time_zone).strftime('%l:%M%p')
