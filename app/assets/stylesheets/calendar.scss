@@ -16,10 +16,15 @@
         font-weight: bold;
     }
 
-    .timeslot.available {
-        &:hover {
-            background-color: green;
-            cursor: pointer;
+    .timeslot {
+        color: grey;
+
+        &.available {
+            color: black;
+            &:hover {
+                background-color: green;
+                cursor: pointer;
+            }
         }
     }
 }
