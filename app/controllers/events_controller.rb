@@ -17,13 +17,6 @@ class EventsController < ApplicationController
     @interval = 30.minutes
     @first_day = @work_day_start.beginning_of_day
 
-    @busy_times = @user.scheduling_calendar.events.map do |e|
-      {
-        start: e.start_at,
-        end: e.end_at,
-        title: e.name,
-        allDay: e.is_all_day
-      }
-    end
+    @busy_times = @user.scheduling_calendar.events.select { |e| e.is_blocking }
   end
 end
