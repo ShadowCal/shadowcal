@@ -32,6 +32,10 @@ class User < ActiveRecord::Base
     SyncPair.new from_calendar_id: default_calendars.shift, to_calendar_id: default_calendars.shift
   end
 
+  def synced_calendars
+    sync_pairs.map { |pair| [pair.from_calendar, pair.to_calendar] }.flatten.uniq
+  end
+
   def add_or_update_remote_account(access_token, type)
     data = access_token.info
 

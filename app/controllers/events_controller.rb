@@ -17,6 +17,6 @@ class EventsController < ApplicationController
     @interval = 30.minutes
     @first_day = @work_day_start.beginning_of_day
 
-    @busy_times = @user.scheduling_calendar.events.select { |e| e.is_blocking and e.end_at > @first_day and e.start_at <= @first_day + 8.day }
+    @busy_times = @user.synced_calendars.map(&:events).flatten.select { |e| e.is_blocking and e.end_at > @first_day and e.start_at <= @first_day + 8.day }
   end
 end
