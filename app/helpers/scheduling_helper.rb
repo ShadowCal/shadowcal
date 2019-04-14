@@ -14,5 +14,9 @@ module SchedulingHelper
     end
   end
 
+  def timeslot_is_busy(timeslot, interval)
+    @busy_times.any? { |e| e.start_at.in_time_zone(@time_zone) < (timeslot + interval).in_time_zone(@time_zone) and e.end_at.in_time_zone(@time_zone) > timeslot.in_time_zone(@time_zone) }
+  end
+
   extend self
 end
