@@ -1,0 +1,8 @@
+= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+
+#calendar
+  - 7.times do |d|
+    .calendar-column.day-of-week
+      .column-header= (@first_day + d.days).strftime('%a, %b %e')
+      - timeslots(start_at: @work_day_start + d.days, end_at: @work_day_end + d.days, interval: @interval) do |t|
+        .timeslot{:class => ("available" unless timeslot_is_busy(t.in_time_zone(@time_zone), @interval)) }= t.in_time_zone(@time_zone).strftime('%l:%M%p')

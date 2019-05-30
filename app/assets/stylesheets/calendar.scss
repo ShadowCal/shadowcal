@@ -1,0 +1,30 @@
+#calendar {
+    display: flex;
+    flex-flow: row nowrap;
+
+    .calendar-column {
+        flex-grow: 1;
+    }
+
+    .timeslot-labels {
+        flex-grow: 0;
+        width: 80px;
+    }
+
+    .column-header {
+        height: 24px;
+        font-weight: bold;
+    }
+
+    .timeslot {
+        color: grey;
+
+        &.available {
+            color: black;
+            &:hover {
+                background-color: green;
+                cursor: pointer;
+            }
+        }
+    }
+}

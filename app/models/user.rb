@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_many :sync_pairs, dependent: :destroy
   has_many :calendars, through: :remote_accounts
   has_many :events, through: :calendars
+  belongs_to :scheduling_calendar, class_name: 'Calendar'
 
   def self.find_or_create_from_omniauth(access_token)
     data = access_token.info
@@ -29,6 +30,10 @@ class User < ActiveRecord::Base
     default_calendars = remote_accounts.first(2).map{ |a| a.default_calendar&.id }.compact
 
     SyncPair.new from_calendar_id: default_calendars.shift, to_calendar_id: default_calendars.shift
+  end
+
+  def synced_calendars
+    sync_pairs.map { |pair| [pair.from_calendar, pair.to_calendar] }.flatten.uniq
   end
 
   def add_or_update_remote_account(access_token, type)
